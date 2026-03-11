@@ -303,12 +303,21 @@ def format_nathan_excel_line(pitch: PitchParameters, sep: str = "\t") -> str:
 def main():
     """使用例（デフォルト: Rapsodo 速度=km/h 入力）"""
     pitch = rapsodo_to_nathan(
-        v0_mps=132.7,  # 40 m/s 相当
-        vel_angle_vertical_deg=-1.47, # deg
-        vel_azimuth_deg=2.0, # deg
-        spin_rate_rpm=2152.3,
-        spin_tilt_deg=0.0, # deg
-        spin_azimuth_deg=0.0, # deg
+        ##### 速度関係
+        v0_mps=132.7,  # 最高速度＝初期速度と同一と解釈（km/h）
+        vel_angle_vertical_deg=-1.47, # 縦のリリース角度（deg）　ボールの上下速度方向角度（下向きが正なので注意）
+        vel_azimuth_deg=2.0, # 横のリリース角度（deg）　と急の方位角　（例：右ピッチャーがマウンドの右側から，ホームベースの内側の左方向に投げるときは正）
+
+        ##### 回転数関係
+        spin_rate_rpm=2152.3, #　回転数
+        spin_tilt_deg=-25.0, # 回転方向（deg）　投手から見た回転軸の水平軸に対する角度（ユーザが角度に変換してほしい。ここでは0としています）
+        # Rapsodoの回転方向の角度は時間表記なので注意．
+        # 変換コードを作っていません．Rapsodoの時間表記がナンセンスで嫌いなだけです．気が向いたら変換できるようにします．
+        # 回転軸が水平面となす角 [deg]。0＝水平、90＝鉛直（後方から見た傾き）
+        # 通常，右投手のストレートの場合：水平面から下向きになるので，数値は通常は負の数値となる
+        spin_azimuth_deg=0.0, # ジャイロ角度（deg）
+        # 回転軸の方位（真上から見た）
+        # spin_azimuth_deg 0＝捕手方向（-Y）と一致
     )
     print("PitchParameters:", pitch)
     print("backspin_rpm=%.1f, sidespin_rpm=%.1f, wg_rpm=%.1f" % (pitch.backspin_rpm, pitch.sidespin_rpm, pitch.wg_rpm))
@@ -320,7 +329,7 @@ def main():
         vel_angle_vertical_deg=-1.47,
         vel_azimuth_deg=2.0,
         spin_rate_rpm=2152.3,
-        spin_tilt_deg=25.0,
+        spin_tilt_deg=-25.0,
         spin_azimuth_deg=10.0,
         velocity_input_unit="mph",
     )
