@@ -83,7 +83,8 @@ EXCELの左側の赤色の枠線で囲ってある部分を，このシミュレ
 さきほどの**rapsodo_to_nathan.py**は，このうち黄色い部部分の，初期値を計算します．release speed (mph)，は単位を変えただけ，release angle (deg)とrelease direction (deg)はそのまま入力すればよいのですが，これらの値を，backspin (rpm)やsidespin (rpm)の，角速度ベクトルの初期入力値の計算に使用します．
 
 コードやこの説明に不備があるかもしれませんが，その場合，ご容赦ください．不備のご指摘に関しては，お手数ですが，[SkillVis](skill-vs.com)までに，お問い合わせください．
-なお，不備のご指摘やご要望をいただいいた場合，内容は拝見しますが，返信を行わない予定ですので，あらかじめご承知ください．申し訳ありません．
+
+### なお，不備のご指摘やご要望をいただいいた場合，内容は拝見しますが，返信を行わない予定ですので，あらかじめご承知ください．申し訳ありません．
 
 
 <img width="1256" height="892" alt="image" src="https://github.com/user-attachments/assets/d3f1aff9-0de8-435f-a46b-8a5f72c73389" />
