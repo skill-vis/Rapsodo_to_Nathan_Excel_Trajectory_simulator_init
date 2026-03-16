@@ -1,4 +1,6 @@
 # Initial data converter for the Nathan trajectory simulator (EXCEL)
+<img width="1417" height="1501" alt="nathan_vectors_illustrator_v2" src="https://github.com/user-attachments/assets/60c96334-87e1-4259-9618-d9db6b8bb057" />
+
 
 <img width="890" height="542" alt="image" src="https://github.com/user-attachments/assets/0a0f010a-2b4d-4c72-abec-aadf0a7f4566" />
 
