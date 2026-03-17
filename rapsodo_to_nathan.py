@@ -1,33 +1,29 @@
 """
-Rapsodo 計測値 → Nathan 軌道シミュレータ入力への変換
+Rapsodo 計測値 → Nathan Excel 用入力への変換
 
-Rapsodo の出力（初速度の大きさ＋2角度、角速度の大きさ＋2角度）を
-MyBallTrajectorySim の PitchParameters に変換する。
+Rapsodo の計測データ（単位: 速度 km/h, 角度 deg, 回転 rpm, 回転方向は "HH:MM" 可）
+を入力とし、Nathan の Excel（TrajectoryCalculator 等）に貼り付け可能な形式
+（mph, deg, rpm）に変換する。
 
-座標・角度の convention は docstring とオプションで調整可能。
 参考: https://rapsodo.com/blogs/baseball/understanding-rapsodo-pitching-data-break-profile-introduction
 """
 
 import math
-from typing import Tuple, Optional
+from typing import Tuple, Union
 
 from MyBallTrajectorySim import (
     PitchParameters,
     angular_velocity_xyz_to_backspin_sidespin_wg,
 )
+from rapsodo_to_mysimulator import clock_time_to_angle_deg
 
-
-# --- Convention（要確認時は Rapsodo 仕様に合わせて変更）---
-# 速度: vel_angle_vertical_deg 正＝水平より下, vel_azimuth_deg 0＝捕手方向（-Y）
-# スピン: spin_tilt_deg 0＝水平, 90＝鉛直. spin_azimuth_deg 0＝捕手方向（-Y）と一致
+# 内部計算用
 RPM_TO_RAD_S = math.pi / 30.0
-
-# --- Nathan Excel（TrajectoryCalculator 等）の入力単位 ---
-# Excel_parameter_conversion.md: 初速度は mph、角度は deg、回転は rpm
-MPS_TO_MPH = 2.2369362920544
-MPH_TO_MPS = 1.0 / MPS_TO_MPH
 KMH_TO_MPS = 1.0 / 3.6
-RAD_S_TO_RPM = 60.0 / (2.0 * math.pi)  # rad/s → rpm
+
+# Nathan Excel 出力用（速度 mph）
+MPS_TO_MPH = 2.2369362920544
+M_TO_FT = 3.28084
 
 
 def rapsodo_velocity_to_theta_phi(
@@ -42,6 +38,8 @@ def rapsodo_velocity_to_theta_phi(
       vel_angle_vertical_deg: 水平面からの角度 [deg]。正＝下向き（Nathan の theta と同様）
       vel_azimuth_deg: 水平面内の方位 [deg]。0＝捕手方向（Nathan の -Y）、
                        正＝右（+X）方向に測る、など（要 Rapsodo 仕様確認）
+                       ※Rapsodo 図の定義では φ の向きが Nathan と反対のため、
+                         rapsodo_to_nathan() で Nathan 定義に合わせて符号反転して使用する。
 
     Returns
     -------
@@ -105,139 +103,80 @@ def rapsodo_spin_to_omega_xyz(
     return wx, wy, wz
 
 
-def _normalize_velocity_to_mps(v0: float, velocity_input_unit: str) -> float:
-    """velocity_input_unit に応じて m/s に正規化"""
-    u = (velocity_input_unit or "kmh").lower()
-    if u in ("mps", "m/s", "ms"):
-        return float(v0)
-    if u in ("kmh", "km/h", "kph"):
-        return float(v0) * KMH_TO_MPS
-    if u in ("mph", ):
-        return float(v0) * MPH_TO_MPS
-    raise ValueError(
-        "velocity_input_unit は 'kmh'（デフォルト）/'mps'/'mph' のいずれかである必要があります: "
-        f"{velocity_input_unit!r}"
-    )
-
-
-def _normalize_angles_to_deg(
-    vel_angle_vertical: float,
-    vel_azimuth: float,
-    spin_tilt: float,
-    spin_azimuth: float,
-    angle_input_unit: str,
-) -> Tuple[float, float, float, float]:
-    """angle_input_unit に応じて全角度を deg に正規化"""
-    u = (angle_input_unit or "deg").lower()
-    if u in ("deg", "degree", "degrees"):
-        return (
-            float(vel_angle_vertical),
-            float(vel_azimuth),
-            float(spin_tilt),
-            float(spin_azimuth),
-        )
-    if u in ("rad", "radian", "radians"):
-        r2d = 180.0 / math.pi
-        return (
-            float(vel_angle_vertical) * r2d,
-            float(vel_azimuth) * r2d,
-            float(spin_tilt) * r2d,
-            float(spin_azimuth) * r2d,
-        )
-    raise ValueError(
-        f"angle_input_unit は 'deg' または 'rad' である必要があります: {angle_input_unit!r}"
-    )
-
-
-def _normalize_spin_rate_to_rpm(spin_rate: float, spin_rate_input_unit: str) -> float:
-    """spin_rate_input_unit に応じて rpm に正規化"""
-    u = (spin_rate_input_unit or "rpm").lower()
-    if u in ("rpm", ):
-        return float(spin_rate)
-    if u in ("rad_s", "rad/s", "rads", "radian_per_s"):
-        return float(spin_rate) * RAD_S_TO_RPM
-    raise ValueError(
-        f"spin_rate_input_unit は 'rpm' または 'rad_s' である必要があります: {spin_rate_input_unit!r}"
-    )
-
-
 def rapsodo_to_nathan(
-    # 初速度（単位は velocity_input_unit で指定、デフォルト km/h = Rapsodo）
-    v0_mps: float,
+    # Rapsodo 単位: 速度 km/h, 角度 deg, 回転 rpm
+    v0_kmh: float,
     vel_angle_vertical_deg: float,
     vel_azimuth_deg: float,
-    # 角速度（単位は spin_rate_input_unit で指定、デフォルト rpm）
     spin_rate_rpm: float,
-    spin_tilt_deg: float,
+    spin_tilt_deg: Union[float, str],
     spin_azimuth_deg: float,
-    # オプション
+    pitcher_hand: str = "R",
+    # オプション（リリース位置・打者利き手・convention）
     x0: float = 0.0,
     y0: float = 16.764,
     z0: float = 1.829,
     batter_hand: str = "R",
     spin_tilt_0_is_horizontal: bool = True,
     spin_azimuth_0_toward_catcher: bool = False,
-    # --- Nathan Excel 入力形式に合わせた単位オプション ---
-    # Rapsodo: 速度=km/h, 角度=deg, 回転=rpm
-    # Nathan Excel: 速度=mph, 角度=deg, 回転=rpm（出力側で format_nathan_excel_line を使用）
-    velocity_input_unit: str = "kmh",
-    angle_input_unit: str = "deg",
-    spin_rate_input_unit: str = "rpm",
 ) -> PitchParameters:
     """
-    Rapsodo 風の 1 球分データを Nathan の PitchParameters に変換する。
+    Rapsodo の 1 球分データを Nathan 用 PitchParameters に変換する。
+
+    入力はすべて Rapsodo の単位で与える: 速度 km/h, 角度 deg, 回転 rpm。
+    回転軸の傾き（spin_tilt_deg）のみ、Rapsodo の時刻表記 "HH:MM" でも指定可能。
 
     Parameters
     ----------
-    v0_mps : float
-        初速度（デフォルトは Rapsodo 出力の km/h。velocity_input_unit で指定）
+    v0_kmh : float
+        初速度 [km/h]（Rapsodo の「最高速度」）
     vel_angle_vertical_deg : float
-        リリースの鉛直角 [deg]。正＝下向き
+        縦のリリース角度 [deg]。下向きが正
     vel_azimuth_deg : float
-        リリースの水平方位 [deg]。0＝捕手方向など（convention 要確認）
+        横のリリース角度 [deg]
     spin_rate_rpm : float
         回転数 [rpm]
-    spin_tilt_deg : float
-        回転軸の傾き（後方から見た水平軸との角）[deg]。0＝水平、90＝鉛直
+    spin_tilt_deg : float or str
+        回転軸の傾き。float の場合は [deg]（0＝水平、90＝鉛直）。
+        str の場合は Rapsodo の時刻表記 "HH:MM"（例: "01:18"）。
+        00:00＝-90 deg, 03:00＝0 deg で変換される。
     spin_azimuth_deg : float
-        回転軸の方位（真上から見た）[deg]
+        ジャイロ角度 [deg]（回転軸の方位、真上から見た）
+    pitcher_hand : str
+        投手の利き腕（'R' / 'L'）。spin_tilt_deg を時計表記で与えた場合に、
+        利き腕による左右反転（3:00↔9:00）を吸収して角度へ変換する。
     x0, y0, z0 : float
-        リリース位置 [m]（必要なら上書き）
+        リリース位置 [m]
     batter_hand : str
         打者利き手
     spin_tilt_0_is_horizontal : bool
-        True のとき spin_tilt_deg=0 を水平とする
+        回転軸傾きの convention（デフォルト True）
     spin_azimuth_0_toward_catcher : bool
-        True のとき spin_azimuth_deg=0 を捕手方向（-Y）とする（旧挙動）
-        False（デフォルト）のとき spin_azimuth_deg=0 をバックスピン軸（-X）とする
-    velocity_input_unit : str
-        'kmh'（デフォルト）… v0 は km/h（Rapsodo）。'mps'… m/s。'mph'… mph（いずれも内部で m/s に換算）
-    angle_input_unit : str
-        'deg'（デフォルト）… 各角度は度。'rad' … ラジアン（内部で度に換算）
-    spin_rate_input_unit : str
-        'rpm'（デフォルト）… spin_rate は rpm。'rad_s' … rad/s（内部で rpm に換算）
+        回転軸方位の convention（デフォルト False）
 
     Returns
     -------
     PitchParameters
-        MyBallTrajectorySim の simulate(pitch=...) に渡す引数
+        Nathan Excel 用に pitch_parameters_to_nathan_excel_units / format_nathan_excel_line へ渡すか、
+        MyBallTrajectorySim の simulate(pitch=...) に渡す。
     """
-    # 入力単位 → 内部計算用（m/s, deg, rpm）に正規化
-    v0_mps = _normalize_velocity_to_mps(v0_mps, velocity_input_unit)
-    vel_angle_vertical_deg, vel_azimuth_deg, spin_tilt_deg, spin_azimuth_deg = (
-        _normalize_angles_to_deg(
-            vel_angle_vertical_deg,
-            vel_azimuth_deg,
-            spin_tilt_deg,
-            spin_azimuth_deg,
-            angle_input_unit,
-        )
-    )
-    spin_rate_rpm = _normalize_spin_rate_to_rpm(spin_rate_rpm, spin_rate_input_unit)
+    # spin_tilt_deg が時刻文字列の場合は角度 [deg] に変換（利き腕による鏡映を考慮）
+    if isinstance(spin_tilt_deg, str):
+        spin_tilt_deg = clock_time_to_angle_deg(spin_tilt_deg, pitcher_hand=pitcher_hand)
+
+    # Rapsodo 単位で固定: km/h → m/s, 角度・回転はそのまま deg, rpm
+    v0_mps = float(v0_kmh) * KMH_TO_MPS
+    vel_angle_vertical_deg = float(vel_angle_vertical_deg)
+    vel_azimuth_deg = float(vel_azimuth_deg)
+    spin_tilt_deg = float(spin_tilt_deg)
+    spin_azimuth_deg = float(spin_azimuth_deg)
+    spin_rate_rpm = float(spin_rate_rpm)
 
     _, theta_deg, phi_deg = rapsodo_velocity_to_theta_phi(
         v0_mps, vel_angle_vertical_deg, vel_azimuth_deg
     )
+    # Rapsodo 図: φ は Nathan と向きが反対 → Nathan 定義の φ に変換して以降は統一して使用
+    phi_deg_nathan = -phi_deg
     wx, wy, wz = rapsodo_spin_to_omega_xyz(
         spin_rate_rpm,
         spin_tilt_deg,
@@ -246,7 +185,7 @@ def rapsodo_to_nathan(
         azimuth_0_toward_catcher=spin_azimuth_0_toward_catcher,
     )
     backspin_rpm, sidespin_rpm, wg_rpm = angular_velocity_xyz_to_backspin_sidespin_wg(
-        wx, wy, wz, theta_deg, phi_deg
+        wx, wy, wz, theta_deg, phi_deg_nathan
     )
     return PitchParameters(
         x0=x0,
@@ -254,7 +193,7 @@ def rapsodo_to_nathan(
         z0=z0,
         v0_mps=v0_mps,
         theta_deg=theta_deg,
-        phi_deg=phi_deg,
+        phi_deg=phi_deg_nathan,
         backspin_rpm=backspin_rpm,
         sidespin_rpm=sidespin_rpm,
         wg_rpm=wg_rpm,
@@ -275,10 +214,13 @@ def pitch_parameters_to_nathan_excel_units(pitch: PitchParameters) -> dict:
         "backspin_rpm": pitch.backspin_rpm,
         "sidespin_rpm": pitch.sidespin_rpm,
         "wg_rpm": pitch.wg_rpm,
-        # 位置は Excel では ft が多い（必要なら別換算）
+        # 位置: Excel は ft が多いので ft も併記
         "x0_m": pitch.x0,
         "y0_m": pitch.y0,
         "z0_m": pitch.z0,
+        "x0_ft": pitch.x0 * M_TO_FT,
+        "y0_ft": pitch.y0 * M_TO_FT,
+        "z0_ft": pitch.z0 * M_TO_FT,
     }
 
 
@@ -300,43 +242,40 @@ def format_nathan_excel_line(pitch: PitchParameters, sep: str = "\t") -> str:
     )
 
 
+    # spin_tilt_deg が時刻文字列の場合は角度 [deg] に変換
 def main():
-    """使用例（デフォルト: Rapsodo 速度=km/h 入力）"""
-    pitch = rapsodo_to_nathan(
-        ##### 速度関係
-        v0_mps=132.7,  # 最高速度＝初期速度と同一と解釈（km/h）
-        vel_angle_vertical_deg=-1.47, # 縦のリリース角度（deg）　ボールの上下速度方向角度（下向きが正なので注意）
-        vel_azimuth_deg=2.0, # 横のリリース角度（deg）　と急の方位角　（例：右ピッチャーがマウンドの右側から，ホームベースの内側の左方向に投げるときは正）
+    """使用例: Rapsodo データを入力し、Nathan Excel 用に変換して表示"""
+    # Rapsodo の 1 球分
+    # - 単位: 速度 km/h, 角度 deg, 回転 rpm, 回転方向 "HH:MM"
+    # - 位置: release side / release height は Rapsodo の m 入力をそのまま使い、Excel 用に ft 換算も出力する
+    pitcher_hand = "R"  # "R" or "L"
 
-        ##### 回転数関係
-        spin_rate_rpm=2152.3, #　回転数
-        spin_tilt_deg=-25.0, # 回転方向（deg）　投手から見た回転軸の水平軸に対する角度（ユーザが角度に変換してほしい。ここでは0としています）
-        # Rapsodoの回転方向の角度は時間表記なので注意．
-        # 変換コードを作っていません．Rapsodoの時間表記がナンセンスで嫌いなだけです．気が向いたら変換できるようにします．
-        # 回転軸が水平面となす角 [deg]。0＝水平、90＝鉛直（後方から見た傾き）
-        # 通常，右投手のストレートの場合：水平面から下向きになるので，数値は通常は負の数値となる
-        spin_azimuth_deg=0.0, # ジャイロ角度（deg）
-        # 回転軸の方位（真上から見た）
-        # spin_azimuth_deg 0＝捕手方向（-Y）と一致
+    # Rapsodo: リリースサイド(m) → x0 に相当
+    # 左投手の場合は符号を負にする（ご要望の convention）
+    release_side_m = 0.47
+    x0_m = -abs(release_side_m) if str(pitcher_hand).upper().startswith("L") else abs(release_side_m)
+
+    # Rapsodo: リリースの高さ(m) → z0 に相当
+    release_height_m = 1.5
+    z0_m = float(release_height_m)
+
+    # y0 は Excel/Nathan 既定に合わせたまま（必要なら上書き）
+    pitch = rapsodo_to_nathan(
+        v0_kmh=135.4, # 「１．最高速度」
+        vel_angle_vertical_deg=0.1, # 「２．縦のリリース角度（deg）」
+        vel_azimuth_deg=-2.6, # 「３．横のリリース角度（deg）」
+        spin_rate_rpm=1772, # 「４．回転数」
+        spin_tilt_deg="01:18", # 「５．回転方向（時刻形式: "HH:MM"）」
+        spin_azimuth_deg=21.0, # 「６．ジャイロ角度（deg）」
+        pitcher_hand=pitcher_hand,
+        x0=x0_m,
+        z0=z0_m,
     )
     print("PitchParameters:", pitch)
     print("backspin_rpm=%.1f, sidespin_rpm=%.1f, wg_rpm=%.1f" % (pitch.backspin_rpm, pitch.sidespin_rpm, pitch.wg_rpm))
-
-    # Nathan Excel 入力単位（mph, deg, rpm）で直接渡す例（速度だけ mph で与える）
-    # 89.5 mph ≈ 144 km/h ≈ 40 m/s
-    pitch2 = rapsodo_to_nathan(
-        v0_mps=82.455957, #89.5,
-        vel_angle_vertical_deg=-1.47,
-        vel_azimuth_deg=2.0,
-        spin_rate_rpm=2152.3,
-        spin_tilt_deg=-25.0,
-        spin_azimuth_deg=10.0,
-        velocity_input_unit="mph",
-    )
-    print("\n--- mph 入力（v0 を mph で指定）---")
-    print("PitchParameters (from mph):", pitch2)
-    print("Nathan Excel 用（mph, deg, rpm）:", pitch_parameters_to_nathan_excel_units(pitch2))
-    print("貼り付け用1行:", format_nathan_excel_line(pitch2))
+    print("\n--- Nathan Excel 用 ---")
+    print("辞書（mph, deg, rpm, ft 併記）:", pitch_parameters_to_nathan_excel_units(pitch))
+    print("貼り付け用1行（タブ区切り）:", format_nathan_excel_line(pitch))
 
 
 if __name__ == "__main__":
