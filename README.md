@@ -67,14 +67,15 @@ Z：鉛直上方：正
             例：spin_azimuth_deg 0＝捕手方向（-Y）と一致
 
 を与えて（書き換えて），Pythonで実行します．
-このファイルの中身を書き換えてください．最後のmain関数の部分です．
+このファイルの下の図のハイライトされた部分の中身を書き換えてください．最後のmain関数の部分です．
 実行例：
         
         cd ◯◯/◯◯/ # このPythonコードのあるフォルダー（ディレクトリ）に移動
         
         python3 rapsodo_to_nathan.py
 
-<img width="1362" height="464" alt="image" src="https://github.com/user-attachments/assets/003927c4-51b9-49b0-9369-00c09cf951d9" />
+<img width="947" height="810" alt="image" src="https://github.com/user-attachments/assets/ec9115c6-b4f8-4bfe-a660-81d8637b5a33" />
+
 
 角度の単位の定義などは，Pythonコードを御覧ください．
 
