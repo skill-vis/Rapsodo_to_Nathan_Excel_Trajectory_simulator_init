@@ -1,7 +1,7 @@
 """
-Rapsodo 計測値 → Nathan Excel 用入力への変換（独立パッケージ版）
+Rapsodo 計測値 → Nathan Excel 用入力への変換
 
-同ディレクトリの clock_time_to_angle_deg / pitch_parameters_bsg のみに依存。
+同ディレクトリの clock_time_to_angle_deg / pitch_parameters_bsg に依存。
 """
 from __future__ import annotations
 
