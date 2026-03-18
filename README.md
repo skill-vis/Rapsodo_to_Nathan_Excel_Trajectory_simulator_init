@@ -1,6 +1,8 @@
 # Initial condition converter for the Nathan trajectory simulator (Rapsodo to EXCEL)
+
 2026.03.18訂正（様々な不備に対応し，Rapsodo形式の回転角度の時計入力，リリース位置の変換，左右投手の区別などを追加）
 
+---
 Alan NathanはEXCELで投球や打球の軌道シミュレータを作り，下記に公開しています．
 
 ここで公開している，初期値変換コード（rapsodo_to_nathan.py）は，そのシミュレータに入力する，角速度データの値の計算を補助するためのツールです．一般にはRapsodoで，出力される角速度（回転寿）データと，Nathanのシミュレータの角速度データとの整合性がないので，それを補助する目的で作りました．
