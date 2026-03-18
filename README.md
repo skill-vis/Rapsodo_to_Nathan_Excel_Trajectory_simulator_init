@@ -20,7 +20,7 @@ EXCELで作られたシミュレータで使用している単位系はアメリ
 このページのうち，[Trajectory Calculator](https://baseball.physics.illinois.edu/trajectory-calculator-new3D.html)
 に置いてある，EXCELで書かれたファイルBaseball Trajectory [Calculator--new 3D version: updated, November 13, 2021](https://baseball.physics.illinois.edu/TrajectoryCalculator-new-3D-May2021.xlsx) を使用すると，環境変数（気温や高度など）とボールの運動学的な初期値（初速度の大きさ，方向，角速度）を入力すると，ピッチングマウンドからホームベースまでの軌道を計算できます．もともとはバッティングの軌道計算だけでしたが，新しく投球軌道シミュレータのEXCELのシート（PitchedBallTrajectory）を追加しています．
 
-Alan Nathanは物理学者なので，非常に丁寧な仕事をされており，このシミュレータの計算方法は非常に丁寧に記述されています．ただしEXCELなので積分方法は単純です．Pythonコードではルンゲ・クッタ法に書き換えていますが大きな違いは発生しません．
+Alan Nathanは物理学者なので，非常に丁寧な仕事をされており，このシミュレータの計算方法は非常に丁寧に記述されています．ただしEXCELなので積分方法は単純です．NathanのEXCELコードをPythonに変換（未公開）し，ルンゲ・クッタ法による積分に書き換えてもいますが大きな違いは発生しません．
 
 単位はアメリカのft, mphなど異なるので注意が必要ですが，EXCELの必要なところに，単位を変換して入力すれば，X, Y, Zの軌道を計算できます．
 
