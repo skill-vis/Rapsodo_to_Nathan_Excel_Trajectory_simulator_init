@@ -128,12 +128,12 @@ def pitch_parameters_to_nathan_excel_units(pitch: PitchParameters) -> dict:
         "backspin_rpm": pitch.backspin_rpm,
         "sidespin_rpm": pitch.sidespin_rpm,
         "wg_rpm": pitch.wg_rpm,
-        "x0_m": pitch.x0,
-        "y0_m": pitch.y0,
-        "z0_m": pitch.z0,
         "x0_ft": pitch.x0 * M_TO_FT,
         "y0_ft": pitch.y0 * M_TO_FT,
         "z0_ft": pitch.z0 * M_TO_FT,
+        "x0_m": pitch.x0,
+        "y0_m": pitch.y0,
+        "z0_m": pitch.z0,
     }
 
 
@@ -141,9 +141,9 @@ def format_nathan_excel_line(pitch: PitchParameters, sep: str = "\t") -> str:
     d = pitch_parameters_to_nathan_excel_units(pitch)
     return sep.join(
         [
-            f"{d['v0_mph']:.4f}",
-            f"{d['theta_deg']:.4f}",
-            f"{d['phi_deg']:.4f}",
+            f"{d['release_speed_mph']:.4f}",
+            f"{d['release_angle_deg']:.4f}",
+            f"{d['release_direction_deg']:.4f}",
             f"{d['backspin_rpm']:.2f}",
             f"{d['sidespin_rpm']:.2f}",
             f"{d['wg_rpm']:.2f}",
