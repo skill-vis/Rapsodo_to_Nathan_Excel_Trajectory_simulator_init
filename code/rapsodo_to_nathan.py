@@ -1,7 +1,7 @@
 """
-Rapsodo 計測値 → Nathan Excel 用入力への変換
+Rapsodo 計測値 → Nathan Excel 用入力への変換（独立パッケージ版）
 
-同ディレクトリの clock_time_to_angle_deg / pitch_parameters_bsg に依存。
+同ディレクトリの clock_time_to_angle_deg / pitch_parameters_bsg のみに依存。
 """
 from __future__ import annotations
 
@@ -122,9 +122,9 @@ def rapsodo_to_nathan(
 def pitch_parameters_to_nathan_excel_units(pitch: PitchParameters) -> dict:
     mph = pitch.v0_mps * MPS_TO_MPH
     return {
-        "v0_mph": mph,
-        "theta_deg": pitch.theta_deg,
-        "phi_deg": pitch.phi_deg,
+        "release_speed_mph": mph,
+        "release_angle_deg": pitch.theta_deg,
+        "release_direction_deg": pitch.phi_deg,
         "backspin_rpm": pitch.backspin_rpm,
         "sidespin_rpm": pitch.sidespin_rpm,
         "wg_rpm": pitch.wg_rpm,
