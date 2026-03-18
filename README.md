@@ -46,7 +46,7 @@ Y：捕手ー＞投手方向：正
 
 Z：鉛直上方：正
 
-<img width="1417" height="1501" alt="nathan_vectors_illustrator_v2" src="https://github.com/user-attachments/assets/2302e1f5-9b23-4ca2-88a1-22a80e377a1d" />
+<img width="1327" height="1430" alt="nathan_vectors_illustrator_v2" src="https://github.com/user-attachments/assets/d5224878-7737-48fa-a970-14cc52797ce3" />
 
 ## Rapsodoの表示例
 ![Rapsodo_#2](https://github.com/user-attachments/assets/45dc543a-2473-4b64-9566-bd07931b3a91)
