@@ -48,6 +48,18 @@ Z：鉛直上方：正
 
 <img width="1417" height="1501" alt="nathan_vectors_illustrator_v2" src="https://github.com/user-attachments/assets/2302e1f5-9b23-4ca2-88a1-22a80e377a1d" />
 
+## Rapsodoの表示例
+![Rapsodo_#2](https://github.com/user-attachments/assets/45dc543a-2473-4b64-9566-bd07931b3a91)
+
+
+図は，[ラプソード計測データ解説①「球速」](https://note-rapsodojp.rapsodo.com/n/n8ad1ed6f0109)　より引用しました．
+
+次の図はRapsodoが定義していると思われる定義を示した図です．XYZの座標系はNathanの定義を踏襲しただけです．Rapsodoには座標系の記述がありません．
+
+また，角度などには言葉だけの定義が多く，厳密な定義がないため，この変換コードは言葉からの推測により式を作成しております．
+
+<img width="1387" height="1515" alt="Rapsodo" src="https://github.com/user-attachments/assets/efc828be-2e68-49d9-8ef6-ab3364777ff8" />
+
 ## 初期値変換コード（rapsodo_to_nathan.py）使用方法
 
 このコードは，コード内で
@@ -84,20 +96,18 @@ Z：鉛直上方：正
 
 角度の単位の定義などは，Pythonコードを御覧ください．
 
-## Rapsodoの表示例
-![Rapsodo_#2](https://github.com/user-attachments/assets/45dc543a-2473-4b64-9566-bd07931b3a91)
+ターミナルの出力例
 
+        % python3 rapsodo_to_nathan.py
 
-図は，[ラプソード計測データ解説①「球速」](https://note-rapsodojp.rapsodo.com/n/n8ad1ed6f0109)　より引用しました．
-
-次の図はRapsodoが定義していると思われる定義を示した図です．XYZの座標系はNathanの定義を踏襲しただけです．Rapsodoには座標系の記述がありません．
-
-また，角度などには言葉だけの定義が多く，厳密な定義がないため，この変換コードは言葉からの推測により式を作成しております．
-
-<img width="1387" height="1515" alt="Rapsodo" src="https://github.com/user-attachments/assets/efc828be-2e68-49d9-8ef6-ab3364777ff8" />
+        PitchParameters: PitchParameters(x0=0.47, y0=16.764, z0=1.5, v0_mps=37.611111111111114, theta_deg=0.1, phi_deg=2.6, backspin_rpm=1062.736282989416, sidespin_rpm=-1377.8913828343998, wg_rpm=450.712026436565, batter_hand='R')
+        backspin_rpm=1062.7, sidespin_rpm=-1377.9, wg_rpm=450.7
+        --- Nathan Excel 用 ---
+        辞書: {'release_speed_mph': 84.13365942893493, 'release_angle_deg': 0.1, 'release_direction_deg': 2.6, 'backspin_rpm': 1062.736282989416, 'sidespin_rpm': -1377.8913828343998, 'wg_rpm': 450.712026436565, 'x0_m': 0.47, 'y0_m': 16.764, 'z0_m': 1.5, 'x0_ft': 1.5419947999999999, 'y0_ft': 55.000001759999996, 'z0_ft': 4.92126}
+        貼り付け用1行: 84.1337	0.1000	2.6000	1062.74	-1377.89	450.71
 
 ## NathanのPitchedBallTrajectoryの入力例
-EXCELの左側の赤色の枠線で囲ってある部分を，このシミュレーションではいじっています．
+EXCELの左側の赤色の枠線で囲ってある（黃色にハイライトした）部分を，このシミュレーションではいじっています．
 
 さきほどの**rapsodo_to_nathan.py**は，このうち黄色い部部分の，初期値を計算します．release speed (mph)，は単位を変えただけ，release angle (deg)とrelease direction (deg)はそのまま入力すればよいのですが，これらの値を，backspin (rpm)やsidespin (rpm)の，角速度ベクトルの初期入力値の計算に使用します．
 
@@ -105,7 +115,7 @@ Nathanの計算結果は，アメリカの単位系ftなどを使用していま
 
 コードやこの説明に不備があるかもしれませんが，その場合，ご容赦ください．不備のご指摘に関しては，お手数ですが，[SkillVis](skill-vs.com)までに，お問い合わせください．
 
-<img width="1256" height="892" alt="image" src="https://github.com/user-attachments/assets/d3f1aff9-0de8-435f-a46b-8a5f72c73389" />
+<img width="1437" height="860" alt="image" src="https://github.com/user-attachments/assets/b74cdca2-2c81-4380-a3ff-629059f26676" />
 
 ### 免責
 不備のご指摘やご要望をいただいいた場合，返信を行わないこともあるかもしれませんが，あらかじめご承知ください．申し訳ありません．
