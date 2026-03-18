@@ -138,6 +138,9 @@ def pitch_parameters_to_nathan_excel_units(pitch: PitchParameters) -> dict:
 
 
 def format_nathan_excel_line(pitch: PitchParameters, sep: str = "\t") -> str:
+    """
+    列順: mph, θ, φ, B, S, G, x0, y0, z0 [ft]（タブ区切り想定）
+    """
     d = pitch_parameters_to_nathan_excel_units(pitch)
     return sep.join(
         [
@@ -147,6 +150,9 @@ def format_nathan_excel_line(pitch: PitchParameters, sep: str = "\t") -> str:
             f"{d['backspin_rpm']:.2f}",
             f"{d['sidespin_rpm']:.2f}",
             f"{d['wg_rpm']:.2f}",
+            f"{d['x0_ft']:.4f}",
+            f"{d['y0_ft']:.4f}",
+            f"{d['z0_ft']:.4f}",
         ]
     )
 
