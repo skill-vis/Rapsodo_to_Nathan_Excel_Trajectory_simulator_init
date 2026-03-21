@@ -1,33 +1,37 @@
 """
-野球のボールの投球軌道シミュレータ
-シミュレータは以下の物理効果を考慮します：
-- 重力
-- 空気抵抗（速度依存の抗力係数）
-- マグヌス効果（スピンによる揚力）
-- 風の影響
-- 標高と気温による空気密度の変化
-- 投球軌道の計算
-- Cdは速度に依存するモデル
+Baseball pitch trajectory simulator.
+
+The underlying physics and formulation originate in A. Nathan's Excel Trajectory
+Calculator; (https://baseball.physics.illinois.edu/trajectory-calculator-new3D.html)
+this code is a Python port with the unit system converted to MKS
+(meters, kilograms, seconds). Additional integrators (e.g. RK4) and extensions
+beyond the spreadsheet are included.
+
+Physics included:
+- Gravity
+- Air drag (velocity-dependent drag coefficient)
+- Magnus force (spin-induced lift)
+- Wind
+- Air density vs elevation and temperature
+- Trajectory integration
+- Cd model depends on speed
 """
 
 """
-野球のボールの投球飛翔シミュレータ（改良版）
-BallTrajectorySim.pyの計算原理を元に、より高度な機能を追加
+Enhanced baseball pitch flight simulator.
+Extends BallTrajectorySim-style physics with additional features:
 
-主な改良点：
-- ルンゲ・クッタ法による高精度な数値積分
-- バッチ処理機能（複数の投球条件を一度にシミュレート）
-- パラメータスタディ機能
-- より詳細な分析機能
-- リアルタイム可視化オプション
+- High-accuracy numerical integration (Runge–Kutta)
+- Batch simulation (many pitch conditions at once)
+- Parameter sweeps
+- Richer analysis and plotting
+- Optional real-time visualization
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import animation
-# 日本語表示用（CJK フォント未検出時の警告を防ぐ）
-plt.rcParams['font.sans-serif'] = ['Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', 'sans-serif']
 plt.rcParams['axes.unicode_minus'] = False
 import math
 import csv
@@ -38,27 +42,25 @@ from enum import Enum
 
 
 class IntegrationMethod(Enum):
-    """数値積分手法"""
+    """Numerical integration scheme."""
     EULER = "euler"
-    NATHAN = "nathan"  # Excel（TrajectoryCalculator）系の差分更新（速度→位置の順で更新）
-    RK4 = "rk4"  # ルンゲ・クッタ4次
+    NATHAN = "nathan"  # Excel TrajectoryCalculator-like update (velocity then position)
+    RK4 = "rk4"  # 4th-order Runge–Kutta
 
 
 @dataclass
 class PitchParameters:
-    """投球パラメータを格納するデータクラス"""
-    x0: float = -0.47 # -0.31  # 初期X位置 (m)
-    y0: float = 16.48  # 初期Y位置 (m) = 55 ft
-    z0: float = 1.5 # 1.91  # 初期Z位置 (m) = 6 ft
-    """この値は、132.7 km/hをmphに変換したもの"""
-    v0_mps: float = 37.611111 # 36.8611  Hottaのmocap data # 初速度 (m/s) = 132.7 km/h
-    theta_deg: float = 0.1 # 1.47  Hottaのmocap data # リリース角度 (deg)。正=水平より上向き、負=下向き（Excel/Nathanシートと一致）
-    phi_deg: float = 2.6 # Hottaのmocap data 2.0  # リリース方向 (deg)
-    """この値は、2152.3 rpmに変換したもの"""
-    backspin_rpm: float = 1062.74 # 1824 Hottaのmocap data  # バックスピン (rpm)
-    sidespin_rpm: float = -1377.89 # -900 # 717.4  Hottaのmocap data # サイドスピン (rpm)
-    wg_rpm: float = 451.0  # 回転軸方向のスピン (rpm)
-    batter_hand: str = 'R'  # バッターの利き手
+    """Pitch / release parameters."""
+    x0: float = -0.47  # initial X (m)
+    y0: float = 16.48  # initial Y (m) ≈ 55 ft
+    z0: float = 1.5  # initial Z (m) ≈ 6 ft
+    v0_mps: float = 37.611111  # release speed (m/s); e.g. 132.7 km/h; Hotta mocap refs in comments
+    theta_deg: float = 0.1  # vertical release angle (deg); + = up from horizontal (Nathan/Excel)
+    phi_deg: float = 2.6  # horizontal release direction (deg)
+    backspin_rpm: float = 1062.74
+    sidespin_rpm: float = -1377.89
+    wg_rpm: float = 451.0  # spin about velocity axis (gyro), rpm
+    batter_hand: str = 'R'
 
 
 def angular_velocity_xyz_to_backspin_sidespin_wg(
@@ -66,10 +68,9 @@ def angular_velocity_xyz_to_backspin_sidespin_wg(
     theta_deg: float, phi_deg: float,
 ) -> Tuple[float, float, float]:
     """
-    角速度ベクトル (wx, wy, wz) [rad/s] を、シミュレータ用の
-    backspin_rpm, sidespin_rpm, wg_rpm に変換する。
+    Convert angular velocity (wx, wy, wz) [rad/s] to backspin_rpm, sidespin_rpm, wg_rpm.
 
-    リリース方向・角度 (theta_deg, phi_deg) が必要（3軸の定義がそれに依存するため）。
+    theta_deg and phi_deg define the release direction (axis convention).
 
     Returns
     -------
@@ -79,7 +80,7 @@ def angular_velocity_xyz_to_backspin_sidespin_wg(
     ph = math.radians(phi_deg)
     cth, sth = math.cos(th), math.sin(th)
     cph, sph = math.cos(ph), math.sin(ph)
-    # 初速度単位ベクトル (v0x/v0, v0y/v0, v0z/v0)。正のθ=上向きなので uz = +sin(θ)
+    # Release-direction unit vector; +theta => uz = +sin(theta)
     ux = cth * sph
     uy = -cth * cph
     uz = sth
@@ -96,20 +97,19 @@ def angular_velocity_xyz_to_backspin_sidespin_wg(
 
 @dataclass
 class EnvironmentParameters:
-    """環境パラメータを格納するデータクラス"""
-    temp_F: float = 70.0  # 気温 (deg F)
-    elev_m: float = 4.572  # 標高 (m) = 15 ft
-    relative_humidity: float = 50.0  # 相対湿度 (%)
-    # pressure_inHg: float = 29.92  # 大気圧 (in Hg) Barometric Pressure in inches of  Hg.  Note:  this is the "corrected" value (i.e., referred to sea level)
-    pressure_mmHg: float = 760.0  # 大気圧 (mm Hg)
-    vwind_mph: float = 0.0  # 風速 (mph)
-    phiwind_deg: float = 0.0  # 風向 (deg)
-    hwind_m: float = 0.0  # 風の高さ (m)
+    """Environment (air, wind)."""
+    temp_F: float = 70.0  # temperature (deg F)
+    elev_m: float = 4.572  # elevation (m) ≈ 15 ft
+    relative_humidity: float = 50.0  # relative humidity (%)
+    pressure_mmHg: float = 760.0  # pressure (mm Hg)
+    vwind_mph: float = 0.0  # wind speed (mph)
+    phiwind_deg: float = 0.0  # wind direction (deg)
+    hwind_m: float = 0.0  # height above which wind applies (m)
 
 
 class BallTrajectorySimulator2:
-    """野球のボールの軌道シミュレータクラス（改良版）"""
-    
+    """Baseball trajectory simulator (enhanced)."""
+
     def __init__(
         self,
         integration_method: IntegrationMethod = IntegrationMethod.RK4,
@@ -117,89 +117,69 @@ class BallTrajectorySimulator2:
         excel_compat: bool = False,
     ):
         """
-        初期化
-        
-        Parameters:
-        -----------
+        Parameters
+        ----------
         integration_method : IntegrationMethod
-            数値積分手法（EULER または RK4）
+            EULER, RK4, or NATHAN (Excel-like).
         use_spin_decay : bool
-            抗力・揚力のスピン由来項の時間減衰を有効化する（Excel版に近い）。デフォルト True。
+            Time decay on spin-dependent drag/lift (Excel-like). Default True.
         excel_compat : bool
-            Nathan Excel（TrajectoryCalculator-new-3D-May2021.xlsx）に合わせた定数・球半径を使用する。
-            具体的には cd0 を Excel の既定値に揃える。
+            Match Nathan Excel TrajectoryCalculator defaults (e.g. cd0 = 0.3008).
         """
-        # ボールの物理特性
-        self.mass_kg = 0.145  # 質量 (kg) = 5.125 oz
-        """original valueは，0.229 mという円周で計算されたもの"""
-        self.radius_m = 0.037 #self.circumference_m / (2 * math.pi)  # 半径 (m) original value = 0.03644648196804404
-        self.circumference_m = self.radius_m * 2 * math.pi #0.229  # 円周 (m) = 9.125 inches = 0.2324778563656447 m
-        
-        # 空気抵抗・揚力パラメータ
-        """cd0を変更（0.3008から0.297に変更）"""
-        self.cd0 = 0.297  # 基本抗力係数
+        self.mass_kg = 0.145  # kg ≈ 5.125 oz
+        self.radius_m = 0.037  # m (circumference-based value ~0.03645 m also used in literature)
+        self.circumference_m = self.radius_m * 2 * math.pi  # m ≈ 9.125 in
 
-        self.cdspin = 0.0292  # スピンによる抗力係数の増加
-        self.cl0 = 0.583  # 基本揚力係数
-        self.cl1 = 2.333  # 揚力係数パラメータ1
-        self.cl2 = 1.12  # 揚力係数パラメータ2
-        
-        # 計算パラメータ
-        self.dt = 0.001  # 時間刻み (sec)
-        self.tau = 10000  # 時間定数 (sec)
-        self.beta = 0.0001217  # 標高係数 (1/m)
+        self.cd0 = 0.297  # base drag coefficient
+        self.cdspin = 0.0292  # spin-dependent drag increment
+        self.cl0 = 0.583
+        self.cl1 = 2.333
+        self.cl2 = 1.12
+
+        self.dt = 0.001  # time step (s)
+        self.tau = 10000  # time scale (s)
+        self.beta = 0.0001217  # elevation factor (1/m)
         self.use_spin_decay = use_spin_decay
         self.excel_compat = excel_compat
-        # 参照速度（Excel: 146.7 ft/s = 100 mph）
-        self.v_ref_ms = 44.704  # m/s
-        
-        # 物理定数
-        self.g = 9.79  # 重力加速度 (m/s^2)
-        self.rho_kg_m3 = 1.197  # 基準空気密度 (kg/m^3) = 0.074742 lb/ft^3
-        # 単位変換定数
+        self.v_ref_ms = 44.704  # m/s (Excel: 146.7 ft/s ≈ 100 mph)
+
+        self.g = 9.79  # gravity (m/s^2)
+        self.rho_kg_m3 = 1.197  # reference air density (kg/m^3)
         self.rpm_to_rad_per_sec = math.pi / 30.0
         self.rad_per_sec_to_rpm = 30.0 / math.pi
-        
-        # 数値積分手法
+
         self.integration_method = integration_method
 
-        # Excel互換モード: 定数・半径を Excel 既定に揃える
         if self.excel_compat:
-            # Excelは cd0=0.3008 を使用
             self.cd0 = 0.3008
-        
-        # 計算結果を保存するリスト
+
         self.trajectory = []
-        self.home_plate_crossing = None  # ホームプレート通過時のデータ
+        self.home_plate_crossing = None  # state at home-plate crossing
         
     def calculate_air_density(self, temp_C: float, elev_m: float, 
                               relative_humidity: float, pressure_mmHg: float) -> float:
         """
-        air density in kg/m^3, taking into account temperature, elevation, pressure, and relative humidity.  
-        Note that the factor 0.3783 was inserted on Jully 5, 2012 to correctly take into account the mass of
-        the water molecule.  See CRC, 54th Ed, p. F-9.
-        空気密度を計算（標高、気温、気圧、湿度を考慮）
-        
-        Parameters:
-        -----------
+        Air density (kg/m^3) from temperature, elevation, pressure, and relative humidity.
+        Factor 0.3783 accounts for water vapor mass (CRC, 54th Ed., p. F-9).
+
+        Parameters
+        ----------
         temp_C : float
-            気温 (deg C)
+            Temperature (deg C)
         elev_m : float
-            標高 (m)
+            Elevation (m)
         relative_humidity : float
-            相対湿度 (%)
+            Relative humidity (%)
         pressure_mmHg : float
-            気圧 (mm Hg)
-        
-        Returns:
-        --------
+            Pressure (mm Hg)
+
+        Returns
+        -------
         float
-            空気密度 (kg/m^3)
+            Air density (kg/m^3)
         """
-        # 飽和水蒸気圧を計算：Buck equation
+        # Saturation vapor pressure (Buck equation)
         svp_mmHg = 4.5841 * math.exp((18.687 - temp_C/234.5) * temp_C / (257.14 + temp_C))
-        
-        # 空気密度を計算 (kg/m^3)
         rho_kg_m3 = 1.2929 * (273 / (temp_C + 273)) * \
                     (pressure_mmHg * math.exp(-self.beta * elev_m) - 
                      0.3783 * relative_humidity * svp_mmHg / 100) / 760
@@ -209,7 +189,7 @@ class BallTrajectorySimulator2:
       
     def _spin_decay_factor(self, v_rel: float, t: float) -> float:
         """
-        スピン由来項の時間減衰係数（Excelに準拠）:
+        Spin-term time decay factor (Excel-style):
           exp( -t / (tau * v_ref / v_rel) )
         """
         if not self.use_spin_decay:
@@ -220,26 +200,23 @@ class BallTrajectorySimulator2:
 
     def calculate_drag_coefficient(self, v_rel: float, spin_eff: float, t: float) -> float:
         """
-        抗力係数Cdを計算（速度とスピンに依存）
-        
-        Parameters:
-        -----------
+        Drag coefficient Cd vs speed and spin.
+
+        Parameters
+        ----------
         v_rel : float
-            相対速度 (m/s)
+            Relative speed (m/s)
         spin_eff : float
-            有効スピン (rpm)
+            Effective spin (rpm)
         t : float
-            経過時間 (sec)
-        
-        Returns:
-        --------
+            Time (s)
+
+        Returns
+        -------
         float
-            抗力係数
+            Drag coefficient
         """
-        # スピンによる補正項
         spin_term = self.cdspin * spin_eff / 1000
-        
-        # 時間依存の減衰項
         decay_term = self._spin_decay_factor(v_rel, t)
         
         cd = self.cd0 + spin_term * decay_term
@@ -247,70 +224,61 @@ class BallTrajectorySimulator2:
     
     def calculate_lift_coefficient(self, romega: float, v_rel: float, t: float) -> float:
         """
-        揚力係数を計算
-        
-        Parameters:
-        -----------
+        Lift coefficient Cl.
+
+        Parameters
+        ----------
         romega : float
-            回転速度 (m/s)
+            r * omega tangential speed (m/s)
         v_rel : float
-            相対速度 (m/s)
+            Relative speed (m/s)
         t : float
-            経過時間 (sec)
-        
-        Returns:
-        --------
+            Time (s)
+
+        Returns
+        -------
         float
-            揚力係数
+            Lift coefficient
         """
-        # S（spin parameter）値を計算
-        # 146.7 ft/s = 44.704 m/s (100 mph)
-        # v_ref_ms = 44.704  # 参照速度 (m/s)
         S = (romega / v_rel) * self._spin_decay_factor(v_rel, t) if v_rel > 0 else 0
-        
-        # 揚力係数を計算
         cl = self.cl2 * S / (self.cl0 + self.cl1 * S) if (self.cl0 + self.cl1 * S) > 0 else 0
         return cl
     
     def calculate_const(self, rho: float) -> float:
         """
-        定数c0を計算（空気抵抗とマグヌス効果の係数）
-        抗力の大きさが F = (1/2)*rho*A*Cd*v^2 になるように、
-        ｜加速度｜= const*Cd*v^2 となる const = (1/2)*rho*A/m を使用する。
-        従来のExcel由来係数(0.02618...)は約1.8倍大きく終端速度が過小評価されがちなため、
-        標準的な抗力式に合わせた。
-        
-        Parameters:
-        -----------
+        Constant c0 for drag/Magnus scaling: |a_drag| = const * Cd * v^2 with
+        F = (1/2)*rho*A*Cd*v^2 so const = (1/2)*rho*A/m.
+        Uses standard drag form (legacy Excel-only factor ~0.02618 can underestimate terminal speed).
+
+        Parameters
+        ----------
         rho : float
-            空気密度 (kg/m^3)
-        
-        Returns:
-        --------
+            Air density (kg/m^3)
+
+        Returns
+        -------
         float
-            定数c0 (1/m)。抗力加速度の係数 |a_drag| = const * Cd * v^2
+            c0 (1/m)
         """
-        # 断面積 A = pi * r^2 = circumference^2 / (4*pi)
-        A = math.pi * self.radius_m ** 2 #self.circumference_m ** 2 / (4.0 * math.pi)
-        # 標準抗力: F = (1/2)*rho*A*Cd*v^2 → a = F/m → const = 0.5*rho*A/m
+        A = math.pi * self.radius_m ** 2
         const = 0.5 * rho * A / self.mass_kg
         return const
         
     def calculate_wind_velocity(self, z: float, env: EnvironmentParameters) -> Tuple[float, float]:
         """
-        風速ベクトルを計算（高さに応じて）
-        
-        Parameters:
-        -----------
+        Wind velocity (m/s) vs height.
+
+        Parameters
+        ----------
         z : float
-            高さ (m)
+            Height (m)
         env : EnvironmentParameters
-            環境パラメータ
-        
-        Returns:
-        --------
+            Environment
+
+        Returns
+        -------
         Tuple[float, float]
-            (vxw, vyw) 風速ベクトル (m/s)
+            (vxw, vyw) wind components (m/s)
         """
         if z >= env.hwind_m:
             # 1 mph = 0.44704 m/s
@@ -325,27 +293,24 @@ class BallTrajectorySimulator2:
                               pitch: PitchParameters, env: EnvironmentParameters,
                               const: float, rho: float, romega_initial: float) -> np.ndarray:
         """
-        加速度を計算
-        
-        Parameters:
-        -----------
+        Acceleration [ax, ay, az].
+
+        Parameters
+        ----------
         state : np.ndarray
-            状態ベクトル [x, y, z, vx, vy, vz, wx, wy, wz, spin_total, omega_total]
+            [x, y, z, vx, vy, vz, wx, wy, wz, spin_total, omega_total]
         t : float
-            経過時間 (sec)
-        pitch : PitchParameters
-            投球パラメータ
-        env : EnvironmentParameters
-            環境パラメータ
+            Time (s)
+        pitch, env : parameters
         const : float
-            定数c0
+            Drag scale c0
         rho : float
-            空気密度 (kg/m^3)
-        
-        Returns:
-        --------
+            Air density (kg/m^3)
+
+        Returns
+        -------
         np.ndarray
-            加速度ベクトル [ax, ay, az]
+            [ax, ay, az]
         """
         x, y, z = state[0], state[1], state[2]
         vx, vy, vz = state[3], state[4], state[5]
@@ -353,31 +318,21 @@ class BallTrajectorySimulator2:
         spin_total = state[9] # norm of spin vector(rpm)
         omega_total = state[10] # norm of angular velocity vector (rad/s)
         
-        # 現在の速度
         v = math.sqrt(vx**2 + vy**2 + vz**2)
-        
-        # 風速ベクトル
         vxw, vyw = self.calculate_wind_velocity(z, env)
-        
-        # 相対速度（風を考慮）
         if z >= env.hwind_m:
             v_rel = math.sqrt((vx - vxw)**2 + (vy - vyw)**2 + vz**2)
         else:
             v_rel = v
         
-        # 有効スピン（マグヌス効果に寄与する成分）
-        flag = 1  # マグヌス効果を有効にする
+        flag = 1  # Magnus on
         spin_eff = math.sqrt(spin_total**2 - 
                             flag * (self.rad_per_sec_to_rpm * (wx*vx + wy*vy + wz*vz) / v)**2) if v > 0 else spin_total
         
-        # 回転速度（romega）
         romega = (spin_eff * self.rpm_to_rad_per_sec) * self.radius_m
-        
-        # 抗力係数と揚力係数を計算
         cd = self.calculate_drag_coefficient(v_rel, spin_eff, t)
         cl = self.calculate_lift_coefficient(romega, v_rel, t)
         
-        # 空気抵抗（抗力）
         if v_rel > 0:
             drag_x = -const * cd * v_rel * (vx - vxw)
             drag_y = -const * cd * v_rel * (vy - vyw)
@@ -385,26 +340,17 @@ class BallTrajectorySimulator2:
         else:
             drag_x = drag_y = drag_z = 0
         
-        # マグヌス効果（揚力）
-        # Excelの式: const*(cl/omega)*v_rel*(cross_product)/X
-        # X = M33/romega, ここでM33は現在のromega（有効スピンから計算）、romegaは初期romega
+        # Magnus: Excel-style const*(cl/omega)*v_rel*cross/X; X = romega/romega_initial
         if v_rel > 0 and omega_total > 0 and romega > 0:
-            # ExcelではromegaはRow 14で定義され、時間に依存しない定数
-            # X = M33/romega_initial, ここでM33は現在のromega、romega_initialは初期romega
             X = romega / romega_initial if romega_initial > 0 else 1.0
-            
-            # 風を考慮した相対速度成分
             vx_rel = vx - vxw if z >= env.hwind_m else vx
             vy_rel = vy - vyw if z >= env.hwind_m else vy
-            
-            # マグヌス効果（クロス積による）
             magnus_x = const * (cl / omega_total) * v_rel * (wy * vz - wz * vy_rel) / X
             magnus_y = const * (cl / omega_total) * v_rel * (wz * vx_rel - wx * vz) / X
             magnus_z = const * (cl / omega_total) * v_rel * (wx * vy_rel - wy * vx_rel) / X
         else:
             magnus_x = magnus_y = magnus_z = 0
         
-        # 加速度（重力 + 空気抵抗 + マグヌス効果）
         ax = drag_x + magnus_x
         ay = drag_y + magnus_y
         az = drag_z + magnus_z - self.g
@@ -415,29 +361,22 @@ class BallTrajectorySimulator2:
                  pitch: PitchParameters, env: EnvironmentParameters,
                  const: float, rho: float, romega_initial: float) -> np.ndarray:
         """
-        ルンゲ・クッタ4次法による1ステップの計算
-        
-        Parameters:
-        -----------
+        One RK4 step.
+
+        Parameters
+        ----------
         state : np.ndarray
-            現在の状態ベクトル
+            Current state
         t : float
-            現在の時間
+            Current time
         dt : float
-            時間刻み
-        pitch : PitchParameters
-            投球パラメータ
-        env : EnvironmentParameters
-            環境パラメータ
-        const : float
-            定数c0
-        rho : float
-            空気密度
-        
-        Returns:
-        --------
+            Time step
+        pitch, env, const, rho, romega_initial : as in calculate_acceleration
+
+        Returns
+        -------
         np.ndarray
-            次の状態ベクトル
+            Next state
         """
         # k1
         acc1 = self.calculate_acceleration(state, t, pitch, env, const, rho, romega_initial)
@@ -458,7 +397,6 @@ class BallTrajectorySimulator2:
         acc4 = self.calculate_acceleration(state4, t + dt, pitch, env, const, rho, romega_initial)
         k4 = np.concatenate([state4[3:6], acc4, np.zeros(5)])
         
-        # 次の状態
         next_state = state + (dt / 6.0) * (k1 + 2*k2 + 2*k3 + k4)
         
         return next_state
@@ -466,34 +404,8 @@ class BallTrajectorySimulator2:
     def euler_step(self, state: np.ndarray, t: float, dt: float,
                    pitch: PitchParameters, env: EnvironmentParameters,
                    const: float, rho: float, romega_initial: float) -> np.ndarray:
-        """
-        オイラー法による1ステップの計算
-        
-        Parameters:
-        -----------
-        state : np.ndarray
-            現在の状態ベクトル
-        t : float
-            現在の時間
-        dt : float
-            時間刻み
-        pitch : PitchParameters
-            投球パラメータ
-        env : EnvironmentParameters
-            環境パラメータ
-        const : float
-            定数c0
-        rho : float
-            空気密度
-        
-        Returns:
-        --------
-        np.ndarray
-            次の状態ベクトル
-        """
+        """One explicit Euler step."""
         acc = self.calculate_acceleration(state, t, pitch, env, const, rho, romega_initial)
-        
-        # 位置と速度を更新
         next_state = state.copy()
         next_state[0:3] = state[0:3] + state[3:6] * dt + 0.5 * acc * dt**2
         next_state[3:6] = state[3:6] + acc * dt
@@ -504,21 +416,15 @@ class BallTrajectorySimulator2:
                     pitch: PitchParameters, env: EnvironmentParameters,
                     const: float, rho: float, romega_initial: float) -> np.ndarray:
         """
-        Nathan Excel（TrajectoryCalculator）系の差分更新に近い 1 ステップ。
-
-        典型的な更新順（シート実装でよくある形）:
-          1) 加速度 a_n を計算
-          2) 速度 v_{n+1} = v_n + a_n * dt
-          3) 位置 x_{n+1} = x_n + v_{n+1} * dt + 0.5 * a_n * dt^2
-
-        ※加速度は当該ステップ開始時の状態（n）で評価する。
+        One step matching Nathan Excel TrajectoryCalculator-style ordering:
+          1) a_n from state n
+          2) v_{n+1} = v_n + a_n * dt
+          3) x_{n+1} = x_n + v_{n+1}*dt + 0.5*a_n*dt^2
         """
         acc = self.calculate_acceleration(state, t, pitch, env, const, rho, romega_initial)
 
         next_state = state.copy()
-        # 先に速度を更新
         next_state[3:6] = state[3:6] + acc * dt
-        # 更新後速度を使って位置を更新（Excelの「vx行→x行」更新の並びに合わせる）
         next_state[0:3] = state[0:3] + next_state[3:6] * dt + 0.5 * acc * dt**2
         return next_state
     
@@ -526,43 +432,33 @@ class BallTrajectorySimulator2:
                 env: Optional[EnvironmentParameters] = None,
                 max_time: float = 1.0, save_interval: int = 1) -> List[Dict]:
         """
-        軌道をシミュレート
-        
-        Parameters:
-        -----------
-        pitch : PitchParameters, optional
-            投球パラメータ（Noneの場合はデフォルト値を使用）
-        env : EnvironmentParameters, optional
-            環境パラメータ（Noneの場合はデフォルト値を使用）
+        Run trajectory integration.
+
+        Parameters
+        ----------
+        pitch, env : optional; defaults if None
         max_time : float
-            最大シミュレーション時間 (sec)
+            Max time (s)
         save_interval : int
-            データ保存間隔（1なら全データ、10なら10ステップごと）
-        
-        Returns:
-        --------
+            Store every N steps (1 = all)
+
+        Returns
+        -------
         List[Dict]
-            軌道データのリスト
+            Trajectory samples
         """
-        # デフォルトパラメータを使用
         if pitch is None:
             pitch = PitchParameters()
         if env is None:
             env = EnvironmentParameters()
         
-        # 初期条件を設定
-        v0 = pitch.v0_mps  # 初速度 (m/s)
-        
-        # 初期速度ベクトル（Excel/Nathan: 正のθ=上向き → v0z = +v0*sin(θ)）
+        v0 = pitch.v0_mps
         v0x = pitch.v0_mps * math.cos(math.radians(pitch.theta_deg)) * math.sin(math.radians(pitch.phi_deg))
         v0y = -pitch.v0_mps * math.cos(math.radians(pitch.theta_deg)) * math.cos(math.radians(pitch.phi_deg))
         v0z = pitch.v0_mps * math.sin(math.radians(pitch.theta_deg))
         
-        # スピンベクトル（rad/s）
         spin_total = math.sqrt(pitch.backspin_rpm**2 + pitch.sidespin_rpm**2 + pitch.wg_rpm**2) + 0.001
         omega_total = math.sqrt(pitch.backspin_rpm**2 + pitch.sidespin_rpm**2) * self.rpm_to_rad_per_sec + 0.001
-        
-        # スピン角速度ベクトル
         wx = (-pitch.backspin_rpm * math.cos(math.radians(pitch.phi_deg)) - 
               pitch.sidespin_rpm * math.sin(math.radians(pitch.theta_deg)) * math.sin(math.radians(pitch.phi_deg)) + 
               pitch.wg_rpm * v0x / v0) * self.rpm_to_rad_per_sec
@@ -572,37 +468,27 @@ class BallTrajectorySimulator2:
         wz = (pitch.sidespin_rpm * math.cos(math.radians(pitch.theta_deg)) + 
               pitch.wg_rpm * v0z / v0) * self.rpm_to_rad_per_sec
         
-        # 空気密度と定数を計算
         temp_C = (5/9) * (env.temp_F - 32)
         # pressure_mmHg = env.pressure_inHg * 1000 / 39.37
         rho = self.calculate_air_density(temp_C, env.elev_m, env.relative_humidity, env.pressure_mmHg)
         const = self.calculate_const(rho)
         
-        # 初期romegaを計算
         romega_initial = omega_total * self.radius_m
-        
-        # 初期状態ベクトル [x, y, z, vx, vy, vz, wx, wy, wz, spin_total, omega_total]
         state = np.array([
-            pitch.x0, pitch.y0, pitch.z0,  # 位置
-            v0x, v0y, v0z,  # 速度
-            wx, wy, wz,  # 角速度
-            spin_total, omega_total  # スピン関連
+            pitch.x0, pitch.y0, pitch.z0,
+            v0x, v0y, v0z,
+            wx, wy, wz,
+            spin_total, omega_total,
         ])
-        
-        # 軌道データを保存
         self.trajectory = []
         self.home_plate_crossing = None
-        
-        # ホームプレートまでの距離
-        home_plate_y = 0.432  # 17 inches = 0.432 m
-        
-        # 初期状態を保存（t=0）
+        home_plate_y = 0.432  # 17 in
         t = 0.0
         x, y, z = state[0], state[1], state[2]
         vx, vy, vz = state[3], state[4], state[5]
         v = math.sqrt(vx**2 + vy**2 + vz**2)
         
-        # 初期状態の抗力係数と揚力係数を計算（保存用）
+        # Initial Cd, Cl for first stored point
         vxw, vyw = self.calculate_wind_velocity(z, env)
         if z >= env.hwind_m:
             v_rel = math.sqrt((vx - vxw)**2 + (vy - vyw)**2 + vz**2)
@@ -632,11 +518,8 @@ class BallTrajectorySimulator2:
             'cl': cl
         })
         
-        # シミュレーションループ
         step = 0
-        
         while t < max_time:
-            # 数値積分
             if self.integration_method == IntegrationMethod.RK4:
                 state = self.rk4_step(state, t, self.dt, pitch, env, const, rho, romega_initial)
             elif self.integration_method == IntegrationMethod.NATHAN:
@@ -648,11 +531,9 @@ class BallTrajectorySimulator2:
             vx, vy, vz = state[3], state[4], state[5]
             v = math.sqrt(vx**2 + vy**2 + vz**2)
             
-            # ホームプレートを通過したかチェック（データ保存前に）
             if len(self.trajectory) > 0:
                 prev_y = self.trajectory[-1]['y']
                 if prev_y > home_plate_y and y <= home_plate_y and self.home_plate_crossing is None:
-                    # 補間してホームプレート通過時の値を計算
                     prev_point = self.trajectory[-1]
                     fraction = (home_plate_y - prev_y) / (y - prev_y) if (y - prev_y) != 0 else 0
                     t_home = prev_point['t'] + fraction * self.dt * save_interval
@@ -663,7 +544,6 @@ class BallTrajectorySimulator2:
                     vz_home = prev_point['vz'] + fraction * (vz - prev_point['vz'])
                     v_home = math.sqrt(vx_home**2 + vy_home**2 + vz_home**2)
                     
-                    # ホームプレート通過時の抗力係数と揚力係数を計算
                     vxw, vyw = self.calculate_wind_velocity(z_home, env)
                     if z_home >= env.hwind_m:
                         v_rel_home = math.sqrt((vx_home - vxw)**2 + (vy_home - vyw)**2 + vz_home**2)
@@ -689,7 +569,6 @@ class BallTrajectorySimulator2:
                         'v_mph': v_home / 0.44704
                     }
                     
-                    # ホームプレート通過時点のデータを追加
                     self.trajectory.append({
                         't': t_home,
                         'x': x_home,
@@ -706,12 +585,9 @@ class BallTrajectorySimulator2:
                         'cl': cl_home
                     })
                     
-                    # ホームプレート通過を検出したら計算を終了
                     break
-            
-            # データを保存（指定間隔ごと）
+
             if step % save_interval == 0:
-                # 抗力係数と揚力係数を計算（保存用）
                 vxw, vyw = self.calculate_wind_velocity(z, env)
                 if z >= env.hwind_m:
                     v_rel = math.sqrt((vx - vxw)**2 + (vy - vyw)**2 + vz**2)
@@ -741,7 +617,6 @@ class BallTrajectorySimulator2:
                     'cl': cl
                 })
             
-            # 地面に着地したら終了
             if z <= 0:
                 break
             
@@ -754,25 +629,16 @@ class BallTrajectorySimulator2:
                       env: Optional[EnvironmentParameters] = None,
                       max_time: float = 1.0) -> List[List[Dict]]:
         """
-        複数の投球条件を一度にシミュレート（バッチ処理）
-        
-        Parameters:
-        -----------
-        pitch_list : List[PitchParameters]
-            投球パラメータのリスト
-        env : EnvironmentParameters, optional
-            環境パラメータ（全投球で共通）
-        max_time : float
-            最大シミュレーション時間 (sec)
-        
-        Returns:
-        --------
+        Batch-run many pitches.
+
+        Returns
+        -------
         List[List[Dict]]
-            各投球の軌道データのリスト
+            One trajectory list per pitch
         """
         results = []
         for i, pitch in enumerate(pitch_list):
-            print(f"シミュレーション {i+1}/{len(pitch_list)}: v0={pitch.v0_mps:.1f} m/s, "
+            print(f"Simulation {i+1}/{len(pitch_list)}: v0={pitch.v0_mps:.1f} m/s, "
                   f"theta={pitch.theta_deg:.1f} deg, spin={pitch.backspin_rpm:.0f} rpm")
             trajectory = self.simulate(pitch=pitch, env=env, max_time=max_time)
             results.append(trajectory)
@@ -783,25 +649,20 @@ class BallTrajectorySimulator2:
                        base_env: Optional[EnvironmentParameters] = None,
                        max_time: float = 1.0) -> Dict:
         """
-        パラメータスタディ（1つのパラメータを変化させてシミュレート）
-        
-        Parameters:
-        -----------
+        Sweep one parameter over a list of values.
+
+        Parameters
+        ----------
         param_name : str
-            変化させるパラメータ名（'v0_mps', 'theta_deg', 'backspin_rpm'など）
+            e.g. 'v0_mps', 'theta_deg', 'backspin_rpm'
         param_values : List[float]
-            パラメータの値のリスト
-        base_pitch : PitchParameters, optional
-            ベースとなる投球パラメータ
-        base_env : EnvironmentParameters, optional
-            ベースとなる環境パラメータ
+        base_pitch, base_env : optional baselines
         max_time : float
-            最大シミュレーション時間 (sec)
-        
-        Returns:
-        --------
+
+        Returns
+        -------
         Dict
-            パラメータ値と結果の辞書
+            value -> {trajectory, summary, home_plate_crossing}
         """
         if base_pitch is None:
             base_pitch = PitchParameters()
@@ -811,7 +672,6 @@ class BallTrajectorySimulator2:
         results = {}
         
         for value in param_values:
-            # パラメータを設定
             pitch = PitchParameters(
                 x0=base_pitch.x0,
                 y0=base_pitch.y0,
@@ -825,10 +685,7 @@ class BallTrajectorySimulator2:
                 batter_hand=base_pitch.batter_hand
             )
             
-            # シミュレーション実行
             trajectory = self.simulate(pitch=pitch, env=base_env, max_time=max_time)
-            
-            # 結果を保存
             summary = self.get_summary()
             results[value] = {
                 'trajectory': trajectory,
@@ -840,25 +697,12 @@ class BallTrajectorySimulator2:
     
     def plot_trajectory_2d(self, ax=None, show=True, label=None, plane='yz'):
         """
-        2D軌道をプロット
-        
-        Parameters:
-        -----------
-        ax : matplotlib.axes, optional
-            既存のaxesオブジェクト（Noneの場合は新規作成）
-        show : bool
-            表示するかどうか
-        label : str, optional
-            凡例ラベル
-        plane : str
-            表示する平面 ('yz', 'xy', 'xz', 'time_series')
-            - 'yz': Y-Z平面（側面図、デフォルト）
-            - 'xy': X-Y平面（上面図）
-            - 'xz': X-Z平面（正面図）
-            - 'time_series': YとZの時系列グラフ
+        Plot 2D trajectory.
+
+        plane : 'yz' | 'xy' | 'xz' | 'time_series'
         """
         if not self.trajectory:
-            print("軌道データがありません。先にsimulate()を実行してください。")
+            print("No trajectory data; run simulate() first.")
             return
         
         if ax is None:
@@ -878,7 +722,6 @@ class BallTrajectorySimulator2:
             ax.set_title('Y and Z Time Series')
             ax.grid(True)
             ax.legend()
-            # アスペクト比は時系列グラフでは等しくしない
         elif plane.lower() == 'yz':
             # Y-Z plane (side view)
             ax.plot(y_data, z_data, linewidth=2, label=label if label else 'Trajectory')
@@ -889,10 +732,8 @@ class BallTrajectorySimulator2:
             ax.set_title('Ball Trajectory (Y-Z Plane: Side View)')
             ax.grid(True)
 
-            # 初速と y=0 到達時の速度をグラフ中に表示（m/s と km/h を併記）
             first = self.trajectory[0]
             v0_ms = first['v']
-            # y=0（ホームプレート）通過時点があればそこを、なければ終点を使用
             if self.home_plate_crossing is not None:
                 last = self.home_plate_crossing
             else:
@@ -905,7 +746,6 @@ class BallTrajectorySimulator2:
                 f"v0 = {v0_ms:.2f} m/s ({v0_kmh:.1f} km/h)\n"
                 f"v(y=0) = {vend_ms:.2f} m/s ({vend_kmh:.1f} km/h)"
             )
-            # 左上隅付近にテキストボックスとして表示
             ax.text(
                 0.02,
                 0.98,
@@ -953,38 +793,19 @@ class BallTrajectorySimulator2:
         return ax
     
     def plot_time_series(self, show=True):
-        """
-        YとZの時系列グラフを表示
-        
-        Parameters:
-        -----------
-        show : bool
-            表示するかどうか
-        """
+        """Y and Z vs time."""
         return self.plot_trajectory_2d(show=show, plane='time_series')
     
     def plot_all_projections(self, show=True):
-        """
-        すべての投影図（YZ、XY、XZ平面）を一度に表示
-        
-        Parameters:
-        -----------
-        show : bool
-            表示するかどうか
-        """
+        """YZ, XY, XZ projections in one figure."""
         if not self.trajectory:
-            print("軌道データがありません。先にsimulate()を実行してください。")
+            print("No trajectory data; run simulate() first.")
             return
         
         fig, axes = plt.subplots(1, 3, figsize=(18, 6))
         
-        # YZ平面（側面図）
         self.plot_trajectory_2d(ax=axes[0], show=False, plane='yz')
-        
-        # XY平面（上面図）
         self.plot_trajectory_2d(ax=axes[1], show=False, plane='xy')
-        
-        # XZ平面（正面図）
         self.plot_trajectory_2d(ax=axes[2], show=False, plane='xz')
         
         plt.tight_layout()
@@ -995,24 +816,21 @@ class BallTrajectorySimulator2:
         return fig, axes
     
     def plot_trajectory_3d(self, ax=None, show=True):
-        """3D軌道をプロット（メートル単位、ホームプレート通過時点まで）"""
+        """3D trajectory in meters, trimmed to home-plate crossing if available."""
         if not self.trajectory:
-            print("軌道データがありません。先にsimulate()を実行してください。")
+            print("No trajectory data; run simulate() first.")
             return
         
         if ax is None:
             fig = plt.figure(figsize=(12, 8))
             ax = fig.add_subplot(111, projection='3d')
         
-        # ホームプレート通過時点までのデータのみを使用
-        # home_plate_y = 0.432 m
         home_plate_y = 0.432
         trajectory_to_plot = [p for p in self.trajectory if p['y'] >= home_plate_y]
         
         if not trajectory_to_plot:
             trajectory_to_plot = self.trajectory
         
-        # データは既にメートル単位
         x_data = [p['x'] for p in trajectory_to_plot]
         y_data = [p['y'] for p in trajectory_to_plot]
         z_data = [p['z'] for p in trajectory_to_plot]
@@ -1020,19 +838,16 @@ class BallTrajectorySimulator2:
         ax.plot(x_data, y_data, z_data, 'b-', linewidth=2, label='Trajectory')
         ax.scatter([x_data[0]], [y_data[0]], [z_data[0]], color='g', s=100, label='Start Point')
         
-        # ホームプレート通過時点を表示
         if self.home_plate_crossing:
             ax.scatter([self.home_plate_crossing['x']], 
                       [self.home_plate_crossing['y']], 
                       [self.home_plate_crossing['z']], 
                       color='orange', s=100, label='Home Plate Crossing')
-            # 終了点はホームプレート通過時点
             ax.scatter([self.home_plate_crossing['x']], 
                       [self.home_plate_crossing['y']], 
                       [self.home_plate_crossing['z']], 
                       color='r', s=100, label='End Point (Home Plate)')
         else:
-            # ホームプレート通過していない場合は最後の点を表示
             ax.scatter([x_data[-1]], [y_data[-1]], [z_data[-1]], color='r', s=100, label='End Point')
         
         ax.set_xlabel('X (m)')
@@ -1041,30 +856,22 @@ class BallTrajectorySimulator2:
         ax.set_title('Ball Trajectory (3D)')
         ax.legend()
         
-        # XYZ軸のスケールを等しくする
-        # 各軸の範囲を取得
         x_range = max(x_data) - min(x_data) if len(x_data) > 0 else 1
         y_range = max(y_data) - min(y_data) if len(y_data) > 0 else 1
         z_range = max(z_data) - min(z_data) if len(z_data) > 0 else 1
         
-        # 最大範囲を取得
         max_range = max(x_range, y_range, z_range)
-        
-        # 各軸の中心を計算
         x_center = (max(x_data) + min(x_data)) / 2 if len(x_data) > 0 else 0
         y_center = (max(y_data) + min(y_data)) / 2 if len(y_data) > 0 else 0
         z_center = (max(z_data) + min(z_data)) / 2 if len(z_data) > 0 else 0
         
-        # 各軸の範囲を等しく設定
         ax.set_xlim([x_center - max_range/2, x_center + max_range/2])
         ax.set_ylim([y_center - max_range/2, y_center + max_range/2])
         ax.set_zlim([z_center - max_range/2, z_center + max_range/2])
         
-        # アスペクト比を等しく設定（matplotlib 3.3.0以降）
         try:
             ax.set_box_aspect([1, 1, 1])
         except AttributeError:
-            # 古いバージョンの場合、手動で設定
             ax.set_aspect('equal')
         
         if show:
@@ -1073,7 +880,7 @@ class BallTrajectorySimulator2:
         return ax
     
     def get_summary(self):
-        """シミュレーション結果のサマリーを返す"""
+        """Return summary dict for last simulate() run."""
         if not self.trajectory:
             return None
         
@@ -1094,15 +901,14 @@ class BallTrajectorySimulator2:
         return summary
     
     def export_to_csv(self, filename='trajectory_output.csv'):
-        """軌道データをCSVファイルに出力"""
+        """Export trajectory to CSV."""
         if not self.trajectory:
-            print("軌道データがありません。先にsimulate()を実行してください。")
+            print("No trajectory data; run simulate() first.")
             return
         
         with open(filename, 'w', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
             
-            # ヘッダー（速度は m/s で統一）
             writer.writerow([
                 'Time (sec)', 'X (m)', 'Y (m)', 'Z (m)',
                 'Vx (m/s)', 'Vy (m/s)', 'Vz (m/s)',
@@ -1111,7 +917,6 @@ class BallTrajectorySimulator2:
                 'Drag Coefficient', 'Lift Coefficient'
             ])
             
-            # データ
             for point in self.trajectory:
                 writer.writerow([
                     point['t'],
@@ -1128,7 +933,7 @@ class BallTrajectorySimulator2:
                     point.get('cl', 0)
                 ])
         
-        print(f"軌道データを {filename} に出力しました。")
+        print(f"Wrote trajectory to {filename}.")
 
 
 def _get_home_plate_xy(
@@ -1136,12 +941,12 @@ def _get_home_plate_xy(
     home_plate_crossing: Optional[Dict],
     home_plate_y: float = 0.432,
 ) -> Tuple[float, float]:
-    """ホームプレート (y=home_plate_y) 通過時の X(左右), Z(上下) [m] を返す。"""
+    """X and Z (m) at home plate (y = home_plate_y)."""
     if home_plate_crossing is not None:
         return home_plate_crossing['x'], home_plate_crossing['z']
     if not trajectory:
         return float('nan'), float('nan')
-    # y が home_plate_y を跨ぐ区間で線形補間
+    # Linear interpolation where y crosses home_plate_y
     for i in range(len(trajectory) - 1):
         p0, p1 = trajectory[i], trajectory[i + 1]
         y0, y1 = p0['y'], p1['y']
@@ -1160,7 +965,7 @@ def plot_spin_comparison(
     home_no: Optional[Dict],
     home_plate_y: float = 0.432,
 ) -> None:
-    """角速度あり・なしの2本の軌道を比較して図に表示する（Y-Z, X-Y, X-Z の3面）。"""
+    """Compare with-spin vs no-spin trajectories (YZ, XY, XZ)."""
     fig, axes = plt.subplots(1, 3, figsize=(16, 5))
 
     y_w = [p['y'] for p in traj_with_spin]
@@ -1170,46 +975,41 @@ def plot_spin_comparison(
     z_n = [p['z'] for p in traj_no_spin]
     x_n = [p['x'] for p in traj_no_spin]
 
-    # 左: Y-Z (側面)
     ax = axes[0]
-    ax.plot(y_w, z_w, 'b-', linewidth=2, label='スピンあり')
-    ax.plot(y_n, z_n, 'r--', linewidth=1.5, label='角速度=0')
+    ax.plot(y_w, z_w, 'b-', linewidth=2, label='With spin')
+    ax.plot(y_n, z_n, 'r--', linewidth=1.5, label='No spin (omega=0)')
     ax.axhline(y=0, color='g', linestyle=':', linewidth=1)
-    ax.axvline(x=home_plate_y, color='k', linestyle='--', linewidth=1, label='ホームプレート')
-    ax.set_xlabel('Y: 距離 (m)')
-    ax.set_ylabel('Z: 高さ (m)')
-    ax.set_title('軌道比較 (Y-Z 側面)')
+    ax.axvline(x=home_plate_y, color='k', linestyle='--', linewidth=1, label='Home plate')
+    ax.set_xlabel('Y: distance (m)')
+    ax.set_ylabel('Z: height (m)')
+    ax.set_title('Trajectory (Y-Z side)')
     ax.legend()
     ax.grid(True)
     ax.set_aspect('equal', adjustable='box')
 
-    # 中央: X-Y (上から、左右・前後)
     ax = axes[1]
-    ax.plot(x_w, y_w, 'b-', linewidth=2, label='スピンあり')
-    ax.plot(x_n, y_n, 'r--', linewidth=1.5, label='角速度=0')
+    ax.plot(x_w, y_w, 'b-', linewidth=2, label='With spin')
+    ax.plot(x_n, y_n, 'r--', linewidth=1.5, label='No spin (omega=0)')
     ax.axvline(x=0, color='k', linestyle=':', linewidth=1, alpha=0.7)
-    ax.axhline(y=home_plate_y, color='k', linestyle='--', linewidth=1, label='ホームプレート')
-    ax.set_xlabel('X: 左右 (m)')
-    ax.set_ylabel('Y: 距離 (m)')
-    ax.set_title('軌道比較 (X-Y 上から)')
+    ax.axhline(y=home_plate_y, color='k', linestyle='--', linewidth=1, label='Home plate')
+    ax.set_xlabel('X: lateral (m)')
+    ax.set_ylabel('Y: distance (m)')
+    ax.set_title('Trajectory (X-Y top)')
     ax.legend()
     ax.grid(True)
     ax.set_aspect('equal', adjustable='box')
 
-    # 右: X-Z (バッター目線・正面)
     ax = axes[2]
-    ax.plot(x_w, z_w, 'b-', linewidth=2, label='スピンあり')
-    ax.plot(x_n, z_n, 'r--', linewidth=1.5, label='角速度=0')
+    ax.plot(x_w, z_w, 'b-', linewidth=2, label='With spin')
+    ax.plot(x_n, z_n, 'r--', linewidth=1.5, label='No spin (omega=0)')
     ax.axhline(y=0, color='g', linestyle=':', linewidth=1, label='Ground')
-    ax.axvline(x=0, color='gray', linestyle='--', linewidth=1, alpha=0.7, label='Center Line')
-    # ホームプレートの位置をX軸上に太線で表示（Z=0、幅約0.43m=17インチ）
-    home_plate_half_width = 0.43 / 2.0  # m
+    ax.axvline(x=0, color='gray', linestyle='--', linewidth=1, alpha=0.7, label='Center line')
+    home_plate_half_width = 0.43 / 2.0
     ax.plot([-home_plate_half_width, home_plate_half_width], [0, 0], 'k-', linewidth=8,
-            solid_capstyle='butt', label='ホームプレート', zorder=5)
-    ax.set_xlabel('X: Lateral (m)')
-    ax.set_ylabel('Z: Height (m)')
-    ax.set_title('軌道比較 (X-Z バッター目線・正面)')
-    # 凡例を少し下げて、軌道線と重ならない位置に配置（下げ過ぎない）
+            solid_capstyle='butt', label='Home plate', zorder=5)
+    ax.set_xlabel('X: lateral (m)')
+    ax.set_ylabel('Z: height (m)')
+    ax.set_title('Trajectory (X-Z batter view)')
     ax.legend(loc='upper left', bbox_to_anchor=(0.02, 0.40))
     ax.grid(True)
     ax.set_aspect('equal', adjustable='box')
@@ -1225,11 +1025,10 @@ def plot_spin_comparison_3d(
     home_no: Optional[Dict],
     home_plate_y: float = 0.432,
 ) -> None:
-    """角速度あり・なしの2本の軌道を3Dで比較表示する。"""
+    """3D comparison: with spin vs no spin."""
     fig = plt.figure(figsize=(10, 8))
     ax = fig.add_subplot(111, projection='3d')
 
-    # ホームプレート通過時点までにトリム
     tw = [p for p in traj_with_spin if p['y'] >= home_plate_y]
     tn = [p for p in traj_no_spin if p['y'] >= home_plate_y]
     if not tw:
@@ -1261,7 +1060,6 @@ def plot_spin_comparison_3d(
     ax.set_title('Trajectory comparison 3D (with spin vs no spin)')
     ax.legend()
 
-    # 等スケール
     all_x = x_w + x_n
     all_y = y_w + y_n
     all_z = z_w + z_n
@@ -1283,15 +1081,14 @@ def animate_spin_comparison_3d(
     traj_no_spin: List[Dict],
     interval_ms: int = 100,
 ) -> None:
-    """3D空間でボール位置をスローアニメーション表示（スピンあり／なしの比較）。"""
+    """Slow 3D animation: with spin vs no spin."""
     if not traj_with_spin or not traj_no_spin:
-        print("軌道データが空です。先に simulate() を実行してください。")
+        print("Trajectory empty; run simulate() first.")
         return
 
     fig = plt.figure(figsize=(10, 8))
     ax = fig.add_subplot(111, projection='3d')
 
-    # データ
     xw = np.array([p['x'] for p in traj_with_spin])
     yw = np.array([p['y'] for p in traj_with_spin])
     zw = np.array([p['z'] for p in traj_with_spin])
@@ -1299,11 +1096,9 @@ def animate_spin_comparison_3d(
     yn = np.array([p['y'] for p in traj_no_spin])
     zn = np.array([p['z'] for p in traj_no_spin])
 
-    # 全体軌道（薄い線）
     ax.plot(xw, yw, zw, 'b-', alpha=0.3)
     ax.plot(xn, yn, zn, 'r--', alpha=0.3)
 
-    # 動くマーカー（3D Line オブジェクト。set_data にはシーケンスが必要）
     point_w, = ax.plot([xw[0]], [yw[0]], [zw[0]], 'bo', label='With spin')
     point_n, = ax.plot([xn[0]], [yn[0]], [zn[0]], 'ro', label='No spin (omega=0)')
 
@@ -1313,7 +1108,6 @@ def animate_spin_comparison_3d(
     ax.set_title('3D animation: with spin vs no spin')
     ax.legend()
 
-    # 等スケール
     all_x = np.concatenate([xw, xn])
     all_y = np.concatenate([yw, yn])
     all_z = np.concatenate([zw, zn])
@@ -1327,19 +1121,16 @@ def animate_spin_comparison_3d(
     ax.set_ylim(cy - r / 2, cy + r / 2)
     ax.set_zlim(cz - r / 2, cz + r / 2)
 
-    # フレーム数を揃える（短い方に合わせる）
     n_frames = min(len(xw), len(xn))
 
     def update(frame: int):
         i = frame
-        # set_data には 1 要素でもシーケンスを渡す必要がある
         point_w.set_data([xw[i]], [yw[i]])
         point_w.set_3d_properties([zw[i]])
         point_n.set_data([xn[i]], [yn[i]])
         point_n.set_3d_properties([zn[i]])
         return point_w, point_n
 
-    # 3D プロットでは blit=True は環境依存で問題を起こしやすいため False にする
     anim = animation.FuncAnimation(
         fig,
         update,
@@ -1355,25 +1146,18 @@ def animate_spin_comparison_3d(
 
 
 def run_spin_comparison_2d_only() -> None:
-    """
-    スピンあり／角速度0 の2本の軌道について、
-    2D比較図（Y-Z, X-Y, X-Z）のみを描画する簡易エントリポイント。
-    """
+    """Quick entry: 2D spin comparison only."""
     sim = BallTrajectorySimulator2(integration_method=IntegrationMethod.RK4)
-
-    # PitchParameters のデフォルト値を使用
     pitch = PitchParameters()
     env = EnvironmentParameters(
         temp_F=70,
         elev_m=4.572,  # 15 ft
     )
 
-    # スピンあり
     sim.simulate(pitch=pitch, env=env, max_time=1.0)
     traj_with_spin = list(sim.trajectory)
     home_with = sim.home_plate_crossing
 
-    # 角速度=0
     pitch_nospin = PitchParameters(
         x0=pitch.x0, y0=pitch.y0, z0=pitch.z0,
         v0_mps=pitch.v0_mps, theta_deg=pitch.theta_deg, phi_deg=pitch.phi_deg,
@@ -1389,26 +1173,19 @@ def run_spin_comparison_2d_only() -> None:
 
 
 def main():
-    """メイン関数：使用例"""
-    # シミュレータを作成（ルンゲ・クッタ法を使用）
+    """Example main."""
     sim = BallTrajectorySimulator2(integration_method=IntegrationMethod.RK4)
-    
-    # 投球パラメータは PitchParameters のデフォルト（43-60行目）を使用
     pitch = PitchParameters()
-    
-    # 環境パラメータを設定
     env = EnvironmentParameters(
         temp_F=70,
         elev_m=4.572  # 15 ft
     )
     
-    # シミュレーション実行（スピンあり）
     sim.simulate(pitch=pitch, env=env, max_time=1.0)
     traj_with_spin = list(sim.trajectory)
     home_with = sim.home_plate_crossing
     summary = sim.get_summary()
     
-    # 角速度=0 の投球で再計算（比較用）
     pitch_nospin = PitchParameters(
         x0=pitch.x0, y0=pitch.y0, z0=pitch.z0,
         v0_mps=pitch.v0_mps, theta_deg=pitch.theta_deg, phi_deg=pitch.phi_deg,
@@ -1419,51 +1196,38 @@ def main():
     traj_no_spin = list(sim.trajectory)
     home_no = sim.home_plate_crossing
     
-    # ホームプレート上での位置（スピンあり・角速度0）と差分
     home_plate_y = 0.432
     x_with, z_with = _get_home_plate_xy(traj_with_spin, home_with, home_plate_y)
     x_no, z_no = _get_home_plate_xy(traj_no_spin, home_no, home_plate_y)
-    delta_x = x_with - x_no  # 左右 (m)
-    delta_z = z_with - z_no  # 上下 (m)
-    
-    # 結果を表示（スピンありの結果、m/s と km/h を併記）
+    delta_x = x_with - x_no
+    delta_z = z_with - z_no
     if summary:
         v0_ms = summary['initial_velocity_mps']
         vend_ms = summary['final_velocity_mps']
         v0_kmh = v0_ms * 3.6
         vend_kmh = vend_ms * 3.6
-        print("\n=== シミュレーション結果 ===")
-        print(f"初速度: {v0_ms:.2f} m/s ({v0_kmh:.1f} km/h)")
-        print(f"最終速度: {vend_ms:.2f} m/s ({vend_kmh:.1f} km/h)")
-        print(f"最大高度: {summary['max_height']:.2f} m")
-        print(f"終端高さ（Z）: {summary['final_position'][2]:.3f} m")
-        print(f"総時間: {summary['total_time']:.3f} sec")
+        print("\n=== Simulation summary ===")
+        print(f"Release speed: {v0_ms:.2f} m/s ({v0_kmh:.1f} km/h)")
+        print(f"Final speed: {vend_ms:.2f} m/s ({vend_kmh:.1f} km/h)")
+        print(f"Max height: {summary['max_height']:.2f} m")
+        print(f"Final Z: {summary['final_position'][2]:.3f} m")
+        print(f"Total time: {summary['total_time']:.3f} s")
         if summary['home_plate_crossing']:
             v_home = summary['home_plate_crossing']['v']
-            print(f"ホームプレート通過時速度: {v_home:.2f} m/s ({v_home * 3.6:.1f} km/h)")
-    
-    # 角速度あり vs 角速度=0 のホームプレート上での差分（XY = 左右・上下 [m]）
-    print("\n=== ホームプレート上でのスピンあり vs 角速度=0 の差分 ===")
-    print(f"  スピンあり  位置: X(左右) = {x_with:.4f} m, Z(上下) = {z_with:.4f} m")
-    print(f"  角速度=0    位置: X(左右) = {x_no:.4f} m, Z(上下) = {z_no:.4f} m")
-    print(f"  差分 (スピンあり − 角速度=0): X(左右) = {delta_x:.4f} m, Z(上下) = {delta_z:.4f} m")
-    
-    # スピン比較図（角速度あり vs 角速度=0）2D
+            print(f"Speed at home plate: {v_home:.2f} m/s ({v_home * 3.6:.1f} km/h)")
+
+    print("\n=== Home plate: with spin vs no spin ===")
+    print(f"  With spin: X = {x_with:.4f} m, Z = {z_with:.4f} m")
+    print(f"  No spin:   X = {x_no:.4f} m, Z = {z_no:.4f} m")
+    print(f"  Delta (with - no): dX = {delta_x:.4f} m, dZ = {delta_z:.4f} m")
+
     plot_spin_comparison(traj_with_spin, traj_no_spin, home_with, home_no, home_plate_y)
-    # スピン比較 3D
     plot_spin_comparison_3d(traj_with_spin, traj_no_spin, home_with, home_no, home_plate_y)
-    # スローアニメーション（3D）— Animation オブジェクトを変数に保持して GC を防ぐ
-    # 現在の約5倍速くするため、フレーム間隔を 120ms → 24ms に設定
     anim = animate_spin_comparison_3d(traj_with_spin, traj_no_spin, interval_ms=24)
-    
-    # 以降はスピンありの軌道で CSV・他プロット（sim.trajectory は直前に角速度=0で上書きされているので復元）
+
     sim.trajectory = traj_with_spin
     sim.home_plate_crossing = home_with
-    
-    # CSV出力
     sim.export_to_csv('trajectory_output2.csv')
-    
-    # プロット
     sim.plot_time_series()
     sim.plot_all_projections()
     sim.plot_trajectory_3d()

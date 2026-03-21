@@ -18,11 +18,74 @@ from MyBallTrajectorySim import (
     PitchParameters,
     EnvironmentParameters,
 )
+import matplotlib
+# GUI環境がない場合でも落ちないように Agg を使用
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 # TrajectoryCalculator-new-3D-May2021.xlsx 用の単位換算
 FT_PER_M = 3.28084
 MPH_PER_MPS = 2.23694  # 1 m/s = 2.23694 mph
+
+
+def _traj_to_arrays(traj):
+    xs = [p["x"] for p in traj]
+    ys = [p["y"] for p in traj]
+    zs = [p["z"] for p in traj]
+    return xs, ys, zs
+
+
+def plot_compare_projections(sim_rk4_spin, sim_nathan_spin, sim_rk4_nospin, sim_nathan_nospin, title="Trajectory projections comparison"):
+    """
+    RK4 と Nathan（Excel系差分）の軌道を、スピン有/無で 3 平面（XY/XZ/YZ）に比較表示する。
+    """
+    xs1, ys1, zs1 = _traj_to_arrays(sim_rk4_spin.trajectory)
+    xs2, ys2, zs2 = _traj_to_arrays(sim_nathan_spin.trajectory)
+    xs3, ys3, zs3 = _traj_to_arrays(sim_rk4_nospin.trajectory)
+    xs4, ys4, zs4 = _traj_to_arrays(sim_nathan_nospin.trajectory)
+
+    fig, axes = plt.subplots(1, 3, figsize=(15, 4.8))
+    fig.suptitle(title)
+
+    # XY
+    ax = axes[0]
+    ax.plot(xs1, ys1, label="RK4 (spin)", lw=2)
+    ax.plot(xs2, ys2, label="Nathan (spin)", lw=2, ls="--")
+    ax.plot(xs3, ys3, label="RK4 (no spin)", lw=1.8, alpha=0.85)
+    ax.plot(xs4, ys4, label="Nathan (no spin)", lw=1.8, ls="--", alpha=0.85)
+    ax.set_xlabel("x [m]")
+    ax.set_ylabel("y [m]")
+    ax.set_title("XY")
+    ax.grid(True, alpha=0.3)
+
+    # XZ
+    ax = axes[1]
+    ax.plot(xs1, zs1, label="RK4 (spin)", lw=2)
+    ax.plot(xs2, zs2, label="Nathan (spin)", lw=2, ls="--")
+    ax.plot(xs3, zs3, label="RK4 (no spin)", lw=1.8, alpha=0.85)
+    ax.plot(xs4, zs4, label="Nathan (no spin)", lw=1.8, ls="--", alpha=0.85)
+    ax.set_xlabel("x [m]")
+    ax.set_ylabel("z [m]")
+    ax.set_title("XZ")
+    ax.grid(True, alpha=0.3)
+
+    # YZ
+    ax = axes[2]
+    ax.plot(ys1, zs1, label="RK4 (spin)", lw=2)
+    ax.plot(ys2, zs2, label="Nathan (spin)", lw=2, ls="--")
+    ax.plot(ys3, zs3, label="RK4 (no spin)", lw=1.8, alpha=0.85)
+    ax.plot(ys4, zs4, label="Nathan (no spin)", lw=1.8, ls="--", alpha=0.85)
+    ax.set_xlabel("y [m]")
+    ax.set_ylabel("z [m]")
+    # 右端サブ図のタイトルが線と重なりやすいので、少し下げる
+    ax.set_title("YZ", y=0.96)
+    ax.grid(True, alpha=0.3)
+
+    handles, labels = axes[0].get_legend_handles_labels()
+    # 凡例（説明ボックス）を少し下げる：ボックス下端が y≈0.05 になるように配置
+    fig.legend(handles, labels, loc="lower right", bbox_to_anchor=(1.02, 0.05))
+    plt.tight_layout(rect=[0, 0, 0.88, 0.95])
+    return fig
 
 
 def print_excel_params(pitch, env):
@@ -46,7 +109,9 @@ def print_excel_params(pitch, env):
     print(f"    temp (℃)      = {temp_C_from_F:.1f}  (Excel用 temp_F = {env.temp_F:.1f})")
     print(f"    elev_ft        = {env.elev_m * FT_PER_M:.2f}   # 標高")
     print(f"    relative_humidity = {env.relative_humidity:.1f}")
-    print(f"    pressure_inHg = {env.pressure_inHg:.2f}")
+    # EnvironmentParameters は pressure_mmHg を使用
+    pressure_inHg = env.pressure_mmHg / 25.4
+    print(f"    pressure_inHg = {pressure_inHg:.2f}")
     print(f"    vwind_mph      = {env.vwind_mph:.1f}")
     print(f"    phiwind_deg    = {env.phiwind_deg:.1f}")
     print(f"    hwind_ft       = {env.hwind_m * FT_PER_M:.2f}")
@@ -81,7 +146,7 @@ def run_example(show_plots=True):
         temp_F=temp_C * (9.0 / 5.0) + 32.0,  # 摂氏→華氏でシミュレータに渡す
         elev_m=87.3, #4.572, 87.3は厚木
         relative_humidity=40.0,
-        pressure_inHg=29.92, # 変更してはいけない定数．1013.25 hPa = 29.92 inHg
+        pressure_mmHg=760.0, # 1013.25 hPa 相当（標準）
         vwind_mph=0.0,
         phiwind_deg=0.0,
         hwind_m=0.0,
@@ -90,8 +155,21 @@ def run_example(show_plots=True):
     # Excel 用パラメータを表示（同じ条件を TrajectoryCalculator-new-3D-May2021.xlsx に入力可能）
     print_excel_params(pitch, env)
 
-    # 4. シミュレーション実行
-    sim.simulate(pitch=pitch, env=env, max_time=1.0, save_interval=1)
+    # 4. シミュレーション実行（RK4 / Nathan、スピン有/無で4通り）
+    sim_rk4_spin = BallTrajectorySimulator2(integration_method=IntegrationMethod.RK4)
+    sim_nathan_spin = BallTrajectorySimulator2(integration_method=IntegrationMethod.NATHAN)
+
+    pitch_nospin = PitchParameters(**{**pitch.__dict__, "backspin_rpm": 0.0, "sidespin_rpm": 0.0, "wg_rpm": 0.0})
+    sim_rk4_nospin = BallTrajectorySimulator2(integration_method=IntegrationMethod.RK4)
+    sim_nathan_nospin = BallTrajectorySimulator2(integration_method=IntegrationMethod.NATHAN)
+
+    sim_rk4_spin.simulate(pitch=pitch, env=env, max_time=1.0, save_interval=1)
+    sim_nathan_spin.simulate(pitch=pitch, env=env, max_time=1.0, save_interval=1)
+    sim_rk4_nospin.simulate(pitch=pitch_nospin, env=env, max_time=1.0, save_interval=1)
+    sim_nathan_nospin.simulate(pitch=pitch_nospin, env=env, max_time=1.0, save_interval=1)
+
+    # 互換: 以降の既存表示は RK4(スピン有) を代表として使う
+    sim = sim_rk4_spin
 
     # 4.5 初期速度ベクトルと仰角の確認（theta_deg が上下の初速の角度であることの検証用）
     if sim.trajectory:
@@ -103,23 +181,35 @@ def run_example(show_plots=True):
         print(f"  (vx, vy, vz) = ({vx:.3f}, {vy:.3f}, {vz:.3f}) m/s")
         print(f"  仰角（水平から、正=上/負=下）: {elev_deg:.2f} deg  （pitch.theta_deg={pitch.theta_deg} は正=下・負=上）")
 
-    # 5. サマリー表示（速度は m/s で統一）
+    # 5. サマリー表示（m/s と km/h を併記）
     summary = sim.get_summary()
     if summary:
+        v0_ms = summary['initial_velocity_mps']
+        vend_ms = summary['final_velocity_mps']
         print("\n=== シミュレーション結果 ===")
-        print(f"初速度: {summary['initial_velocity_mps']:.2f} m/s")
-        print(f"最終速度: {summary['final_velocity_mps']:.2f} m/s")
+        print(f"初速度: {v0_ms:.2f} m/s ({v0_ms * 3.6:.1f} km/h)")
+        print(f"最終速度: {vend_ms:.2f} m/s ({vend_ms * 3.6:.1f} km/h)")
         print(f"最大高度: {summary['max_height']:.2f} m")
         print(f"終端高さ（Z）: {summary['final_position'][2]:.3f} m")
         print(f"総時間: {summary['total_time']:.3f} sec")
         if summary.get('home_plate_crossing'):
             h = summary['home_plate_crossing']
-            print(f"ホームプレート通過: 速度 {h['v']:.2f} m/s, 高さ z={h['z']:.3f} m")
+            v_home = h['v']
+            print(f"ホームプレート通過: 速度 {v_home:.2f} m/s ({v_home * 3.6:.1f} km/h), 高さ z={h['z']:.3f} m")
 
     if not show_plots:
         return sim, summary
 
     # 6. 可視化
+    # (0) 比較図（RK4 vs Nathan、スピン有/無、3平面）
+    fig0 = plot_compare_projections(
+        sim_rk4_spin, sim_nathan_spin, sim_rk4_nospin, sim_nathan_nospin,
+        title="RK4 vs Nathan (with/without spin) — projections"
+    )
+    out_png = os.path.join(os.path.dirname(__file__), "compare_rk4_nathan_spin_projections.png")
+    fig0.savefig(out_png, dpi=200)
+    plt.close('all')
+
     # (A) 側面図（Y-Z）
     sim.plot_trajectory_2d(plane='yz')
     plt.close('all')
