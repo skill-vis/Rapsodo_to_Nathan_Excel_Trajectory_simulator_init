@@ -610,8 +610,6 @@ class BallTrajectorySimulator2:
                         'cd': cd_home,
                         'cl': cl_home
                     })
-                    
-                    break
 
             if step % save_interval == 0:
                 vxw, vyw = self.calculate_wind_velocity(z, env)
@@ -647,7 +645,7 @@ class BallTrajectorySimulator2:
                     'cl': cl
                 })
             
-            if z <= 0:
+            if z <= 0 or y < 0:
                 break
             
             t += self.dt
