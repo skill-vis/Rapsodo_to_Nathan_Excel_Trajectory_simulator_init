@@ -36,7 +36,9 @@ website:
             href: concepts/reading-the-output.qmd
     right:
       - icon: github
-        href: https://github.com/skill-vis/MyTrajectorySimulator-API
+        href: https://github.com/skill-vis/MyTrajectorySimulator
+      - text: 日本語
+        href: https://skill-vis.github.io/MyTrajectorySimulator/ja/
       - text: Launch Simulator
         href: https://baseball.skill-vis.com
         target: _blank

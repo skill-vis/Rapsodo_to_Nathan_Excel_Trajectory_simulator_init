@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja"><head>
 
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.36">
@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Rapsodo Input – Baseball Pitch Trajectory Simulator</title>
+<title>回転と変化 – 投球軌道シミュレータ</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -61,20 +61,49 @@ ul.task-list li input[type="checkbox"] {
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "No results",
-    "search-matching-documents-text": "matching documents",
-    "search-copy-link-title": "Copy link to search",
-    "search-hide-matches-text": "Hide additional matches",
-    "search-more-match-text": "more match in this document",
-    "search-more-matches-text": "more matches in this document",
-    "search-clear-button-title": "Clear",
+    "search-no-results-text": "一致なし",
+    "search-matching-documents-text": "一致した文書",
+    "search-copy-link-title": "検索へのリンクをコピー",
+    "search-hide-matches-text": "追加の検索結果を非表示",
+    "search-more-match-text": "追加の検索結果",
+    "search-more-matches-text": "追加の検索結果",
+    "search-clear-button-title": "消去",
     "search-text-placeholder": "",
-    "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit",
-    "search-label": "Search"
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "検索",
+    "search-label": "サーチ"
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -247,70 +276,70 @@ ul.task-list li input[type="checkbox"] {
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="../index.html">
-    <span class="navbar-title">Baseball Pitch Trajectory Simulator</span>
+    <span class="navbar-title">投球軌道シミュレータ</span>
     </a>
   </div>
-            <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+            <div id="quarto-search" class="" title="サーチ"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="ナビゲーションを切り替える" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="../index.html"> 
-<span class="menu-text">Home</span></a>
+<span class="menu-text">ホーム</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../getting-started.html"> 
-<span class="menu-text">Quick Start</span></a>
+<span class="menu-text">はじめに</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-guides" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Guides</span>
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">ガイド</span>
     </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-guides">    
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-">    
         <li>
     <a class="dropdown-item" href="../guides/statcast-mode.html">
- <span class="dropdown-text">Statcast Mode</span></a>
+ <span class="dropdown-text">Statcastモード</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../guides/manual-mode.html">
- <span class="dropdown-text">Manual Input</span></a>
+ <span class="dropdown-text">手動入力</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../guides/rapsodo-mode.html">
- <span class="dropdown-text">Rapsodo Input</span></a>
+ <span class="dropdown-text">Rapsodo入力</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../guides/overlay-comparison.html">
- <span class="dropdown-text">Overlay Comparison</span></a>
+ <span class="dropdown-text">Overlay比較</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../guides/batters-eye.html">
- <span class="dropdown-text">Batter’s Eye</span></a>
+ <span class="dropdown-text">バッター視点</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../guides/pitch-tunnel.html">
- <span class="dropdown-text">Pitch Tunnel</span></a>
+ <span class="dropdown-text">ピッチトンネル</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-concepts" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Concepts</span>
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu--1" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">コンセプト</span>
     </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-concepts">    
+    <ul class="dropdown-menu" aria-labelledby="nav-menu--1">    
         <li>
     <a class="dropdown-item" href="../concepts/spin-and-movement.html">
- <span class="dropdown-text">Spin &amp; Movement</span></a>
+ <span class="dropdown-text">スピンと変化</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../concepts/pitch-tunneling.html">
- <span class="dropdown-text">Pitch Tunneling</span></a>
+ <span class="dropdown-text">ピッチトンネル</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../concepts/reading-the-output.html">
- <span class="dropdown-text">Reading the Output</span></a>
+ <span class="dropdown-text">出力の読み方</span></a>
   </li>  
     </ul>
   </li>
@@ -322,17 +351,17 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="https://skill-vis.github.io/MyTrajectorySimulator/ja/"> 
-<span class="menu-text">日本語</span></a>
+    <a class="nav-link" href="https://skill-vis.github.io/MyTrajectorySimulator/"> 
+<span class="menu-text">English</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="https://baseball.skill-vis.com" target="_blank"> 
-<span class="menu-text">Launch Simulator</span></a>
+<span class="menu-text">シミュレータを開く</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="ダークモードの切り替え"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -343,21 +372,18 @@ ul.task-list li input[type="checkbox"] {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
+    <h2 id="toc-title">目次</h2>
    
   <ul>
-  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
-  <li><a href="#opening-the-rapsodo-dialog" id="toc-opening-the-rapsodo-dialog" class="nav-link" data-scroll-target="#opening-the-rapsodo-dialog">Opening the Rapsodo Dialog</a></li>
-  <li><a href="#input-fields" id="toc-input-fields" class="nav-link" data-scroll-target="#input-fields">Input Fields</a>
+  <li><a href="#ひとことで言うと" id="toc-ひとことで言うと" class="nav-link active" data-scroll-target="#ひとことで言うと">ひとことで言うと</a></li>
+  <li><a href="#回転の3つの成分" id="toc-回転の3つの成分" class="nav-link" data-scroll-target="#回転の3つの成分">回転の3つの成分</a>
   <ul class="collapse">
-  <li><a href="#pitcher" id="toc-pitcher" class="nav-link" data-scroll-target="#pitcher">Pitcher</a></li>
-  <li><a href="#velocity" id="toc-velocity" class="nav-link" data-scroll-target="#velocity">Velocity</a></li>
-  <li><a href="#spin" id="toc-spin" class="nav-link" data-scroll-target="#spin">Spin</a></li>
-  <li><a href="#release-position" id="toc-release-position" class="nav-link" data-scroll-target="#release-position">Release Position</a></li>
+  <li><a href="#backspinバックスピン-ノビのダイヤル" id="toc-backspinバックスピン-ノビのダイヤル" class="nav-link" data-scroll-target="#backspinバックスピン-ノビのダイヤル">Backspin（バックスピン） — 「ノビ」のダイヤル</a></li>
+  <li><a href="#sidespinサイドスピン-横変化のダイヤル" id="toc-sidespinサイドスピン-横変化のダイヤル" class="nav-link" data-scroll-target="#sidespinサイドスピン-横変化のダイヤル">Sidespin（サイドスピン） — 「横変化」のダイヤル</a></li>
+  <li><a href="#gyrospinジャイロスピン-弾丸のダイヤル" id="toc-gyrospinジャイロスピン-弾丸のダイヤル" class="nav-link" data-scroll-target="#gyrospinジャイロスピン-弾丸のダイヤル">Gyrospin（ジャイロスピン） — 「弾丸」のダイヤル</a></li>
   </ul></li>
-  <li><a href="#how-the-conversion-works" id="toc-how-the-conversion-works" class="nav-link" data-scroll-target="#how-the-conversion-works">How the Conversion Works</a></li>
-  <li><a href="#overlay-mode" id="toc-overlay-mode" class="nav-link" data-scroll-target="#overlay-mode">Overlay Mode</a></li>
-  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">Limitations</a></li>
+  <li><a href="#シミュレータで回転を見る" id="toc-シミュレータで回転を見る" class="nav-link" data-scroll-target="#シミュレータで回転を見る">シミュレータで回転を見る</a></li>
+  <li><a href="#spin-efficiency回転効率" id="toc-spin-efficiency回転効率" class="nav-link" data-scroll-target="#spin-efficiency回転効率">Spin Efficiency（回転効率）</a></li>
   </ul>
 </nav>
     </div>
@@ -367,8 +393,8 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Rapsodo Input</h1>
-<p class="subtitle lead">Enter your Rapsodo measurements and simulate the trajectory</p>
+<h1 class="title">回転と変化</h1>
+<p class="subtitle lead">バックスピン・サイドスピン・ジャイロスピンがどのように投球の変化を生むか</p>
 </div>
 
 
@@ -385,161 +411,149 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="overview" class="level2">
-<h2 class="anchored" data-anchor-id="overview">Overview</h2>
-<p>If you use a Rapsodo pitching unit, you can enter its measurements directly into the simulator. The system converts Rapsodo’s output format (speed, spin direction, gyro angle) into the physics parameters needed for trajectory simulation.</p>
+<section id="ひとことで言うと" class="level2">
+<h2 class="anchored" data-anchor-id="ひとことで言うと">ひとことで言うと</h2>
+<p><strong>回転がボールを動かす。</strong> 回転の方向と量によって、投球が「ノビる」のか、横に滑るのか、落ちるのか、カットするのかが決まります。</p>
 </section>
-<section id="opening-the-rapsodo-dialog" class="level2">
-<h2 class="anchored" data-anchor-id="opening-the-rapsodo-dialog">Opening the Rapsodo Dialog</h2>
-<p>Click the <strong>Rapsodo</strong> button in the toolbar (next to the Simulate button). A dialog appears with input fields.</p>
-</section>
-<section id="input-fields" class="level2">
-<h2 class="anchored" data-anchor-id="input-fields">Input Fields</h2>
-<section id="pitcher" class="level3">
-<h3 class="anchored" data-anchor-id="pitcher">Pitcher</h3>
+<section id="回転の3つの成分" class="level2">
+<h2 class="anchored" data-anchor-id="回転の3つの成分">回転の3つの成分</h2>
+<p>すべての投球の回転は3つの成分に分解できます。3つの独立したダイヤルで、3つの異なる効果を制御していると考えてください。</p>
+<section id="backspinバックスピン-ノビのダイヤル" class="level3">
+<h3 class="anchored" data-anchor-id="backspinバックスピン-ノビのダイヤル">Backspin（バックスピン） — 「ノビ」のダイヤル</h3>
+<p>バックスピンは、フォーシームで見られる回転です。ボールの上面が進行方向と逆に回転します。</p>
+<p><strong>効果:</strong> 重力に抗う上向きの力（マグナス力）を生みます。実際にボールは上昇しません — ただ <em>打者の予想より落ちない</em> だけです。高回転のストレートが「ホップする」「ノビがある」と感じられるのはこのためです。</p>
+<p><strong>典型的な値：</strong></p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 39%">
+<col style="width: 32%">
+<col style="width: 28%">
+</colgroup>
 <thead>
 <tr class="header">
-<th>Field</th>
-<th>Description</th>
-<th>Default</th>
+<th>球種</th>
+<th>Backspin</th>
+<th>効果</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><strong>Hand</strong></td>
-<td>Pitcher’s throwing hand (R/L)</td>
-<td>Right</td>
+<td>フォーシーム</td>
+<td>1800〜2500 rpm</td>
+<td>強い「ノビ」、ボールが沈みにくい</td>
 </tr>
 <tr class="even">
-<td><strong>Batter Hand</strong></td>
-<td>Batter’s stance (R/L)</td>
-<td>Right</td>
+<td>カーブ</td>
+<td>−1500〜−2500 rpm</td>
+<td>負のバックスピン = トップスピン = 余分な落下</td>
+</tr>
+<tr class="odd">
+<td>チェンジアップ</td>
+<td>1200〜1600 rpm</td>
+<td>ストレートよりノビが少ない → より落ちる</td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="velocity" class="level3">
-<h3 class="anchored" data-anchor-id="velocity">Velocity</h3>
+<section id="sidespinサイドスピン-横変化のダイヤル" class="level3">
+<h3 class="anchored" data-anchor-id="sidespinサイドスピン-横変化のダイヤル">Sidespin（サイドスピン） — 「横変化」のダイヤル</h3>
+<p>サイドスピンは、ボールを左右に動かす回転です。</p>
+<p><strong>効果:</strong> 水平方向の力を生みます。スライダーの横変化は、ほぼすべてサイドスピンによるものです。カーブはトップスピン（負のバックスピン）とサイドスピンを組み合わせて、斜め方向の変化を生みます。</p>
+<p><strong>典型的な値：</strong></p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
-<th>Field</th>
-<th>Description</th>
-<th>Example</th>
+<th>球種</th>
+<th>Sidespin</th>
+<th>効果</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><strong>Speed (km/h)</strong></td>
-<td>Release speed</td>
-<td>131.6</td>
+<td>スライダー</td>
+<td>1500〜2500 rpm</td>
+<td>強い横変化</td>
 </tr>
 <tr class="even">
-<td><strong>Vertical Angle (°)</strong></td>
-<td>Upward/downward release angle</td>
-<td>0.1</td>
+<td>カーブ</td>
+<td>500〜1500 rpm</td>
+<td>トップスピンと合わせて斜めの変化</td>
 </tr>
 <tr class="odd">
-<td><strong>Horizontal Angle (°)</strong></td>
-<td>Left/right release angle</td>
-<td>−2.6</td>
+<td>フォーシーム</td>
+<td>0〜500 rpm</td>
+<td>わずかなシュート成分</td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="spin" class="level3">
-<h3 class="anchored" data-anchor-id="spin">Spin</h3>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Field</th>
-<th>Description</th>
-<th>Example</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>Spin Rate (rpm)</strong></td>
-<td>Total spin rate</td>
-<td>1772</td>
-</tr>
-<tr class="even">
-<td><strong>Spin Direction (HH:MM)</strong></td>
-<td>Clock-face spin direction</td>
-<td>01:18</td>
-</tr>
-<tr class="odd">
-<td><strong>Gyro Angle (°)</strong></td>
-<td>Gyroscopic spin angle</td>
-<td>21</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="release-position" class="level3">
-<h3 class="anchored" data-anchor-id="release-position">Release Position</h3>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Field</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>Height (m)</strong></td>
-<td>Release height</td>
-<td>1.50</td>
-</tr>
-<tr class="even">
-<td><strong>Side (m)</strong></td>
-<td>Lateral offset from center</td>
-<td>0.47</td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="how-the-conversion-works" class="level2">
-<h2 class="anchored" data-anchor-id="how-the-conversion-works">How the Conversion Works</h2>
-<p>The simulator internally converts Rapsodo measurements to the BSG (Backspin/Sidespin/Gyrospin) decomposition:</p>
-<ol type="1">
-<li><strong>Spin Direction</strong> (clock time like “01:18”) → spin tilt angle in degrees</li>
-<li><strong>Spin Rate + Tilt + Gyro Angle</strong> → angular velocity vector (ωx, ωy, ωz)</li>
-<li><strong>Angular velocity</strong> → Backspin, Sidespin, Gyrospin (via the M matrix)</li>
-</ol>
-<p>The converted values are shown at the bottom of the dialog after you click Simulate.</p>
+<section id="gyrospinジャイロスピン-弾丸のダイヤル" class="level3">
+<h3 class="anchored" data-anchor-id="gyrospinジャイロスピン-弾丸のダイヤル">Gyrospin（ジャイロスピン） — 「弾丸」のダイヤル</h3>
+<p>ジャイロスピンは、進行方向を軸とした回転です — フットボールのスパイラルやライフル弾のようなものです。</p>
+<p><strong>効果:</strong> 変化という点では、何も起きません。ジャイロスピンはボールに力を与えません。総回転数2500 rpmでもジャイロスピンが50%なら、有効回転はわずか1250 rpmの投球と同じ変化量になります。</p>
+<p><strong>なぜ重要か:</strong> 回転数だけでは投球の変化量はわかりません。<strong>Spin efficiency</strong>（回転効率） — バックスピン + サイドスピン（ジャイロスピンではない部分）の割合 — が変化量を決定します。</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Your data is saved
+<span class="screen-reader-only">ヒント</span>シミュレータで確認できます
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The numeric values you enter are saved in your browser’s local storage. Next time you open the Rapsodo dialog, the last values are pre-filled (except pitcher/batter hand, which always resets to Right).</p>
+<p>シミュレータでは、<strong>オレンジの軌道</strong>が回転効果込みの軌道です。<strong>グレーの軌道</strong>は回転なし（重力のみ）を示します。両者の間隔がそのまま変化量です。</p>
+<p>2つの球種をオーバーレイすると、軌道がどこで分岐するか — そして打者がその違いを認識するのに十分な時間があるかどうかが、はっきりわかります。</p>
 </div>
 </div>
 </section>
-<section id="overlay-mode" class="level2">
-<h2 class="anchored" data-anchor-id="overlay-mode">Overlay Mode</h2>
-<p>Check the <strong>Overlay</strong> box in the Rapsodo dialog to overlay the Rapsodo-simulated pitch on top of an existing trajectory. This is useful for:</p>
+</section>
+<section id="シミュレータで回転を見る" class="level2">
+<h2 class="anchored" data-anchor-id="シミュレータで回転を見る">シミュレータで回転を見る</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../images/spin-axis.png" class="img-fluid figure-img" alt="回転軸の矢印と縫い目テクスチャの野球ボールのクローズアップ"></p>
+<figcaption>ボール上の回転軸矢印 — 回転の方向を示す</figcaption>
+</figure>
+</div>
+<p>シミュレータのアニメーションボールは、投球の実際の角速度で回転します。ボールに付いた矢印が回転軸を示します：</p>
 <ul>
-<li>Comparing your bullpen data (Rapsodo) with an MLB pitcher’s Statcast data</li>
-<li>Overlaying multiple bullpen pitches to check consistency</li>
+<li><strong>矢印が上向き</strong> → 主にバックスピン（フォーシーム）</li>
+<li><strong>矢印が横向き</strong> → 主にサイドスピン（スライダー）</li>
+<li><strong>矢印が前方向き</strong> → 主にジャイロスピン（ジャイロスライダー、弾丸回転）</li>
 </ul>
 </section>
-<section id="limitations" class="level2">
-<h2 class="anchored" data-anchor-id="limitations">Limitations</h2>
+<section id="spin-efficiency回転効率" class="level2">
+<h2 class="anchored" data-anchor-id="spin-efficiency回転効率">Spin Efficiency（回転効率）</h2>
+<p>Spin efficiencyの定義はシンプルです：</p>
+<blockquote class="blockquote">
+<p><strong>Spin efficiency = 有効回転 / 総回転</strong></p>
+</blockquote>
+<p>有効回転 = バックスピン + サイドスピン（実際にボールを動かす成分）。</p>
+<p>フォーシームのSpin efficiencyは通常90〜100%。ジャイロスライダーは30〜50%程度 — 速く回転していますが、その多くがジャイロスピンとして「無駄」になっています。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="技術的な補足：回転分解（BSG）">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">ノート</span>技術的な補足：回転分解（BSG）
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>回転軸はNathanモデルにおいて、<strong>B</strong>ackspin、<strong>S</strong>idespin、<strong>G</strong>yrospin（BSG分解）の3成分で記述されます。</p>
+<p>角速度ベクトル <span class="math inline">\((\omega_x, \omega_y, \omega_z)\)</span> と速度方向が与えられたとき、BSG成分は <span class="math inline">\(\omega\)</span> を速度ベクトルに対して分解することで得られます：</p>
 <ul>
-<li>Rapsodo does not provide the ball’s position at home plate, so there is no Statcast comparison marker</li>
-<li>The release position uses the values you enter (or defaults), not a measured position</li>
-<li>Environmental parameters (air density, temperature) are held constant at standard conditions</li>
+<li><strong>G</strong>（ジャイロスピン）: <span class="math inline">\(\omega\)</span> の速度方向成分</li>
+<li><strong>B</strong>（バックスピン）: 速度に垂直な水平成分</li>
+<li><strong>S</strong>（サイドスピン）: 残りの成分</li>
 </ul>
+<p>注意：BとSの軸は互いに直交していますが、どちらもGに対して正確には直交しません。BSG座標系は直交基底ではなく、<strong>斜交基底</strong>です。</p>
+</div>
+</div>
+</div>
 
 
 </section>
@@ -583,12 +597,12 @@ ul.task-list li input[type="checkbox"] {
       // flash "checked"
       button.classList.add('code-copy-button-checked');
       var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copied!");
+      button.setAttribute("title", "コピーしました");
       let tooltip;
       if (window.bootstrap) {
         button.setAttribute("data-bs-toggle", "tooltip");
         button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copied!");
+        button.setAttribute("data-bs-title", "コピーしました");
         tooltip = new bootstrap.Tooltip(button, 
           { trigger: "manual", 
             customClass: "code-copy-button-tooltip",
@@ -631,7 +645,7 @@ ul.task-list li input[type="checkbox"] {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/baseball\.skill-vis\.com");
+        var filterRegex = new RegExp("https:\/\/skill-vis\.github\.io\/MyTrajectorySimulator\/ja");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -965,7 +979,7 @@ ul.task-list li input[type="checkbox"] {
       &nbsp;
     </div>   
     <div class="nav-footer-center">
-<p>Physics model: <a href="https://baseball.physics.illinois.edu/">Alan Nathan</a> &nbsp;|&nbsp; Built with <a href="https://quarto.org">Quarto</a></p>
+<p>物理モデル: <a href="https://baseball.physics.illinois.edu/">Alan Nathan</a> &nbsp;|&nbsp; <a href="https://quarto.org">Quarto</a> で構築</p>
 </div>
     <div class="nav-footer-right">
       &nbsp;

@@ -1,0 +1,499 @@
+[
+  {
+    "objectID": "concepts/pitch-tunneling.html",
+    "href": "concepts/pitch-tunneling.html",
+    "title": "ピッチトンネリング",
+    "section": "",
+    "text": "95マイルのストレートがホームプレートに届くまで約400ミリ秒。しかし打者はボール到達の約170ミリ秒前にスイングするかどうかを決めなければなりません。その瞬間、ボールはまだホームプレートから約23〜24フィートの地点にあります。\nこれが判断ポイント — 打者が判断を変えられる最後の瞬間です。"
+  },
+  {
+    "objectID": "concepts/pitch-tunneling.html#判断ポイント",
+    "href": "concepts/pitch-tunneling.html#判断ポイント",
+    "title": "ピッチトンネリング",
+    "section": "",
+    "text": "95マイルのストレートがホームプレートに届くまで約400ミリ秒。しかし打者はボール到達の約170ミリ秒前にスイングするかどうかを決めなければなりません。その瞬間、ボールはまだホームプレートから約23〜24フィートの地点にあります。\nこれが判断ポイント — 打者が判断を変えられる最後の瞬間です。"
+  },
+  {
+    "objectID": "concepts/pitch-tunneling.html#トンネルとは",
+    "href": "concepts/pitch-tunneling.html#トンネルとは",
+    "title": "ピッチトンネリング",
+    "section": "トンネルとは？",
+    "text": "トンネルとは？\nピッチトンネルとは、判断ポイントで2つの異なる投球が同じ空間を通過することです。\nストレートとチェンジアップがホームプレートから23.8フィートの地点を同じ場所・同じ角度で通過すれば、打者は判断の瞬間にこの2球を区別できません。推測するしかなくなります。\n判断ポイントを過ぎると、2球の軌道は分岐します — ストレートは高いまま、チェンジアップは落ちます。しかしその時には、打者はすでに判断を下しています。\nホームプレートでの差が大きく、トンネルポイントでの差が小さいほど、そのペアは効果的です。"
+  },
+  {
+    "objectID": "concepts/pitch-tunneling.html#シミュレータでのトンネル分析",
+    "href": "concepts/pitch-tunneling.html#シミュレータでのトンネル分析",
+    "title": "ピッチトンネリング",
+    "section": "シミュレータでのトンネル分析",
+    "text": "シミュレータでのトンネル分析\n\nステップバイステップ\n\nOverlayモードをオン（Simulate横のトグルボタン）\nストレートをシミュレーション（例: 投球リストからFFを選択）\nチェンジアップをシミュレーション（同じ試合からCHを選択）\nTunnel可視化をオン（ツールバーのTunnelボタン）\n\n表示されるもの：\n\n球種ごとに色分けされた2本の軌道線\nリリースポイントから23.8フィート通過点までの半透明トンネルシリンダー\n各投球のトンネルポイントのリングマーカー\n\nリングが重なっていれば、トンネリングが成功しています。 判断の瞬間に打者は同じものを見ているということです。\n\n\nチェックポイント\n\n\n\n良いトンネル\n悪いトンネル\n\n\n\n\n23.8フィートでリングがほぼ重なる\nリングが離れている\n\n\nトンネルポイント後にのみ軌道が分岐\nトンネルポイント時点で既に分離\n\n\nリリースポイントが近い\nリリースポイントが異なる\n\n\nホームプレートでの差が大きい\nホームプレートでの差が小さい\n\n\n\n\n\n試してみたい球種ペア\n\nFF + CH（ストレート / チェンジアップ） — 球速差がありながら似た軌道\nFF + FS（ストレート / スプリッター） — ゾーン上部が似ていて、スプリッターが最後に落ちる\nFF + SL（ストレート / スライダー） — トンネル後に水平方向に分岐\nFC + CH（カッター / チェンジアップ） — 似た腕の振り\n\n\n\n\n\n\n\nヒントBatter’s Eye + Tunnel を試そう\n\n\n\nトンネリングされた球種ペアを見ながらBatter’s Eyeビューを有効にしてください。打者の視点で2球が迫ってくる様子が見えます — なぜ打者が最後の瞬間まで区別できないのか、身をもって体験できます。"
+  },
+  {
+    "objectID": "concepts/pitch-tunneling.html#なぜトンネリングが効くのか",
+    "href": "concepts/pitch-tunneling.html#なぜトンネリングが効くのか",
+    "title": "ピッチトンネリング",
+    "section": "なぜトンネリングが効くのか",
+    "text": "なぜトンネリングが効くのか\n人間の視覚システムは、軌道の変化を処理するのに時間を必要とします。研究によると、打者はボールの位置と速度を追跡し、先を予測しています。判断ポイントで2球の位置と方向が同じであれば、打者の脳は両方に対して同じ予測を生成します — 最終的に異なる場所に到達するにもかかわらず。\n効果的なトンネリングは、優れたストレートや優れたチェンジアップを持っているだけでは成り立ちません。重要なのはそれらがペアとしてどれだけ機能するか — そしてまさにそれを、このシミュレータで評価できます。"
+  },
+  {
+    "objectID": "concepts/reading-the-output.html",
+    "href": "concepts/reading-the-output.html",
+    "title": "出力の読み方",
+    "section": "",
+    "text": "ライン\n色\n意味\n\n\n\n\n回転込み軌道\nオレンジ（またはオーバーレイ色）\n回転効果を含むボールの実際の経路\n\n\n回転なし軌道\nシアン（破線）\n重力のみ（回転なし）の場合の経路\n\n\n両者の間隔\n—\nこれがそのままSpin movement\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nマーカー\n色\n意味\n\n\n\n\n塗りつぶし円\nオレンジ（またはオーバーレイ色）\nシミュレーションによるホームプレート通過点\n\n\n破線リング\n同色\nStatcast実測の通過点（Hawk-Eye計測）\n\n\n塗りつぶし円\nシアン\n回転なしの通過点\n\n\nω矢印\n軌道と同色\nホームプレートでの回転軸方向\n\n\n\n\n\n\nアニメーションボールはプロシージャル縫い目テクスチャを持ち、実際の角速度で回転します。Spin Axisボタンが有効な場合、ボールを貫く矢印が回転軸を示します：\n\n矢頭つき矢印 → 回転軸の正方向\n矢頭なし矢印 → 逆方向\n矢印の長さ → 回転数に比例（長い = 高回転）"
+  },
+  {
+    "objectID": "concepts/reading-the-output.html#dビュー",
+    "href": "concepts/reading-the-output.html#dビュー",
+    "title": "出力の読み方",
+    "section": "",
+    "text": "ライン\n色\n意味\n\n\n\n\n回転込み軌道\nオレンジ（またはオーバーレイ色）\n回転効果を含むボールの実際の経路\n\n\n回転なし軌道\nシアン（破線）\n重力のみ（回転なし）の場合の経路\n\n\n両者の間隔\n—\nこれがそのままSpin movement\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nマーカー\n色\n意味\n\n\n\n\n塗りつぶし円\nオレンジ（またはオーバーレイ色）\nシミュレーションによるホームプレート通過点\n\n\n破線リング\n同色\nStatcast実測の通過点（Hawk-Eye計測）\n\n\n塗りつぶし円\nシアン\n回転なしの通過点\n\n\nω矢印\n軌道と同色\nホームプレートでの回転軸方向\n\n\n\n\n\n\nアニメーションボールはプロシージャル縫い目テクスチャを持ち、実際の角速度で回転します。Spin Axisボタンが有効な場合、ボールを貫く矢印が回転軸を示します：\n\n矢頭つき矢印 → 回転軸の正方向\n矢頭なし矢印 → 逆方向\n矢印の長さ → 回転数に比例（長い = 高回転）"
+  },
+  {
+    "objectID": "concepts/reading-the-output.html#左パネル",
+    "href": "concepts/reading-the-output.html#左パネル",
+    "title": "出力の読み方",
+    "section": "左パネル",
+    "text": "左パネル\n\n位置と速度\nPosition: (-0.774, 16.37, 1.740) m\nv0: 38.69 m/s  theta: -0.67°  phi: 1.41°\n\nPosition — リリースポイント（メートル）。x = 左右、y = ホーム方向、z = 高さ\nv₀ — 球速（m/s）\nθ (theta) — 垂直角度（負の値 = 下向き）\nφ (phi) — 水平角度\n\n\n\n回転成分\nBackspin: 759 rpm  Side: 1824 rpm  Gyro: 1516 rpm  Spin: 2467 rpm\nωx: -108.2 rad/s  ωy: -42.3 rad/s  ωz: 191.0 rad/s  |ω|: 225.1 rad/s\n\n\n\n値\n意味\n\n\n\n\nBackspin\n垂直方向の変化を生む回転（rpm）\n\n\nSidespin\n水平方向の変化を生む回転（rpm）\n\n\nGyrospin\nボールの進行方向の回転 — 変化への影響なし（rpm）\n\n\nSpin\n総角速度の大きさ（= |ω| をrpmで表示）\n\n\nωx, ωy, ωz\n絶対座標系での角速度（rad/s）\n\n\n|ω|\nSpinと同じ値をrad/sで表示\n\n\n\n\n\nSpin Efficiencyと回転軸\nSpin eff: 79.3%  Axis(pfx): 112.6°  Axis(SC): 69.0°  Batter: R\n\n\n\n値\n意味\n\n\n\n\nSpin eff\n変化を生む回転の割合（100% = すべて有効回転）\n\n\nAxis(pfx)\nシミュレーションの変化量から計算した回転軸角度\n\n\nAxis(SC)\nStatcastが報告する回転軸角度\n\n\nBatter\n打者の打席（RまたはL）\n\n\n\n\n\nホームプレート結果\n● Sim (spin) Home: x=0.102m, z=0.806m\n● Sim (no spin) Home: x=-0.371m, z=0.619m\n● Spin movement: horiz 47.4cm, vert 18.8cm\n○ Statcast actual Home: x=0.028m, z=0.813m\n● Sim vs Statcast diff: horiz 7.4cm, vert -0.7cm\n\n\n\n値\n意味\n\n\n\n\nSim (spin) Home\nシミュレーションによるホームプレート通過位置\n\n\nSim (no spin) Home\n回転なしの場合の通過位置\n\n\nSpin movement\n両者の差 = 回転がどれだけボールを動かしたか\n\n\nStatcast actual\nHawk-Eyeの実測値\n\n\nSim vs Statcast diff\nシミュレーションの精度（小さいほど良い）\n\n\n\n\n\n\n\n\n\nノート一般的な精度\n\n\n\nシミュレーションは通常、Statcastと5〜10 cm以内で一致します。差の原因：\n\nジャイロスピンの推定（Statcastは3つの回転成分すべてを直接計測していない）\n環境条件（シミュレーションは標準的な空気密度を使用）\n縫い目の向きの影響（モデル化されていない）"
+  },
+  {
+    "objectID": "concepts/reading-the-output.html#overlay-statistics",
+    "href": "concepts/reading-the-output.html#overlay-statistics",
+    "title": "出力の読み方",
+    "section": "Overlay Statistics",
+    "text": "Overlay Statistics\n2球以上をオーバーレイすると、折りたたみ可能なOverlay Statisticsセクションが表示され、すべてのパラメータの平均 ± σ、最小値、最大値が確認できます。シミュレーション値に加え、Statcast実測のSpin movement（SC Move Horiz/Vert）も含まれます。"
+  },
+  {
+    "objectID": "concepts/reading-the-output.html#チャート",
+    "href": "concepts/reading-the-output.html#チャート",
+    "title": "出力の読み方",
+    "section": "チャート",
+    "text": "チャート\n3Dビューの下に、軌道に沿った抗力係数（Cd）と揚力係数（Cl）のチャートが表示されます。これらは空力モデルから得られた値で、研究者にとって有用です。セクションを折りたたんで非表示にできます。"
+  },
+  {
+    "objectID": "concepts/reading-the-output.html#csvエクスポート",
+    "href": "concepts/reading-the-output.html#csvエクスポート",
+    "title": "出力の読み方",
+    "section": "CSVエクスポート",
+    "text": "CSVエクスポート\nCSV Exportをクリックすると、2つのファイルがダウンロードされます：\n\npitch_summary.csv — パラメータごとに1行、投球ごとに1列。複数投球をオーバーレイした場合は、統計行（mean, std, min, max）が末尾に追加されます。\ntrajectory_detail.csv — 全タイムステップデータ：位置、速度、加速度、抗力、マグナス力、重力、Cd、Cl。\n\n両ファイルとも、Alan Nathanの軌道計算機をクレジットするヘッダーコメントが含まれます。"
+  },
+  {
+    "objectID": "guides/batters-eye.html",
+    "href": "guides/batters-eye.html",
+    "title": "Batter’s Eye",
+    "section": "",
+    "text": "Batter’s Eyeは、バッターボックスの打者の目の位置にカメラを配置します。打者と同じように、向かってくる投球を見ることができます。"
+  },
+  {
+    "objectID": "guides/batters-eye.html#概要",
+    "href": "guides/batters-eye.html#概要",
+    "title": "Batter’s Eye",
+    "section": "",
+    "text": "Batter’s Eyeは、バッターボックスの打者の目の位置にカメラを配置します。打者と同じように、向かってくる投球を見ることができます。"
+  },
+  {
+    "objectID": "guides/batters-eye.html#batters-eyeの起動",
+    "href": "guides/batters-eye.html#batters-eyeの起動",
+    "title": "Batter’s Eye",
+    "section": "Batter’s Eyeの起動",
+    "text": "Batter’s Eyeの起動\nツールバーの2つのボタンのいずれかをクリックします：\n\n\n\nボタン\n説明\n\n\n\n\nBatter’s Eye\n現在の打者の打席側から見た視点\n\n\nOpposite Eye\n反対側の打席から見た視点\n\n\n\nカメラが打者の目の位置に移動します。3D打者フィギュアは視界を妨げないよう非表示になります。\n\n\n\nBatter’s Eye ビュー — バッターボックスから投球が近づいてくる様子"
+  },
+  {
+    "objectID": "guides/batters-eye.html#カメラ位置",
+    "href": "guides/batters-eye.html#カメラ位置",
+    "title": "Batter’s Eye",
+    "section": "カメラ位置",
+    "text": "カメラ位置\n目の位置は以下で決まります：\n\nX（左右）: 中心から±0.65m、打者の打席に基づく（R = 一塁側ボックス、L = 三塁側ボックス）\nY（奥行き）: ホームプレートの0.216m後方\nZ（高さ）: Statcastデータがある場合、sz_top + 0.3m（ストライクゾーン上端 + 30cm）に設定。Statcastデータがない場合、デフォルトの1.45m（打者モデルの頭の高さ）"
+  },
+  {
+    "objectID": "guides/batters-eye.html#一人称モードでの操作",
+    "href": "guides/batters-eye.html#一人称モードでの操作",
+    "title": "Batter’s Eye",
+    "section": "一人称モードでの操作",
+    "text": "一人称モードでの操作\n\n視線の移動\n\nマウスドラッグ — 視線を回転（首を回す）\nスクロールホイール — 視野角（FOV）の調整\n\n\n\n位置の微調整\nキーボードで目の位置を微調整できます：\n\n\n\nキー\n方向\n移動量\n\n\n\n\nW\n前方（投手方向）\n1 cm\n\n\nS\n後方（捕手方向）\n1 cm\n\n\nA\n左（一塁方向）\n1 cm\n\n\nD\n右（三塁方向）\n1 cm\n\n\nE\n上\n1 cm\n\n\nQ\n下\n1 cm\n\n\n\n元の位置からのオフセットが左上のオーバーレイに表示されます：\nEye offset: X +3cm  Y -1cm  Z +2cm\n\n\nボールトラッキング\n\n\n\nモード\n説明\n\n\n\n\nTrack: Ball（デフォルト）\n再生中にカメラが自動的にボールを追従\n\n\nTrack: Pitcher\nカメラはマウンド方向を向いたまま固定\n\n\n\nオーバーレイのトグルボタンをクリックして切り替えます。"
+  },
+  {
+    "objectID": "guides/batters-eye.html#活用法",
+    "href": "guides/batters-eye.html#活用法",
+    "title": "Batter’s Eye",
+    "section": "活用法",
+    "text": "活用法\n\nトンネル評価\nOverlayを有効にして、ストレートとチェンジアップをシミュレーションし、Batter’s Eyeに切り替えます。アニメーションを再生して、2球が近づいてくる様子を見てください。最後の瞬間まで区別がつかなければ、トンネルが効果的ということです。\n\n\n球種認識トレーニング\nBatter’s Eyeモードでスロー再生（← →キーでコマ送り）して投球を観察します。ストレートとスライダーの違いが最初に見えるのはどの時点か、注目してみてください。\n\n\n動画エクスポート\nREC SlowボタンでBatter’s EyeビューをMP4として録画できます。打者が見ている景色を共有しましょう。\n\n\n\n\n\n\nヒントSpin Axisとの組み合わせ\n\n\n\nBatter’s Eye中にSpin Axisボタンをオンにしてみてください。近づいてくるボール上に回転軸の矢印が表示されます — これはエリート打者が球種を見分けるために使う視覚的手がかりです。"
+  },
+  {
+    "objectID": "guides/statcast-mode.html",
+    "href": "guides/statcast-mode.html",
+    "title": "Statcast モード",
+    "section": "",
+    "text": "Statcast モードでは、MLB の実際の試合から投球データを取得してシミュレーションできます。Hawk-Eye システムが計測したすべてのデータ（球速、回転数、回転軸、リリースポイント）が、そのまま物理エンジンに入力されます。"
+  },
+  {
+    "objectID": "guides/statcast-mode.html#概要",
+    "href": "guides/statcast-mode.html#概要",
+    "title": "Statcast モード",
+    "section": "",
+    "text": "Statcast モードでは、MLB の実際の試合から投球データを取得してシミュレーションできます。Hawk-Eye システムが計測したすべてのデータ（球速、回転数、回転軸、リリースポイント）が、そのまま物理エンジンに入力されます。"
+  },
+  {
+    "objectID": "guides/statcast-mode.html#投手の検索",
+    "href": "guides/statcast-mode.html#投手の検索",
+    "title": "Statcast モード",
+    "section": "投手の検索",
+    "text": "投手の検索\n\n検索ボックスに投手の姓（例: “Ohtani”）を入力\n同姓の投手がいる場合は名も追加\n年度を設定（2016年〜現在、デフォルト: 2025年）\nSearch をクリック、またはEnterキーを押す\n\n検索結果には、一致した選手のMLB IDと在籍年が表示されます。選択した年度にデータがない場合は警告が表示されます。\n\n\n\n\n\n\nヒント\n\n\n\n入力中にオートコンプリートが候補を表示します。フルネームを入力する必要はありません。"
+  },
+  {
+    "objectID": "guides/statcast-mode.html#試合の閲覧",
+    "href": "guides/statcast-mode.html#試合の閲覧",
+    "title": "Statcast モード",
+    "section": "試合の閲覧",
+    "text": "試合の閲覧\n投手を選択すると、登板した試合の一覧が表示されます。各エントリには以下が含まれます：\n\n試合の日付\n投球数\n使用した球種（例: FF, SL, CU, CH）\n\n試合をクリックすると、1球ごとのデータが読み込まれます。"
+  },
+  {
+    "objectID": "guides/statcast-mode.html#投球の選択",
+    "href": "guides/statcast-mode.html#投球の選択",
+    "title": "Statcast モード",
+    "section": "投球の選択",
+    "text": "投球の選択\n投球リストには、その試合のすべての投球が表示されます：\n\n\n\n列\n説明\n\n\n\n\n#\n試合中の投球番号\n\n\nType\n色分けされた球種バッジ\n\n\nSpeed\n球速（km/h）\n\n\nSpin\n回転数（rpm）\n\n\nInn\nイニング\n\n\nResult\n投球結果（ストライク、ボール、ファウルなど）\n\n\n\n\n1球を選択\n投球をクリックし、Simulate Selected Pitch をクリックします。\n\n\n複数球を選択\n\nCmd/Ctrl + クリック — 個別の投球をトグル選択\nShift + クリック — 範囲選択\nリスト上部の球種ボタン（例: “All FF (12)”）をクリックすると、その球種をすべて選択\nボタンが “Simulate N Pitches (Overlay)” に変わり、選択したすべての投球がシミュレーションされ自動的にオーバーレイ表示されます"
+  },
+  {
+    "objectID": "guides/statcast-mode.html#表示される情報",
+    "href": "guides/statcast-mode.html#表示される情報",
+    "title": "Statcast モード",
+    "section": "表示される情報",
+    "text": "表示される情報\nシミュレーション後、左パネルに以下が表示されます：\n\nリリース位置 (x, y, z)（メートル）\n速度ベクトル (v₀, θ, φ)\n回転分解 (Backspin, Sidespin, Gyrospin（rpm）、および Spin = |ω|（rpm））\n角速度 (ωx, ωy, ωz（rad/s）、および |ω|（rad/s））\nSpin efficiency と回転軸角度\nホームプレート通過点 — シミュレーション値 vs Statcast実測値、差（cm）\nSpin movement — 回転による水平・垂直方向の変位（cm）\n打者のストライクゾーン — 打者ごとに調整（Statcastのsz_top, sz_bot）"
+  },
+  {
+    "objectID": "guides/statcast-mode.html#ヒント",
+    "href": "guides/statcast-mode.html#ヒント",
+    "title": "Statcast モード",
+    "section": "ヒント",
+    "text": "ヒント\n\n打者シルエットと3D打者フィギュアは、Statcastデータの打者の打席（R/L）に自動対応します\n投手シルエットは投手の投球腕に応じて左右反転します\n複数投球をオーバーレイすると、Overlay Statistics パネルが自動表示され、全パラメータの平均値・標準偏差・最小値・最大値が確認できます"
+  },
+  {
+    "objectID": "guides/rapsodo-mode.html",
+    "href": "guides/rapsodo-mode.html",
+    "title": "Rapsodo入力",
+    "section": "",
+    "text": "Rapsodo投球ユニットをお使いの場合、計測値をそのままシミュレータに入力できます。Rapsodoの出力形式（球速、回転方向、ジャイロ角度）を、軌道シミュレーションに必要な物理パラメータに自動変換します。"
+  },
+  {
+    "objectID": "guides/rapsodo-mode.html#概要",
+    "href": "guides/rapsodo-mode.html#概要",
+    "title": "Rapsodo入力",
+    "section": "",
+    "text": "Rapsodo投球ユニットをお使いの場合、計測値をそのままシミュレータに入力できます。Rapsodoの出力形式（球速、回転方向、ジャイロ角度）を、軌道シミュレーションに必要な物理パラメータに自動変換します。"
+  },
+  {
+    "objectID": "guides/rapsodo-mode.html#rapsodoダイアログを開く",
+    "href": "guides/rapsodo-mode.html#rapsodoダイアログを開く",
+    "title": "Rapsodo入力",
+    "section": "Rapsodoダイアログを開く",
+    "text": "Rapsodoダイアログを開く\nツールバーのRapsodoボタン（Simulateボタンの隣）をクリックします。入力フィールドを持つダイアログが表示されます。"
+  },
+  {
+    "objectID": "guides/rapsodo-mode.html#入力フィールド",
+    "href": "guides/rapsodo-mode.html#入力フィールド",
+    "title": "Rapsodo入力",
+    "section": "入力フィールド",
+    "text": "入力フィールド\n\n投手\n\n\n\nフィールド\n説明\nデフォルト\n\n\n\n\nHand\n投手の利き腕（R/L）\nRight\n\n\nBatter Hand\n打者の打席（R/L）\nRight\n\n\n\n\n\n球速\n\n\n\nフィールド\n説明\n例\n\n\n\n\nSpeed (km/h)\n球速（リリース時）\n131.6\n\n\nVertical Angle (°)\n上下方向のリリース角度\n0.1\n\n\nHorizontal Angle (°)\n左右方向のリリース角度\n−2.6\n\n\n\n\n\n回転\n\n\n\nフィールド\n説明\n例\n\n\n\n\nSpin Rate (rpm)\n総回転数\n1772\n\n\nSpin Direction (HH:MM)\n時計面での回転方向\n01:18\n\n\nGyro Angle (°)\nジャイロスピン角度\n21\n\n\n\n\n\nリリース位置\n\n\n\nフィールド\n説明\nデフォルト\n\n\n\n\nHeight (m)\nリリース高さ\n1.50\n\n\nSide (m)\n中心からの左右オフセット\n0.47"
+  },
+  {
+    "objectID": "guides/rapsodo-mode.html#変換の仕組み",
+    "href": "guides/rapsodo-mode.html#変換の仕組み",
+    "title": "Rapsodo入力",
+    "section": "変換の仕組み",
+    "text": "変換の仕組み\nシミュレータ内部では、Rapsodoの計測値をBSG分解（Backspin/Sidespin/Gyrospin）に変換しています：\n\nSpin Direction（“01:18”のような時計表記） → 回転傾斜角（度）に変換\nSpin Rate + 傾斜角 + Gyro Angle → 角速度ベクトル (ωx, ωy, ωz)\n角速度 → Backspin, Sidespin, Gyrospin（M行列による変換）\n\n変換後の値は、Simulateをクリックした後にダイアログ下部に表示されます。\n\n\n\n\n\n\nヒントデータは保存されます\n\n\n\n入力した数値はブラウザのローカルストレージに保存されます。次回Rapsodoダイアログを開いたときに、前回の値がプリフィルされます（投手/打者の利き腕は常にRightにリセットされます）。"
+  },
+  {
+    "objectID": "guides/rapsodo-mode.html#overlayモード",
+    "href": "guides/rapsodo-mode.html#overlayモード",
+    "title": "Rapsodo入力",
+    "section": "Overlayモード",
+    "text": "Overlayモード\nRapsodoダイアログのOverlayチェックボックスをオンにすると、既存の軌道の上にRapsodoの投球を重ねて表示できます。以下の用途に便利です：\n\nブルペンデータ（Rapsodo）とMLB投手のStatcastデータの比較\n複数のブルペン投球を重ねて一貫性のチェック"
+  },
+  {
+    "objectID": "guides/rapsodo-mode.html#制限事項",
+    "href": "guides/rapsodo-mode.html#制限事項",
+    "title": "Rapsodo入力",
+    "section": "制限事項",
+    "text": "制限事項\n\nRapsodoはホームプレートでのボール位置を計測しないため、Statcast比較マーカーは表示されません\nリリース位置は入力値（またはデフォルト値）を使用し、実測値ではありません\n環境パラメータ（空気密度、温度）は標準条件で固定されています"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "投球軌道シミュレータ",
+    "section": "",
+    "text": "実際の物理法則に基づいて、投球の3D軌道をブラウザ上でシミュレーションする無料ツールです。 MLB投手を検索し、投球を選んで、ボールが飛んでいく様子を観察できます。\nシミュレータを開く    はじめに"
+  },
+  {
+    "objectID": "index.html#できること",
+    "href": "index.html#できること",
+    "title": "投球軌道シミュレータ",
+    "section": "できること",
+    "text": "できること\n投手の名前を入力すると、MLB Statcastからその投手の実際の投球データ（フォーシーム、スライダー、カーブ、チェンジアップなど）を取得します。データは2016年から現在のシーズンまで利用可能です（デフォルト: 2025年）。投球を選んでSimulateを押すと、ピッチャーの手からホームプレートまでの軌道が3Dで表示されます。\nこの軌道は映像に基づくアニメーションではありません。物理シミュレーションです。リリース速度、回転数、回転軸から、イリノイ大学のAlan Nathan教授が開発した空気力学モデル — 野球の軌道研究における標準的なリファレンス — を用いて計算しています。"
+  },
+  {
+    "objectID": "index.html#活用シーン",
+    "href": "index.html#活用シーン",
+    "title": "投球軌道シミュレータ",
+    "section": "活用シーン",
+    "text": "活用シーン\n\n\nピッチングコーチ向け\n投手のフォーシームとチェンジアップをOverlayして、トンネリングが効果的かどうかを確認。2つの軌道がどこで、いつ分岐するかを正確に見ることができます。\n\n\nアナリスト向け\n投手間のスピン分解（バックスピン、サイドスピン、ジャイロスピン）を比較。位置、速度、加速度、力の各成分を含む完全な軌道データをCSVでエクスポートして、さらなる分析が可能です。\n\n\n選手育成向け\nRapsodoの計測データを直接入力して軌道をシミュレーション。回転数や回転軸を変えた「もしも」のシナリオをテストできます。"
+  },
+  {
+    "objectID": "index.html#主な機能",
+    "href": "index.html#主な機能",
+    "title": "投球軌道シミュレータ",
+    "section": "主な機能",
+    "text": "主な機能\n\n\n\n\n\n\n\n機能\n説明\n\n\n\n\nMLB Statcast連携\n投手を検索し、試合ごとの投球データを閲覧、個別の投球をシミュレート\n\n\n3つの入力モード\nStatcastデータ、手動スライダー、Rapsodo計測値\n\n\nOverlay比較\n複数の投球を重ね合わせて軌道を比較\n\n\nバッター視点\nバッターボックスからの一人称カメラ — 打者が見る景色を体験\n\n\nピッチトンネル\n打者が判断を迫られるトンネルポイント（23.8フィート）を可視化\n\n\nスピン軸表示\n実際の角速度で回転する縫い目テクスチャ付きボールとスピン軸矢印\n\n\nCSVインポート/エクスポート\n速度、加速度、力の内訳を含む完全な軌道データ\n\n\n動画録画\n3Dビューをmp4としてエクスポート"
+  },
+  {
+    "objectID": "index.html#球種一覧",
+    "href": "index.html#球種一覧",
+    "title": "投球軌道シミュレータ",
+    "section": "球種一覧",
+    "text": "球種一覧\nシミュレータはMLB Statcastと同じ球種分類とカラーコードを使用しています：\nFF フォーシーム   SI シンカー   FC カッター   SL スライダー   CU カーブ   CH チェンジアップ   FS スプリッター   ST スイーパー"
+  },
+  {
+    "objectID": "index.html#物理の仕組み",
+    "href": "index.html#物理の仕組み",
+    "title": "投球軌道シミュレータ",
+    "section": "物理の仕組み",
+    "text": "物理の仕組み\n\n\n\n\n\n\nノート詳しく知りたい方へ（オプション）\n\n\n\n\n\nシミュレータは、空気中を進む回転するボールの運動方程式を解いています：\n\n抗力（ドラッグ） — ボールを減速させる（速度に逆らう力）\nマグナス力 — スピン軸と速度の両方に垂直な方向にボールを押す\n重力 — ボールを下に引く\n\nスピンは3つの成分に分解されます：\n\nバックスピン — 「ライズ」を生む。バックスピン2200rpmのフォーシームは、スピンなしのボールに比べて約40cm落下が少なくなります。\nサイドスピン — 水平方向の変化を生む。スライダーの横変化はサイドスピンによるものです。\nジャイロスピン — 進行方向周りの回転（弾丸のような回転）。変化には寄与しません。ジャイロスピンが多く、バック/サイドスピンが少ない投球は、総回転数が高くても変化が小さくなります。\n\nシミュレーションは4次ルンゲ・クッタ法で0.001秒刻みの積分を行い、Nathanのオリジナル軌道計算機と同等の精度を実現しています。"
+  },
+  {
+    "objectID": "index.html#クレジット",
+    "href": "index.html#クレジット",
+    "title": "投球軌道シミュレータ",
+    "section": "クレジット",
+    "text": "クレジット\n\n物理モデル: Alan Nathanの軌道計算機\n投球データ: MLB Statcast（Hawk-Eyeトラッキング）\n野球ボールの縫い目曲線: mathcurve.com のパラメトリック表現"
+  },
+  {
+    "objectID": "getting-started.html",
+    "href": "getting-started.html",
+    "title": "はじめに",
+    "section": "",
+    "text": "baseball.skill-vis.com にアクセスします。ブラウザ上で動作するので、インストールは不要です。"
+  },
+  {
+    "objectID": "getting-started.html#ステップ1-シミュレータを開く",
+    "href": "getting-started.html#ステップ1-シミュレータを開く",
+    "title": "はじめに",
+    "section": "",
+    "text": "baseball.skill-vis.com にアクセスします。ブラウザ上で動作するので、インストールは不要です。"
+  },
+  {
+    "objectID": "getting-started.html#ステップ2-投手を検索する",
+    "href": "getting-started.html#ステップ2-投手を検索する",
+    "title": "はじめに",
+    "section": "ステップ2: 投手を検索する",
+    "text": "ステップ2: 投手を検索する\n左パネルの検索ボックスに投手の名前（例: “Ohtani”）を入力してEnterを押します。候補から投手を選択します。\n\n\n\n投手名で検索"
+  },
+  {
+    "objectID": "getting-started.html#ステップ3-試合を選ぶ",
+    "href": "getting-started.html#ステップ3-試合を選ぶ",
+    "title": "はじめに",
+    "section": "ステップ3: 試合を選ぶ",
+    "text": "ステップ3: 試合を選ぶ\n試合日の一覧が表示されます。各エントリには日付、投球数、使用した球種が表示されます。試合をクリックすると投球リストが読み込まれます。\n\n\n\n試合リストと投球選択"
+  },
+  {
+    "objectID": "getting-started.html#ステップ4-投球を選ぶ",
+    "href": "getting-started.html#ステップ4-投球を選ぶ",
+    "title": "はじめに",
+    "section": "ステップ4: 投球を選ぶ",
+    "text": "ステップ4: 投球を選ぶ\n投球リストにはその試合のすべての投球が表示されます。各行には：\n\n球種 — カラーコード付きバッジ （FF = フォーシーム、 SL = スライダー など）\n球速（km/h）\n回転数（rpm）\n\n投球をクリックし、Simulate を押します。"
+  },
+  {
+    "objectID": "getting-started.html#ステップ5-軌道を見る",
+    "href": "getting-started.html#ステップ5-軌道を見る",
+    "title": "はじめに",
+    "section": "ステップ5: 軌道を見る",
+    "text": "ステップ5: 軌道を見る\n\n\n\nシミュレーション結果 — 3D軌道と左パネルのパラメータ\n\n\n3Dビューに表示されるもの：\n\nオレンジの線 — スピン効果を含む実際の軌道\n灰色の線 — スピンなし（重力のみ）の場合の軌道\n2本の線の間 — これがスピンによる変化量\nアニメーションする野球 — 実際の回転数で回転し、スピン軸の矢印付き\n\nドラッグで視点を回転、スクロールでズームできます。"
+  },
+  {
+    "objectID": "getting-started.html#ステップ6-バッター視点を試す",
+    "href": "getting-started.html#ステップ6-バッター視点を試す",
+    "title": "はじめに",
+    "section": "ステップ6: バッター視点を試す",
+    "text": "ステップ6: バッター視点を試す\nツールバーの Batter’s Eye ボタンをクリックします。カメラがバッターボックスに移動し、打者の視点から投球を見ることができます。Track: Ball（カメラがボールを追従）と Track: Pitcher（カメラ固定）を切り替えられます。"
+  },
+  {
+    "objectID": "getting-started.html#次のステップ",
+    "href": "getting-started.html#次のステップ",
+    "title": "はじめに",
+    "section": "次のステップ",
+    "text": "次のステップ\n\n2球を比較: Overlay モードをONにして、2球目をシミュレートすると軌道が重なって表示されます\n球種を絞り込む: 投球リスト上のフィルタボタン（FF, SL, CH等）を使います\n自分のデータを入力: 手動入力 または Rapsodo入力 に切り替え\n物理を理解する: スピンと変化 でバックスピン、サイドスピン、ジャイロスピンの意味を学ぶ"
+  },
+  {
+    "objectID": "guides/overlay-comparison.html",
+    "href": "guides/overlay-comparison.html",
+    "title": "Overlay比較",
+    "section": "",
+    "text": "Overlayモードでは、複数の投球をシミュレーションして軌道を同時に表示できます。投球比較の中核となる機能で、トンネル分析、球種設計の評価、一貫性のチェックに使えます。"
+  },
+  {
+    "objectID": "guides/overlay-comparison.html#概要",
+    "href": "guides/overlay-comparison.html#概要",
+    "title": "Overlay比較",
+    "section": "",
+    "text": "Overlayモードでは、複数の投球をシミュレーションして軌道を同時に表示できます。投球比較の中核となる機能で、トンネル分析、球種設計の評価、一貫性のチェックに使えます。"
+  },
+  {
+    "objectID": "guides/overlay-comparison.html#overlayをオンにする",
+    "href": "guides/overlay-comparison.html#overlayをオンにする",
+    "title": "Overlay比較",
+    "section": "Overlayをオンにする",
+    "text": "Overlayをオンにする\nSimulateボタンの隣にあるOverlayチェックボックスをオンにします。有効にすると：\n\n最初の投球はビューをクリアして通常通り描画\n2球目以降は別の色で軌道が追加表示されます\n\n\n\n\n2球をオーバーレイ表示 — FF（オレンジ）とST（グリーン）の異なる軌道"
+  },
+  {
+    "objectID": "guides/overlay-comparison.html#複数投球の一括選択",
+    "href": "guides/overlay-comparison.html#複数投球の一括選択",
+    "title": "Overlay比較",
+    "section": "複数投球の一括選択",
+    "text": "複数投球の一括選択\n試合の投球リスト表示中に、複数の投球を選択できます：\n\n\n\n操作\n効果\n\n\n\n\nCmd/Ctrl + クリック\n個別の投球をオン/オフ切り替え\n\n\nShift + クリック\n範囲選択\n\n\n“All FF (12)” ボタン\nその球種をすべて選択\n\n\n“Clear All” ボタン\nすべての選択を解除\n\n\n\n複数の投球が選択されると、Simulateボタンが “Simulate N Pitches (Overlay)” に変わります。クリックすると、選択されたすべての投球が順次シミュレーションされ、自動的にオーバーレイ表示されます。\n\n\n\n\n\n\n警告\n\n\n\n30球以上を選択すると確認ダイアログが表示されます。各投球にAPIコールが必要なため、大量の投球には時間がかかります。"
+  },
+  {
+    "objectID": "guides/overlay-comparison.html#アニメーション再生",
+    "href": "guides/overlay-comparison.html#アニメーション再生",
+    "title": "Overlay比較",
+    "section": "アニメーション再生",
+    "text": "アニメーション再生\n複数投球をオーバーレイした場合：\n\n最大3個のボールが再生中に同時にアニメーション\n各ボールは実際の角速度で回転するテクスチャ付き野球ボール\nボールは時間同期されています — 155 km/hのストレートは130 km/hのカーブより先にホームプレートに到達\n最速のボール到達後も、最も遅いボールがホームプレートに届くまで再生が継続\nコマ送り（← →キー）は最も遅いオーバーレイボールを含む全時間範囲をカバー"
+  },
+  {
+    "objectID": "guides/overlay-comparison.html#overlay-statistics",
+    "href": "guides/overlay-comparison.html#overlay-statistics",
+    "title": "Overlay比較",
+    "section": "Overlay Statistics",
+    "text": "Overlay Statistics\n2球以上をオーバーレイすると、左パネル（下にスクロール）にOverlay Statisticsパネルが表示されます。内容：\n\n入力パラメータ\n\n球速、リリース位置、角度、BSG回転成分、角速度（ωx, ωy, ωz）、|ω|、成分比率\n\n\n\nシミュレーション出力\n\nホームプレート通過点、Spin movement、Statcast比較、トンネルポイント\n\n\n\nStatcast実測値\n\nSC Move Horiz/Vert (cm) — Statcastで計測された実際のSpin movement（pfx）\n\nすべての値は平均 ± σ、最小値、最大値で表示されます。セクションは折りたたみ可能です。"
+  },
+  {
+    "objectID": "guides/overlay-comparison.html#統計付きcsvエクスポート",
+    "href": "guides/overlay-comparison.html#統計付きcsvエクスポート",
+    "title": "Overlay比較",
+    "section": "統計付きCSVエクスポート",
+    "text": "統計付きCSVエクスポート\nオーバーレイデータがある状態でCSV Exportをクリックすると：\n\nサマリーCSVには、投球ごとに1列、さらに末尾に統計行（mean, std, min, max）が含まれます\n軌道CSVには、全投球のデータが横並びで含まれます"
+  },
+  {
+    "objectID": "guides/overlay-comparison.html#ヒント",
+    "href": "guides/overlay-comparison.html#ヒント",
+    "title": "Overlay比較",
+    "section": "ヒント",
+    "text": "ヒント\n\nFF + ST のオーバーレイでストレートとスイーパーのトンネリングを評価\n試合中の全FFをオーバーレイしてストレートの一貫性をチェック（標準偏差に注目）\nBatter’s Eyeビューとオーバーレイを併用して、打者目線で投球を確認\nTunnelボタンで各投球の23.8フィートのトンネルシリンダーを表示"
+  },
+  {
+    "objectID": "guides/manual-mode.html",
+    "href": "guides/manual-mode.html",
+    "title": "マニュアル入力",
+    "section": "",
+    "text": "マニュアル入力モードでは、すべてのパラメータをスライダーで直接操作できます。以下のような用途に便利です：\n\n「もし〇〇だったら？」というシナリオの検証（例: バックスピンを200 rpm増やしたら？）\n各パラメータが軌道に与える影響の理解\nStatcastやRapsodo以外のデータソースからの入力"
+  },
+  {
+    "objectID": "guides/manual-mode.html#概要",
+    "href": "guides/manual-mode.html#概要",
+    "title": "マニュアル入力",
+    "section": "",
+    "text": "マニュアル入力モードでは、すべてのパラメータをスライダーで直接操作できます。以下のような用途に便利です：\n\n「もし〇〇だったら？」というシナリオの検証（例: バックスピンを200 rpm増やしたら？）\n各パラメータが軌道に与える影響の理解\nStatcastやRapsodo以外のデータソースからの入力"
+  },
+  {
+    "objectID": "guides/manual-mode.html#パラメータ",
+    "href": "guides/manual-mode.html#パラメータ",
+    "title": "マニュアル入力",
+    "section": "パラメータ",
+    "text": "パラメータ\n\n\n\n\n\n\n\n\nスライダー\n範囲\n説明\n\n\n\n\nSpeed\n100〜170 km/h\n球速（リリース時）\n\n\nBackspin\n−3000〜3000 rpm\nバックスピン成分（負の値 = トップスピン）\n\n\nSidespin\n−3000〜3000 rpm\nサイドスピン成分\n\n\nGyrospin\n−3000〜3000 rpm\nジャイロスピン成分\n\n\nVert angle (θ)\n−10°〜10°\n垂直リリース角度\n\n\nHoriz angle (φ)\n−10°〜10°\n水平リリース角度\n\n\n\nSimulate をクリックすると、これらの値で物理シミュレーションが実行されます。"
+  },
+  {
+    "objectID": "guides/manual-mode.html#リリース位置",
+    "href": "guides/manual-mode.html#リリース位置",
+    "title": "マニュアル入力",
+    "section": "リリース位置",
+    "text": "リリース位置\nリリース位置 (x₀, y₀, z₀) は、直近のStatcast投球データまたはデフォルト値に基づいて設定されます：\n\nx₀ = 投手の左右オフセット（右投: −0.47m、左投: +0.47m）\ny₀ = 16.764m（ホームプレートから55フィート — 標準的なリリース距離）\nz₀ = 1.50m（おおよそのリリース高さ）\n\nRapsodoモード使用時は、リリース位置が自動更新されます。"
+  },
+  {
+    "objectID": "guides/manual-mode.html#実験してみよう",
+    "href": "guides/manual-mode.html#実験してみよう",
+    "title": "マニュアル入力",
+    "section": "実験してみよう",
+    "text": "実験してみよう\n\nひとつずつ変えてみる\n各パラメータの効果を学ぶ最良の方法：\n\n典型的なストレートの設定で始める（Speed 150、Backspin 2200、Sidespin 0、Gyrospin 0）\nSimulateを押す\nスライダーを1つだけ変更する（例: サイドスピンを500 rpm追加）\nOverlay をオンにして、もう一度Simulateを押す\n2つの軌道を比較する\n\n\n\n試してみたいプリセット\n\n\n\nプリセット\nSpeed\nBS\nSS\nGS\nθ\nφ\n\n\n\n\nフォーシーム\n155\n2200\n200\n0\n−1\n2\n\n\nカーブ\n125\n−2000\n800\n0\n2\n1\n\n\nスライダー\n135\n200\n1800\n1000\n0\n1\n\n\nチェンジアップ\n140\n1400\n400\n0\n−1\n2\n\n\nジャイロスライダー\n135\n100\n500\n2000\n0\n1\n\n\n\n\n\n\n\n\n\nノート\n\n\n\nこれらはあくまで大まかな目安です。投手によってパラメータは異なります — だからこそStatcastモードが役立ちます。"
+  },
+  {
+    "objectID": "guides/pitch-tunnel.html",
+    "href": "guides/pitch-tunnel.html",
+    "title": "Pitch Tunnel可視化",
+    "section": "",
+    "text": "Tunnel機能は、各投球が23.8フィートの判断ポイントを通過する位置を表示します。ここは打者がスイングの判断を変更できる最後の瞬間です。"
+  },
+  {
+    "objectID": "guides/pitch-tunnel.html#概要",
+    "href": "guides/pitch-tunnel.html#概要",
+    "title": "Pitch Tunnel可視化",
+    "section": "",
+    "text": "Tunnel機能は、各投球が23.8フィートの判断ポイントを通過する位置を表示します。ここは打者がスイングの判断を変更できる最後の瞬間です。"
+  },
+  {
+    "objectID": "guides/pitch-tunnel.html#tunnelをオンにする",
+    "href": "guides/pitch-tunnel.html#tunnelをオンにする",
+    "title": "Pitch Tunnel可視化",
+    "section": "Tunnelをオンにする",
+    "text": "Tunnelをオンにする\nツールバーのTunnelボタンをクリックします。トグルでオン/オフ（緑 = オン）を切り替えます。"
+  },
+  {
+    "objectID": "guides/pitch-tunnel.html#表示される内容",
+    "href": "guides/pitch-tunnel.html#表示される内容",
+    "title": "Pitch Tunnel可視化",
+    "section": "表示される内容",
+    "text": "表示される内容\n\n\n\nPitch Tunnel可視化 — 黄色のシリンダーがリリースポイントから判断ポイントまでの通り道を表示\n\n\nTunnelが有効な場合、3Dビューに表示されるもの：\n\n黄色のリング — リリースポイントと23.8フィート通過点にそれぞれ1つ\n半透明の黄色シリンダー — 2つのポイントを結び、「トンネル」の通路を表示\n\n複数の投球をオーバーレイすると、各投球に個別のトンネルシリンダーが表示されます。23.8フィートでのリングが重なっていれば、それらの投球のトンネリングがうまくいっているということです。"
+  },
+  {
+    "objectID": "guides/pitch-tunnel.html#トンネルデータの読み方",
+    "href": "guides/pitch-tunnel.html#トンネルデータの読み方",
+    "title": "Pitch Tunnel可視化",
+    "section": "トンネルデータの読み方",
+    "text": "トンネルデータの読み方\n左パネルにトンネル通過座標が表示されます：\n● Tunnel (23.8ft) x=-0.404m, z=1.410m\nこれは、ボールが23.8フィート面を通過する時点での位置です。オーバーレイした投球間でこの座標を比較してください — 値が近いほど、トンネリングが優れています。"
+  },
+  {
+    "objectID": "guides/pitch-tunnel.html#tunnel-overlay実践例",
+    "href": "guides/pitch-tunnel.html#tunnel-overlay実践例",
+    "title": "Pitch Tunnel可視化",
+    "section": "Tunnel + Overlay：実践例",
+    "text": "Tunnel + Overlay：実践例\n\n大谷のFF vs ST（2026-03-24）\n\n“Ohtani” で検索、2026-03-24を選択\n#7（FF, 97 mph）を選択 — Overlayをオンにしてシミュレーション\n#83（ST, 81 mph）を選択 — シミュレーション\nTunnel を有効化\n\nこの2球のリリース角度の差はわずか0.234°。球速差が16 mphあるにもかかわらず、23.8フィートではほぼ同じポイントを通過します。\n\n\n千賀のFF vs FO（2026-03-19）\n\n“Senga” で検索、2026-03-19を選択\n#54（FF, 95 mph）を選択 — Overlayオンでシミュレーション\n#30（FO, 87 mph）を選択 — シミュレーション\nTunnel と Batter’s Eye を有効化\n\nリリース角度の差はわずか0.095°。フォークボール（“お化けフォーク”）は、判断ポイントでストレートとまったく同じに見えます。"
+  },
+  {
+    "objectID": "guides/pitch-tunnel.html#ヒント",
+    "href": "guides/pitch-tunnel.html#ヒント",
+    "title": "Pitch Tunnel可視化",
+    "section": "ヒント",
+    "text": "ヒント\n\nトンネル可視化はBatter’s Eyeを含むすべてのビューモードで動作します\nコマ送り（← →キー）で、トンネル通過ポイントのちょうどその瞬間にアニメーションを一時停止できます\nトンネルシリンダーの半径はボール直径の約2倍 — 打者が投球を確実に区別できない範囲を表しています"
+  },
+  {
+    "objectID": "concepts/spin-and-movement.html",
+    "href": "concepts/spin-and-movement.html",
+    "title": "回転と変化",
+    "section": "",
+    "text": "回転がボールを動かす。 回転の方向と量によって、投球が「ノビる」のか、横に滑るのか、落ちるのか、カットするのかが決まります。"
+  },
+  {
+    "objectID": "concepts/spin-and-movement.html#ひとことで言うと",
+    "href": "concepts/spin-and-movement.html#ひとことで言うと",
+    "title": "回転と変化",
+    "section": "",
+    "text": "回転がボールを動かす。 回転の方向と量によって、投球が「ノビる」のか、横に滑るのか、落ちるのか、カットするのかが決まります。"
+  },
+  {
+    "objectID": "concepts/spin-and-movement.html#回転の3つの成分",
+    "href": "concepts/spin-and-movement.html#回転の3つの成分",
+    "title": "回転と変化",
+    "section": "回転の3つの成分",
+    "text": "回転の3つの成分\nすべての投球の回転は3つの成分に分解できます。3つの独立したダイヤルで、3つの異なる効果を制御していると考えてください。\n\nBackspin（バックスピン） — 「ノビ」のダイヤル\nバックスピンは、フォーシームで見られる回転です。ボールの上面が進行方向と逆に回転します。\n効果: 重力に抗う上向きの力（マグナス力）を生みます。実際にボールは上昇しません — ただ 打者の予想より落ちない だけです。高回転のストレートが「ホップする」「ノビがある」と感じられるのはこのためです。\n典型的な値：\n\n\n\n\n\n\n\n\n球種\nBackspin\n効果\n\n\n\n\nフォーシーム\n1800〜2500 rpm\n強い「ノビ」、ボールが沈みにくい\n\n\nカーブ\n−1500〜−2500 rpm\n負のバックスピン = トップスピン = 余分な落下\n\n\nチェンジアップ\n1200〜1600 rpm\nストレートよりノビが少ない → より落ちる\n\n\n\n\n\nSidespin（サイドスピン） — 「横変化」のダイヤル\nサイドスピンは、ボールを左右に動かす回転です。\n効果: 水平方向の力を生みます。スライダーの横変化は、ほぼすべてサイドスピンによるものです。カーブはトップスピン（負のバックスピン）とサイドスピンを組み合わせて、斜め方向の変化を生みます。\n典型的な値：\n\n\n\n球種\nSidespin\n効果\n\n\n\n\nスライダー\n1500〜2500 rpm\n強い横変化\n\n\nカーブ\n500〜1500 rpm\nトップスピンと合わせて斜めの変化\n\n\nフォーシーム\n0〜500 rpm\nわずかなシュート成分\n\n\n\n\n\nGyrospin（ジャイロスピン） — 「弾丸」のダイヤル\nジャイロスピンは、進行方向を軸とした回転です — フットボールのスパイラルやライフル弾のようなものです。\n効果: 変化という点では、何も起きません。ジャイロスピンはボールに力を与えません。総回転数2500 rpmでもジャイロスピンが50%なら、有効回転はわずか1250 rpmの投球と同じ変化量になります。\nなぜ重要か: 回転数だけでは投球の変化量はわかりません。Spin efficiency（回転効率） — バックスピン + サイドスピン（ジャイロスピンではない部分）の割合 — が変化量を決定します。\n\n\n\n\n\n\nヒントシミュレータで確認できます\n\n\n\nシミュレータでは、オレンジの軌道が回転効果込みの軌道です。グレーの軌道は回転なし（重力のみ）を示します。両者の間隔がそのまま変化量です。\n2つの球種をオーバーレイすると、軌道がどこで分岐するか — そして打者がその違いを認識するのに十分な時間があるかどうかが、はっきりわかります。"
+  },
+  {
+    "objectID": "concepts/spin-and-movement.html#シミュレータで回転を見る",
+    "href": "concepts/spin-and-movement.html#シミュレータで回転を見る",
+    "title": "回転と変化",
+    "section": "シミュレータで回転を見る",
+    "text": "シミュレータで回転を見る\n\n\n\nボール上の回転軸矢印 — 回転の方向を示す\n\n\nシミュレータのアニメーションボールは、投球の実際の角速度で回転します。ボールに付いた矢印が回転軸を示します：\n\n矢印が上向き → 主にバックスピン（フォーシーム）\n矢印が横向き → 主にサイドスピン（スライダー）\n矢印が前方向き → 主にジャイロスピン（ジャイロスライダー、弾丸回転）"
+  },
+  {
+    "objectID": "concepts/spin-and-movement.html#spin-efficiency回転効率",
+    "href": "concepts/spin-and-movement.html#spin-efficiency回転効率",
+    "title": "回転と変化",
+    "section": "Spin Efficiency（回転効率）",
+    "text": "Spin Efficiency（回転効率）\nSpin efficiencyの定義はシンプルです：\n\nSpin efficiency = 有効回転 / 総回転\n\n有効回転 = バックスピン + サイドスピン（実際にボールを動かす成分）。\nフォーシームのSpin efficiencyは通常90〜100%。ジャイロスライダーは30〜50%程度 — 速く回転していますが、その多くがジャイロスピンとして「無駄」になっています。\n\n\n\n\n\n\nノート技術的な補足：回転分解（BSG）\n\n\n\n\n\n回転軸はNathanモデルにおいて、Backspin、Sidespin、Gyrospin（BSG分解）の3成分で記述されます。\n角速度ベクトル \\((\\omega_x, \\omega_y, \\omega_z)\\) と速度方向が与えられたとき、BSG成分は \\(\\omega\\) を速度ベクトルに対して分解することで得られます：\n\nG（ジャイロスピン）: \\(\\omega\\) の速度方向成分\nB（バックスピン）: 速度に垂直な水平成分\nS（サイドスピン）: 残りの成分\n\n注意：BとSの軸は互いに直交していますが、どちらもGに対して正確には直交しません。BSG座標系は直交基底ではなく、斜交基底です。"
+  }
+]

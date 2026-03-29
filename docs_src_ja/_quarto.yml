@@ -1,0 +1,61 @@
+project:
+  type: website
+  output-dir: ../docs/ja
+
+website:
+  title: "投球軌道シミュレータ"
+  description: "スピンがどのように変化を生むかを可視化 — MLBのStatcastデータで"
+  site-url: https://skill-vis.github.io/MyTrajectorySimulator/ja
+  navbar:
+    left:
+      - text: ホーム
+        href: index.qmd
+      - text: はじめに
+        href: getting-started.qmd
+      - text: ガイド
+        menu:
+          - text: Statcastモード
+            href: guides/statcast-mode.qmd
+          - text: 手動入力
+            href: guides/manual-mode.qmd
+          - text: Rapsodo入力
+            href: guides/rapsodo-mode.qmd
+          - text: Overlay比較
+            href: guides/overlay-comparison.qmd
+          - text: バッター視点
+            href: guides/batters-eye.qmd
+          - text: ピッチトンネル
+            href: guides/pitch-tunnel.qmd
+      - text: コンセプト
+        menu:
+          - text: スピンと変化
+            href: concepts/spin-and-movement.qmd
+          - text: ピッチトンネル
+            href: concepts/pitch-tunneling.qmd
+          - text: 出力の読み方
+            href: concepts/reading-the-output.qmd
+    right:
+      - icon: github
+        href: https://github.com/skill-vis/MyTrajectorySimulator
+      - text: English
+        href: https://skill-vis.github.io/MyTrajectorySimulator/
+      - text: シミュレータを開く
+        href: https://baseball.skill-vis.com
+        target: _blank
+
+  page-footer:
+    center: |
+      物理モデル: [Alan Nathan](https://baseball.physics.illinois.edu/) &nbsp;|&nbsp;
+      [Quarto](https://quarto.org) で構築
+
+format:
+  html:
+    theme:
+      dark: darkly
+    css: styles.css
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    code-tools: false
+
+lang: ja

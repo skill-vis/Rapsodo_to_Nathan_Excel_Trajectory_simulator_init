@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja"><head>
 
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.36">
@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Rapsodo Input – Baseball Pitch Trajectory Simulator</title>
+<title>はじめに – 投球軌道シミュレータ</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -26,27 +26,27 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../">
-<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../site_libs/quarto-html/popper.min.js"></script>
-<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-f418161beb48e0141c760e455f12af2c.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
-<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-45431c2918bd31147ddb3fa7038bb99f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-5685cd926c25366c96d9f1407e584118.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-45431c2918bd31147ddb3fa7038bb99f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-f418161beb48e0141c760e455f12af2c.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-45431c2918bd31147ddb3fa7038bb99f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-5685cd926c25366c96d9f1407e584118.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-45431c2918bd31147ddb3fa7038bb99f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -61,22 +61,22 @@ ul.task-list li input[type="checkbox"] {
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "No results",
-    "search-matching-documents-text": "matching documents",
-    "search-copy-link-title": "Copy link to search",
-    "search-hide-matches-text": "Hide additional matches",
-    "search-more-match-text": "more match in this document",
-    "search-more-matches-text": "more matches in this document",
-    "search-clear-button-title": "Clear",
+    "search-no-results-text": "一致なし",
+    "search-matching-documents-text": "一致した文書",
+    "search-copy-link-title": "検索へのリンクをコピー",
+    "search-hide-matches-text": "追加の検索結果を非表示",
+    "search-more-match-text": "追加の検索結果",
+    "search-more-matches-text": "追加の検索結果",
+    "search-clear-button-title": "消去",
     "search-text-placeholder": "",
-    "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit",
-    "search-label": "Search"
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "検索",
+    "search-label": "サーチ"
   }
 }</script>
 
 
-<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="nav-fixed quarto-dark"><script id="quarto-html-before-body" type="application/javascript">
@@ -246,71 +246,71 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="../index.html">
-    <span class="navbar-title">Baseball Pitch Trajectory Simulator</span>
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">投球軌道シミュレータ</span>
     </a>
   </div>
-            <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+            <div id="quarto-search" class="" title="サーチ"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="ナビゲーションを切り替える" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../index.html"> 
-<span class="menu-text">Home</span></a>
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">ホーム</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../getting-started.html"> 
-<span class="menu-text">Quick Start</span></a>
+    <a class="nav-link active" href="./getting-started.html" aria-current="page"> 
+<span class="menu-text">はじめに</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-guides" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Guides</span>
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">ガイド</span>
     </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-guides">    
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-">    
         <li>
-    <a class="dropdown-item" href="../guides/statcast-mode.html">
- <span class="dropdown-text">Statcast Mode</span></a>
+    <a class="dropdown-item" href="./guides/statcast-mode.html">
+ <span class="dropdown-text">Statcastモード</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../guides/manual-mode.html">
- <span class="dropdown-text">Manual Input</span></a>
+    <a class="dropdown-item" href="./guides/manual-mode.html">
+ <span class="dropdown-text">手動入力</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../guides/rapsodo-mode.html">
- <span class="dropdown-text">Rapsodo Input</span></a>
+    <a class="dropdown-item" href="./guides/rapsodo-mode.html">
+ <span class="dropdown-text">Rapsodo入力</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../guides/overlay-comparison.html">
- <span class="dropdown-text">Overlay Comparison</span></a>
+    <a class="dropdown-item" href="./guides/overlay-comparison.html">
+ <span class="dropdown-text">Overlay比較</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../guides/batters-eye.html">
- <span class="dropdown-text">Batter’s Eye</span></a>
+    <a class="dropdown-item" href="./guides/batters-eye.html">
+ <span class="dropdown-text">バッター視点</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../guides/pitch-tunnel.html">
- <span class="dropdown-text">Pitch Tunnel</span></a>
+    <a class="dropdown-item" href="./guides/pitch-tunnel.html">
+ <span class="dropdown-text">ピッチトンネル</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-concepts" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Concepts</span>
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu--1" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">コンセプト</span>
     </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-concepts">    
+    <ul class="dropdown-menu" aria-labelledby="nav-menu--1">    
         <li>
-    <a class="dropdown-item" href="../concepts/spin-and-movement.html">
- <span class="dropdown-text">Spin &amp; Movement</span></a>
+    <a class="dropdown-item" href="./concepts/spin-and-movement.html">
+ <span class="dropdown-text">スピンと変化</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../concepts/pitch-tunneling.html">
- <span class="dropdown-text">Pitch Tunneling</span></a>
+    <a class="dropdown-item" href="./concepts/pitch-tunneling.html">
+ <span class="dropdown-text">ピッチトンネル</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../concepts/reading-the-output.html">
- <span class="dropdown-text">Reading the Output</span></a>
+    <a class="dropdown-item" href="./concepts/reading-the-output.html">
+ <span class="dropdown-text">出力の読み方</span></a>
   </li>  
     </ul>
   </li>
@@ -322,17 +322,17 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="https://skill-vis.github.io/MyTrajectorySimulator/ja/"> 
-<span class="menu-text">日本語</span></a>
+    <a class="nav-link" href="https://skill-vis.github.io/MyTrajectorySimulator/"> 
+<span class="menu-text">English</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="https://baseball.skill-vis.com" target="_blank"> 
-<span class="menu-text">Launch Simulator</span></a>
+<span class="menu-text">シミュレータを開く</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="ダークモードの切り替え"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -343,21 +343,16 @@ ul.task-list li input[type="checkbox"] {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
+    <h2 id="toc-title">目次</h2>
    
   <ul>
-  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
-  <li><a href="#opening-the-rapsodo-dialog" id="toc-opening-the-rapsodo-dialog" class="nav-link" data-scroll-target="#opening-the-rapsodo-dialog">Opening the Rapsodo Dialog</a></li>
-  <li><a href="#input-fields" id="toc-input-fields" class="nav-link" data-scroll-target="#input-fields">Input Fields</a>
-  <ul class="collapse">
-  <li><a href="#pitcher" id="toc-pitcher" class="nav-link" data-scroll-target="#pitcher">Pitcher</a></li>
-  <li><a href="#velocity" id="toc-velocity" class="nav-link" data-scroll-target="#velocity">Velocity</a></li>
-  <li><a href="#spin" id="toc-spin" class="nav-link" data-scroll-target="#spin">Spin</a></li>
-  <li><a href="#release-position" id="toc-release-position" class="nav-link" data-scroll-target="#release-position">Release Position</a></li>
-  </ul></li>
-  <li><a href="#how-the-conversion-works" id="toc-how-the-conversion-works" class="nav-link" data-scroll-target="#how-the-conversion-works">How the Conversion Works</a></li>
-  <li><a href="#overlay-mode" id="toc-overlay-mode" class="nav-link" data-scroll-target="#overlay-mode">Overlay Mode</a></li>
-  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">Limitations</a></li>
+  <li><a href="#ステップ1-シミュレータを開く" id="toc-ステップ1-シミュレータを開く" class="nav-link active" data-scroll-target="#ステップ1-シミュレータを開く">ステップ1: シミュレータを開く</a></li>
+  <li><a href="#ステップ2-投手を検索する" id="toc-ステップ2-投手を検索する" class="nav-link" data-scroll-target="#ステップ2-投手を検索する">ステップ2: 投手を検索する</a></li>
+  <li><a href="#ステップ3-試合を選ぶ" id="toc-ステップ3-試合を選ぶ" class="nav-link" data-scroll-target="#ステップ3-試合を選ぶ">ステップ3: 試合を選ぶ</a></li>
+  <li><a href="#ステップ4-投球を選ぶ" id="toc-ステップ4-投球を選ぶ" class="nav-link" data-scroll-target="#ステップ4-投球を選ぶ">ステップ4: 投球を選ぶ</a></li>
+  <li><a href="#ステップ5-軌道を見る" id="toc-ステップ5-軌道を見る" class="nav-link" data-scroll-target="#ステップ5-軌道を見る">ステップ5: 軌道を見る</a></li>
+  <li><a href="#ステップ6-バッター視点を試す" id="toc-ステップ6-バッター視点を試す" class="nav-link" data-scroll-target="#ステップ6-バッター視点を試す">ステップ6: バッター視点を試す</a></li>
+  <li><a href="#次のステップ" id="toc-次のステップ" class="nav-link" data-scroll-target="#次のステップ">次のステップ</a></li>
   </ul>
 </nav>
     </div>
@@ -367,8 +362,8 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Rapsodo Input</h1>
-<p class="subtitle lead">Enter your Rapsodo measurements and simulate the trajectory</p>
+<h1 class="title">はじめに</h1>
+<p class="subtitle lead">3分で最初のシミュレーション</p>
 </div>
 
 
@@ -385,160 +380,68 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="overview" class="level2">
-<h2 class="anchored" data-anchor-id="overview">Overview</h2>
-<p>If you use a Rapsodo pitching unit, you can enter its measurements directly into the simulator. The system converts Rapsodo’s output format (speed, spin direction, gyro angle) into the physics parameters needed for trajectory simulation.</p>
+<section id="ステップ1-シミュレータを開く" class="level2">
+<h2 class="anchored" data-anchor-id="ステップ1-シミュレータを開く">ステップ1: シミュレータを開く</h2>
+<p><strong><a href="https://baseball.skill-vis.com">baseball.skill-vis.com</a></strong> にアクセスします。ブラウザ上で動作するので、インストールは不要です。</p>
 </section>
-<section id="opening-the-rapsodo-dialog" class="level2">
-<h2 class="anchored" data-anchor-id="opening-the-rapsodo-dialog">Opening the Rapsodo Dialog</h2>
-<p>Click the <strong>Rapsodo</strong> button in the toolbar (next to the Simulate button). A dialog appears with input fields.</p>
-</section>
-<section id="input-fields" class="level2">
-<h2 class="anchored" data-anchor-id="input-fields">Input Fields</h2>
-<section id="pitcher" class="level3">
-<h3 class="anchored" data-anchor-id="pitcher">Pitcher</h3>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Field</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>Hand</strong></td>
-<td>Pitcher’s throwing hand (R/L)</td>
-<td>Right</td>
-</tr>
-<tr class="even">
-<td><strong>Batter Hand</strong></td>
-<td>Batter’s stance (R/L)</td>
-<td>Right</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="velocity" class="level3">
-<h3 class="anchored" data-anchor-id="velocity">Velocity</h3>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Field</th>
-<th>Description</th>
-<th>Example</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>Speed (km/h)</strong></td>
-<td>Release speed</td>
-<td>131.6</td>
-</tr>
-<tr class="even">
-<td><strong>Vertical Angle (°)</strong></td>
-<td>Upward/downward release angle</td>
-<td>0.1</td>
-</tr>
-<tr class="odd">
-<td><strong>Horizontal Angle (°)</strong></td>
-<td>Left/right release angle</td>
-<td>−2.6</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="spin" class="level3">
-<h3 class="anchored" data-anchor-id="spin">Spin</h3>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Field</th>
-<th>Description</th>
-<th>Example</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>Spin Rate (rpm)</strong></td>
-<td>Total spin rate</td>
-<td>1772</td>
-</tr>
-<tr class="even">
-<td><strong>Spin Direction (HH:MM)</strong></td>
-<td>Clock-face spin direction</td>
-<td>01:18</td>
-</tr>
-<tr class="odd">
-<td><strong>Gyro Angle (°)</strong></td>
-<td>Gyroscopic spin angle</td>
-<td>21</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="release-position" class="level3">
-<h3 class="anchored" data-anchor-id="release-position">Release Position</h3>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Field</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>Height (m)</strong></td>
-<td>Release height</td>
-<td>1.50</td>
-</tr>
-<tr class="even">
-<td><strong>Side (m)</strong></td>
-<td>Lateral offset from center</td>
-<td>0.47</td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="how-the-conversion-works" class="level2">
-<h2 class="anchored" data-anchor-id="how-the-conversion-works">How the Conversion Works</h2>
-<p>The simulator internally converts Rapsodo measurements to the BSG (Backspin/Sidespin/Gyrospin) decomposition:</p>
-<ol type="1">
-<li><strong>Spin Direction</strong> (clock time like “01:18”) → spin tilt angle in degrees</li>
-<li><strong>Spin Rate + Tilt + Gyro Angle</strong> → angular velocity vector (ωx, ωy, ωz)</li>
-<li><strong>Angular velocity</strong> → Backspin, Sidespin, Gyrospin (via the M matrix)</li>
-</ol>
-<p>The converted values are shown at the bottom of the dialog after you click Simulate.</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Your data is saved
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The numeric values you enter are saved in your browser’s local storage. Next time you open the Rapsodo dialog, the last values are pre-filled (except pitcher/batter hand, which always resets to Right).</p>
-</div>
+<section id="ステップ2-投手を検索する" class="level2">
+<h2 class="anchored" data-anchor-id="ステップ2-投手を検索する">ステップ2: 投手を検索する</h2>
+<p>左パネルの検索ボックスに投手の名前（例: <strong>“Ohtani”</strong>）を入力してEnterを押します。候補から投手を選択します。</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/search.png" class="img-fluid figure-img" alt="Ohtaniの検索結果" width="350"></p>
+<figcaption>投手名で検索</figcaption>
+</figure>
 </div>
 </section>
-<section id="overlay-mode" class="level2">
-<h2 class="anchored" data-anchor-id="overlay-mode">Overlay Mode</h2>
-<p>Check the <strong>Overlay</strong> box in the Rapsodo dialog to overlay the Rapsodo-simulated pitch on top of an existing trajectory. This is useful for:</p>
+<section id="ステップ3-試合を選ぶ" class="level2">
+<h2 class="anchored" data-anchor-id="ステップ3-試合を選ぶ">ステップ3: 試合を選ぶ</h2>
+<p>試合日の一覧が表示されます。各エントリには日付、投球数、使用した球種が表示されます。試合をクリックすると投球リストが読み込まれます。</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/pitch-list.png" class="img-fluid figure-img" alt="試合日と球種フィルタボタン付き投球リスト" width="300"></p>
+<figcaption>試合リストと投球選択</figcaption>
+</figure>
+</div>
+</section>
+<section id="ステップ4-投球を選ぶ" class="level2">
+<h2 class="anchored" data-anchor-id="ステップ4-投球を選ぶ">ステップ4: 投球を選ぶ</h2>
+<p>投球リストにはその試合のすべての投球が表示されます。各行には：</p>
 <ul>
-<li>Comparing your bullpen data (Rapsodo) with an MLB pitcher’s Statcast data</li>
-<li>Overlaying multiple bullpen pitches to check consistency</li>
+<li><strong>球種</strong> — カラーコード付きバッジ （<span class="pitch-type-badge pt-ff">FF</span> = フォーシーム、 <span class="pitch-type-badge pt-sl">SL</span> = スライダー など）</li>
+<li><strong>球速</strong>（km/h）</li>
+<li><strong>回転数</strong>（rpm）</li>
 </ul>
+<p>投球をクリックし、<strong>Simulate</strong> を押します。</p>
 </section>
-<section id="limitations" class="level2">
-<h2 class="anchored" data-anchor-id="limitations">Limitations</h2>
+<section id="ステップ5-軌道を見る" class="level2">
+<h2 class="anchored" data-anchor-id="ステップ5-軌道を見る">ステップ5: 軌道を見る</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/sim-result.png" class="img-fluid figure-img" alt="軌道、パラメータ、マーカーを表示したシミュレータ画面"></p>
+<figcaption>シミュレーション結果 — 3D軌道と左パネルのパラメータ</figcaption>
+</figure>
+</div>
+<p>3Dビューに表示されるもの：</p>
 <ul>
-<li>Rapsodo does not provide the ball’s position at home plate, so there is no Statcast comparison marker</li>
-<li>The release position uses the values you enter (or defaults), not a measured position</li>
-<li>Environmental parameters (air density, temperature) are held constant at standard conditions</li>
+<li><strong>オレンジの線</strong> — スピン効果を含む実際の軌道</li>
+<li><strong>灰色の線</strong> — スピンなし（重力のみ）の場合の軌道</li>
+<li><strong>2本の線の間</strong> — これがスピンによる<strong>変化量</strong></li>
+<li><strong>アニメーションする野球</strong> — 実際の回転数で回転し、スピン軸の矢印付き</li>
+</ul>
+<p>ドラッグで視点を回転、スクロールでズームできます。</p>
+</section>
+<section id="ステップ6-バッター視点を試す" class="level2">
+<h2 class="anchored" data-anchor-id="ステップ6-バッター視点を試す">ステップ6: バッター視点を試す</h2>
+<p>ツールバーの <strong>Batter’s Eye</strong> ボタンをクリックします。カメラがバッターボックスに移動し、打者の視点から投球を見ることができます。<strong>Track: Ball</strong>（カメラがボールを追従）と <strong>Track: Pitcher</strong>（カメラ固定）を切り替えられます。</p>
+</section>
+<section id="次のステップ" class="level2">
+<h2 class="anchored" data-anchor-id="次のステップ">次のステップ</h2>
+<ul>
+<li><strong>2球を比較</strong>: <strong>Overlay</strong> モードをONにして、2球目をシミュレートすると軌道が重なって表示されます</li>
+<li><strong>球種を絞り込む</strong>: 投球リスト上のフィルタボタン（FF, SL, CH等）を使います</li>
+<li><strong>自分のデータを入力</strong>: <a href="./guides/manual-mode.html">手動入力</a> または <a href="./guides/rapsodo-mode.html">Rapsodo入力</a> に切り替え</li>
+<li><strong>物理を理解する</strong>: <a href="./concepts/spin-and-movement.html">スピンと変化</a> でバックスピン、サイドスピン、ジャイロスピンの意味を学ぶ</li>
 </ul>
 
 
@@ -583,12 +486,12 @@ ul.task-list li input[type="checkbox"] {
       // flash "checked"
       button.classList.add('code-copy-button-checked');
       var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copied!");
+      button.setAttribute("title", "コピーしました");
       let tooltip;
       if (window.bootstrap) {
         button.setAttribute("data-bs-toggle", "tooltip");
         button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copied!");
+        button.setAttribute("data-bs-title", "コピーしました");
         tooltip = new bootstrap.Tooltip(button, 
           { trigger: "manual", 
             customClass: "code-copy-button-tooltip",
@@ -631,7 +534,7 @@ ul.task-list li input[type="checkbox"] {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/baseball\.skill-vis\.com");
+        var filterRegex = new RegExp("https:\/\/skill-vis\.github\.io\/MyTrajectorySimulator\/ja");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -965,7 +868,7 @@ ul.task-list li input[type="checkbox"] {
       &nbsp;
     </div>   
     <div class="nav-footer-center">
-<p>Physics model: <a href="https://baseball.physics.illinois.edu/">Alan Nathan</a> &nbsp;|&nbsp; Built with <a href="https://quarto.org">Quarto</a></p>
+<p>物理モデル: <a href="https://baseball.physics.illinois.edu/">Alan Nathan</a> &nbsp;|&nbsp; <a href="https://quarto.org">Quarto</a> で構築</p>
 </div>
     <div class="nav-footer-right">
       &nbsp;

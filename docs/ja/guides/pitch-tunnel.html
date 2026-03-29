@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja"><head>
 
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.36">
@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Rapsodo Input – Baseball Pitch Trajectory Simulator</title>
+<title>Pitch Tunnel可視化 – 投球軌道シミュレータ</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -61,17 +61,17 @@ ul.task-list li input[type="checkbox"] {
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "No results",
-    "search-matching-documents-text": "matching documents",
-    "search-copy-link-title": "Copy link to search",
-    "search-hide-matches-text": "Hide additional matches",
-    "search-more-match-text": "more match in this document",
-    "search-more-matches-text": "more matches in this document",
-    "search-clear-button-title": "Clear",
+    "search-no-results-text": "一致なし",
+    "search-matching-documents-text": "一致した文書",
+    "search-copy-link-title": "検索へのリンクをコピー",
+    "search-hide-matches-text": "追加の検索結果を非表示",
+    "search-more-match-text": "追加の検索結果",
+    "search-more-matches-text": "追加の検索結果",
+    "search-clear-button-title": "消去",
     "search-text-placeholder": "",
-    "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit",
-    "search-label": "Search"
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "検索",
+    "search-label": "サーチ"
   }
 }</script>
 
@@ -247,70 +247,70 @@ ul.task-list li input[type="checkbox"] {
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="../index.html">
-    <span class="navbar-title">Baseball Pitch Trajectory Simulator</span>
+    <span class="navbar-title">投球軌道シミュレータ</span>
     </a>
   </div>
-            <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+            <div id="quarto-search" class="" title="サーチ"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="ナビゲーションを切り替える" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="../index.html"> 
-<span class="menu-text">Home</span></a>
+<span class="menu-text">ホーム</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../getting-started.html"> 
-<span class="menu-text">Quick Start</span></a>
+<span class="menu-text">はじめに</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-guides" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Guides</span>
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">ガイド</span>
     </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-guides">    
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-">    
         <li>
     <a class="dropdown-item" href="../guides/statcast-mode.html">
- <span class="dropdown-text">Statcast Mode</span></a>
+ <span class="dropdown-text">Statcastモード</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../guides/manual-mode.html">
- <span class="dropdown-text">Manual Input</span></a>
+ <span class="dropdown-text">手動入力</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../guides/rapsodo-mode.html">
- <span class="dropdown-text">Rapsodo Input</span></a>
+ <span class="dropdown-text">Rapsodo入力</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../guides/overlay-comparison.html">
- <span class="dropdown-text">Overlay Comparison</span></a>
+ <span class="dropdown-text">Overlay比較</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../guides/batters-eye.html">
- <span class="dropdown-text">Batter’s Eye</span></a>
+ <span class="dropdown-text">バッター視点</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../guides/pitch-tunnel.html">
- <span class="dropdown-text">Pitch Tunnel</span></a>
+ <span class="dropdown-text">ピッチトンネル</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-concepts" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Concepts</span>
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu--1" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">コンセプト</span>
     </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-concepts">    
+    <ul class="dropdown-menu" aria-labelledby="nav-menu--1">    
         <li>
     <a class="dropdown-item" href="../concepts/spin-and-movement.html">
- <span class="dropdown-text">Spin &amp; Movement</span></a>
+ <span class="dropdown-text">スピンと変化</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../concepts/pitch-tunneling.html">
- <span class="dropdown-text">Pitch Tunneling</span></a>
+ <span class="dropdown-text">ピッチトンネル</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../concepts/reading-the-output.html">
- <span class="dropdown-text">Reading the Output</span></a>
+ <span class="dropdown-text">出力の読み方</span></a>
   </li>  
     </ul>
   </li>
@@ -322,17 +322,17 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="https://skill-vis.github.io/MyTrajectorySimulator/ja/"> 
-<span class="menu-text">日本語</span></a>
+    <a class="nav-link" href="https://skill-vis.github.io/MyTrajectorySimulator/"> 
+<span class="menu-text">English</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="https://baseball.skill-vis.com" target="_blank"> 
-<span class="menu-text">Launch Simulator</span></a>
+<span class="menu-text">シミュレータを開く</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="ダークモードの切り替え"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -343,21 +343,19 @@ ul.task-list li input[type="checkbox"] {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
+    <h2 id="toc-title">目次</h2>
    
   <ul>
-  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
-  <li><a href="#opening-the-rapsodo-dialog" id="toc-opening-the-rapsodo-dialog" class="nav-link" data-scroll-target="#opening-the-rapsodo-dialog">Opening the Rapsodo Dialog</a></li>
-  <li><a href="#input-fields" id="toc-input-fields" class="nav-link" data-scroll-target="#input-fields">Input Fields</a>
+  <li><a href="#概要" id="toc-概要" class="nav-link active" data-scroll-target="#概要">概要</a></li>
+  <li><a href="#tunnelをオンにする" id="toc-tunnelをオンにする" class="nav-link" data-scroll-target="#tunnelをオンにする">Tunnelをオンにする</a></li>
+  <li><a href="#表示される内容" id="toc-表示される内容" class="nav-link" data-scroll-target="#表示される内容">表示される内容</a></li>
+  <li><a href="#トンネルデータの読み方" id="toc-トンネルデータの読み方" class="nav-link" data-scroll-target="#トンネルデータの読み方">トンネルデータの読み方</a></li>
+  <li><a href="#tunnel-overlay実践例" id="toc-tunnel-overlay実践例" class="nav-link" data-scroll-target="#tunnel-overlay実践例">Tunnel + Overlay：実践例</a>
   <ul class="collapse">
-  <li><a href="#pitcher" id="toc-pitcher" class="nav-link" data-scroll-target="#pitcher">Pitcher</a></li>
-  <li><a href="#velocity" id="toc-velocity" class="nav-link" data-scroll-target="#velocity">Velocity</a></li>
-  <li><a href="#spin" id="toc-spin" class="nav-link" data-scroll-target="#spin">Spin</a></li>
-  <li><a href="#release-position" id="toc-release-position" class="nav-link" data-scroll-target="#release-position">Release Position</a></li>
+  <li><a href="#大谷のff-vs-st2026-03-24" id="toc-大谷のff-vs-st2026-03-24" class="nav-link" data-scroll-target="#大谷のff-vs-st2026-03-24">大谷のFF vs ST（2026-03-24）</a></li>
+  <li><a href="#千賀のff-vs-fo2026-03-19" id="toc-千賀のff-vs-fo2026-03-19" class="nav-link" data-scroll-target="#千賀のff-vs-fo2026-03-19">千賀のFF vs FO（2026-03-19）</a></li>
   </ul></li>
-  <li><a href="#how-the-conversion-works" id="toc-how-the-conversion-works" class="nav-link" data-scroll-target="#how-the-conversion-works">How the Conversion Works</a></li>
-  <li><a href="#overlay-mode" id="toc-overlay-mode" class="nav-link" data-scroll-target="#overlay-mode">Overlay Mode</a></li>
-  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">Limitations</a></li>
+  <li><a href="#ヒント" id="toc-ヒント" class="nav-link" data-scroll-target="#ヒント">ヒント</a></li>
   </ul>
 </nav>
     </div>
@@ -367,8 +365,8 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Rapsodo Input</h1>
-<p class="subtitle lead">Enter your Rapsodo measurements and simulate the trajectory</p>
+<h1 class="title">Pitch Tunnel可視化</h1>
+<p class="subtitle lead">打者が判断する23.8フィートのトンネルを可視化</p>
 </div>
 
 
@@ -385,160 +383,64 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="overview" class="level2">
-<h2 class="anchored" data-anchor-id="overview">Overview</h2>
-<p>If you use a Rapsodo pitching unit, you can enter its measurements directly into the simulator. The system converts Rapsodo’s output format (speed, spin direction, gyro angle) into the physics parameters needed for trajectory simulation.</p>
+<section id="概要" class="level2">
+<h2 class="anchored" data-anchor-id="概要">概要</h2>
+<p>Tunnel機能は、各投球が23.8フィートの判断ポイントを通過する位置を表示します。ここは打者がスイングの判断を変更できる最後の瞬間です。</p>
 </section>
-<section id="opening-the-rapsodo-dialog" class="level2">
-<h2 class="anchored" data-anchor-id="opening-the-rapsodo-dialog">Opening the Rapsodo Dialog</h2>
-<p>Click the <strong>Rapsodo</strong> button in the toolbar (next to the Simulate button). A dialog appears with input fields.</p>
+<section id="tunnelをオンにする" class="level2">
+<h2 class="anchored" data-anchor-id="tunnelをオンにする">Tunnelをオンにする</h2>
+<p>ツールバーの<strong>Tunnel</strong>ボタンをクリックします。トグルでオン/オフ（緑 = オン）を切り替えます。</p>
 </section>
-<section id="input-fields" class="level2">
-<h2 class="anchored" data-anchor-id="input-fields">Input Fields</h2>
-<section id="pitcher" class="level3">
-<h3 class="anchored" data-anchor-id="pitcher">Pitcher</h3>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Field</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>Hand</strong></td>
-<td>Pitcher’s throwing hand (R/L)</td>
-<td>Right</td>
-</tr>
-<tr class="even">
-<td><strong>Batter Hand</strong></td>
-<td>Batter’s stance (R/L)</td>
-<td>Right</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="velocity" class="level3">
-<h3 class="anchored" data-anchor-id="velocity">Velocity</h3>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Field</th>
-<th>Description</th>
-<th>Example</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>Speed (km/h)</strong></td>
-<td>Release speed</td>
-<td>131.6</td>
-</tr>
-<tr class="even">
-<td><strong>Vertical Angle (°)</strong></td>
-<td>Upward/downward release angle</td>
-<td>0.1</td>
-</tr>
-<tr class="odd">
-<td><strong>Horizontal Angle (°)</strong></td>
-<td>Left/right release angle</td>
-<td>−2.6</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="spin" class="level3">
-<h3 class="anchored" data-anchor-id="spin">Spin</h3>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Field</th>
-<th>Description</th>
-<th>Example</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>Spin Rate (rpm)</strong></td>
-<td>Total spin rate</td>
-<td>1772</td>
-</tr>
-<tr class="even">
-<td><strong>Spin Direction (HH:MM)</strong></td>
-<td>Clock-face spin direction</td>
-<td>01:18</td>
-</tr>
-<tr class="odd">
-<td><strong>Gyro Angle (°)</strong></td>
-<td>Gyroscopic spin angle</td>
-<td>21</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="release-position" class="level3">
-<h3 class="anchored" data-anchor-id="release-position">Release Position</h3>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Field</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>Height (m)</strong></td>
-<td>Release height</td>
-<td>1.50</td>
-</tr>
-<tr class="even">
-<td><strong>Side (m)</strong></td>
-<td>Lateral offset from center</td>
-<td>0.47</td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="how-the-conversion-works" class="level2">
-<h2 class="anchored" data-anchor-id="how-the-conversion-works">How the Conversion Works</h2>
-<p>The simulator internally converts Rapsodo measurements to the BSG (Backspin/Sidespin/Gyrospin) decomposition:</p>
-<ol type="1">
-<li><strong>Spin Direction</strong> (clock time like “01:18”) → spin tilt angle in degrees</li>
-<li><strong>Spin Rate + Tilt + Gyro Angle</strong> → angular velocity vector (ωx, ωy, ωz)</li>
-<li><strong>Angular velocity</strong> → Backspin, Sidespin, Gyrospin (via the M matrix)</li>
-</ol>
-<p>The converted values are shown at the bottom of the dialog after you click Simulate.</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
+<section id="表示される内容" class="level2">
+<h2 class="anchored" data-anchor-id="表示される内容">表示される内容</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../images/tunnel.png" class="img-fluid figure-img" alt="2球のオーバーレイと黄色のトンネルシリンダー"></p>
+<figcaption>Pitch Tunnel可視化 — 黄色のシリンダーがリリースポイントから判断ポイントまでの通り道を表示</figcaption>
+</figure>
 </div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Your data is saved
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The numeric values you enter are saved in your browser’s local storage. Next time you open the Rapsodo dialog, the last values are pre-filled (except pitcher/batter hand, which always resets to Right).</p>
-</div>
-</div>
-</section>
-<section id="overlay-mode" class="level2">
-<h2 class="anchored" data-anchor-id="overlay-mode">Overlay Mode</h2>
-<p>Check the <strong>Overlay</strong> box in the Rapsodo dialog to overlay the Rapsodo-simulated pitch on top of an existing trajectory. This is useful for:</p>
+<p>Tunnelが有効な場合、3Dビューに表示されるもの：</p>
 <ul>
-<li>Comparing your bullpen data (Rapsodo) with an MLB pitcher’s Statcast data</li>
-<li>Overlaying multiple bullpen pitches to check consistency</li>
+<li><strong>黄色のリング</strong> — リリースポイントと23.8フィート通過点にそれぞれ1つ</li>
+<li><strong>半透明の黄色シリンダー</strong> — 2つのポイントを結び、「トンネル」の通路を表示</li>
 </ul>
+<p>複数の投球をオーバーレイすると、各投球に個別のトンネルシリンダーが表示されます。23.8フィートでのリングが重なっていれば、それらの投球のトンネリングがうまくいっているということです。</p>
 </section>
-<section id="limitations" class="level2">
-<h2 class="anchored" data-anchor-id="limitations">Limitations</h2>
+<section id="トンネルデータの読み方" class="level2">
+<h2 class="anchored" data-anchor-id="トンネルデータの読み方">トンネルデータの読み方</h2>
+<p>左パネルにトンネル通過座標が表示されます：</p>
+<pre><code>● Tunnel (23.8ft) x=-0.404m, z=1.410m</code></pre>
+<p>これは、ボールが23.8フィート面を通過する時点での位置です。オーバーレイした投球間でこの座標を比較してください — 値が近いほど、トンネリングが優れています。</p>
+</section>
+<section id="tunnel-overlay実践例" class="level2">
+<h2 class="anchored" data-anchor-id="tunnel-overlay実践例">Tunnel + Overlay：実践例</h2>
+<section id="大谷のff-vs-st2026-03-24" class="level3">
+<h3 class="anchored" data-anchor-id="大谷のff-vs-st2026-03-24">大谷のFF vs ST（2026-03-24）</h3>
+<ol type="1">
+<li>“Ohtani” で検索、2026-03-24を選択</li>
+<li><strong>#7</strong>（FF, 97 mph）を選択 — Overlayをオンにしてシミュレーション</li>
+<li><strong>#83</strong>（ST, 81 mph）を選択 — シミュレーション</li>
+<li><strong>Tunnel</strong> を有効化</li>
+</ol>
+<p>この2球のリリース角度の差はわずか0.234°。球速差が16 mphあるにもかかわらず、23.8フィートではほぼ同じポイントを通過します。</p>
+</section>
+<section id="千賀のff-vs-fo2026-03-19" class="level3">
+<h3 class="anchored" data-anchor-id="千賀のff-vs-fo2026-03-19">千賀のFF vs FO（2026-03-19）</h3>
+<ol type="1">
+<li>“Senga” で検索、2026-03-19を選択</li>
+<li><strong>#54</strong>（FF, 95 mph）を選択 — Overlayオンでシミュレーション</li>
+<li><strong>#30</strong>（FO, 87 mph）を選択 — シミュレーション</li>
+<li><strong>Tunnel</strong> と <strong>Batter’s Eye</strong> を有効化</li>
+</ol>
+<p>リリース角度の差はわずか0.095°。フォークボール（“お化けフォーク”）は、判断ポイントでストレートとまったく同じに見えます。</p>
+</section>
+</section>
+<section id="ヒント" class="level2">
+<h2 class="anchored" data-anchor-id="ヒント">ヒント</h2>
 <ul>
-<li>Rapsodo does not provide the ball’s position at home plate, so there is no Statcast comparison marker</li>
-<li>The release position uses the values you enter (or defaults), not a measured position</li>
-<li>Environmental parameters (air density, temperature) are held constant at standard conditions</li>
+<li>トンネル可視化はBatter’s Eyeを含む<strong>すべてのビューモード</strong>で動作します</li>
+<li><strong>コマ送り</strong>（← →キー）で、トンネル通過ポイントのちょうどその瞬間にアニメーションを一時停止できます</li>
+<li>トンネルシリンダーの半径はボール直径の約2倍 — 打者が投球を確実に区別できない範囲を表しています</li>
 </ul>
 
 
@@ -583,12 +485,12 @@ ul.task-list li input[type="checkbox"] {
       // flash "checked"
       button.classList.add('code-copy-button-checked');
       var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copied!");
+      button.setAttribute("title", "コピーしました");
       let tooltip;
       if (window.bootstrap) {
         button.setAttribute("data-bs-toggle", "tooltip");
         button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copied!");
+        button.setAttribute("data-bs-title", "コピーしました");
         tooltip = new bootstrap.Tooltip(button, 
           { trigger: "manual", 
             customClass: "code-copy-button-tooltip",
@@ -631,7 +533,7 @@ ul.task-list li input[type="checkbox"] {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/baseball\.skill-vis\.com");
+        var filterRegex = new RegExp("https:\/\/skill-vis\.github\.io\/MyTrajectorySimulator\/ja");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -965,7 +867,7 @@ ul.task-list li input[type="checkbox"] {
       &nbsp;
     </div>   
     <div class="nav-footer-center">
-<p>Physics model: <a href="https://baseball.physics.illinois.edu/">Alan Nathan</a> &nbsp;|&nbsp; Built with <a href="https://quarto.org">Quarto</a></p>
+<p>物理モデル: <a href="https://baseball.physics.illinois.edu/">Alan Nathan</a> &nbsp;|&nbsp; <a href="https://quarto.org">Quarto</a> で構築</p>
 </div>
     <div class="nav-footer-right">
       &nbsp;
