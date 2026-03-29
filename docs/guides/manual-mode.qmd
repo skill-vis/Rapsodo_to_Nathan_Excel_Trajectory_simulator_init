@@ -1,0 +1,61 @@
+---
+title: "Manual Input"
+subtitle: "Set your own parameters with sliders"
+---
+
+## Overview
+
+Manual Input mode lets you control every parameter directly using sliders. This is useful for:
+
+- Testing "what if" scenarios (e.g., what happens if I add 200 rpm of backspin?)
+- Understanding how each parameter affects trajectory
+- Entering data from sources other than Statcast or Rapsodo
+
+## Parameters
+
+| Slider | Range | Description |
+|--------|-------|-------------|
+| **Speed** | 100–170 km/h | Release speed |
+| **Backspin** | −3000 to 3000 rpm | Backspin component (negative = topspin) |
+| **Sidespin** | −3000 to 3000 rpm | Sidespin component |
+| **Gyrospin** | −3000 to 3000 rpm | Gyrospin component |
+| **Vert angle (θ)** | −10° to 10° | Vertical release angle |
+| **Horiz angle (φ)** | −10° to 10° | Horizontal release angle |
+
+Click **Simulate** to run the physics simulation with these values.
+
+## Release Position
+
+The release position (x₀, y₀, z₀) is set based on the most recent Statcast pitch or the default values:
+
+- **x₀** = pitcher's lateral offset (R: −0.47m, L: +0.47m)
+- **y₀** = 16.764m (55 ft from home plate — standard release distance)
+- **z₀** = 1.50m (approximate release height)
+
+When using Rapsodo mode, the release position updates automatically.
+
+## Experimenting
+
+### Changing one thing at a time
+
+The best way to learn what each parameter does:
+
+1. Start with a typical fastball (speed 150, backspin 2200, sidespin 0, gyrospin 0)
+2. Hit Simulate
+3. Change **one slider** (e.g., add 500 rpm sidespin)
+4. Turn on **Overlay**, hit Simulate again
+5. Compare the two trajectories
+
+### Quick presets to try
+
+| Preset | Speed | BS | SS | GS | θ | φ |
+|--------|-------|-----|-----|-----|---|---|
+| **Four-seam fastball** | 155 | 2200 | 200 | 0 | −1 | 2 |
+| **Curveball** | 125 | −2000 | 800 | 0 | 2 | 1 |
+| **Slider** | 135 | 200 | 1800 | 1000 | 0 | 1 |
+| **Changeup** | 140 | 1400 | 400 | 0 | −1 | 2 |
+| **Gyro slider** | 135 | 100 | 500 | 2000 | 0 | 1 |
+
+::: {.callout-note}
+These are rough approximations. Every pitcher is different — that's what makes Statcast mode valuable.
+:::

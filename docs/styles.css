@@ -1,0 +1,59 @@
+/* Custom styles for Baseball Pitch Trajectory Simulator docs */
+
+.hero-section {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.hero-section h1 {
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.hero-section .lead {
+  font-size: 1.2rem;
+  color: #aab;
+  margin-bottom: 1.5rem;
+}
+
+.feature-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.2rem;
+  margin: 2rem 0;
+}
+
+.feature-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 1.2rem;
+}
+
+.feature-card h3 {
+  margin-top: 0;
+  font-size: 1.1rem;
+}
+
+.pitch-type-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 0.85rem;
+  color: white;
+}
+
+/* Pitch type colors matching the simulator */
+.pt-ff { background: #e94560; }
+.pt-si { background: #ff8844; }
+.pt-fc { background: #cc6600; }
+.pt-sl { background: #4488ff; }
+.pt-cu { background: #44ccff; color: #111; }
+.pt-ch { background: #44cc44; }
+.pt-fs { background: #88cc88; color: #111; }
+.pt-st { background: #aa44ff; }
+
+img {
+  border-radius: 6px;
+}

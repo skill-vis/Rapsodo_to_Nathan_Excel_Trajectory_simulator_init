@@ -1,0 +1,72 @@
+---
+title: "Statcast Mode"
+subtitle: "Simulate real MLB pitches with Hawk-Eye tracking data"
+---
+
+## Overview
+
+Statcast Mode lets you pull actual pitch data from any MLB game and simulate it. Every pitch tracked by the Hawk-Eye system — release speed, spin rate, spin axis, release point — feeds directly into the physics engine.
+
+## Finding a Pitcher
+
+1. Enter the pitcher's **last name** (e.g., "Ohtani") in the search box
+2. Optionally add the **first name** to disambiguate
+3. Set the **year** (2016–present, default: 2025)
+4. Click **Search** or press Enter
+
+The results show each matched player with their MLB ID and active years. If a player has no data for the selected year, a warning appears.
+
+::: {.callout-tip}
+The autocomplete suggests names as you type — you don't need to spell the full name.
+:::
+
+## Browsing Games
+
+After selecting a pitcher, a list of game dates appears. Each entry shows:
+
+- **Date** of the game
+- **Number of pitches** thrown
+- **Pitch types** used (e.g., FF, SL, CU, CH)
+
+Click a game to load its pitch-by-pitch data.
+
+## Selecting Pitches
+
+The pitch list shows every pitch from that game:
+
+| Column | Description |
+|--------|-------------|
+| **#** | Pitch index within the game |
+| **Type** | Color-coded pitch type badge |
+| **Speed** | Release speed in km/h |
+| **Spin** | Spin rate in rpm |
+| **Inn** | Inning |
+| **Result** | Pitch outcome (strike, ball, foul, etc.) |
+
+### Single pitch
+Click a pitch, then click **Simulate Selected Pitch**.
+
+### Multiple pitches
+- **Cmd/Ctrl + Click** — toggle individual pitches
+- **Shift + Click** — select a range
+- Use the **pitch type buttons** above the list (e.g., "All FF (12)") to select all pitches of a type
+- The button changes to **"Simulate N Pitches (Overlay)"** — all selected pitches are simulated and overlaid automatically
+
+## What You Get
+
+After simulation, the left panel shows:
+
+- **Release position** (x, y, z) in meters
+- **Velocity vector** (v₀, θ, φ)
+- **Spin decomposition** (Backspin, Sidespin, Gyrospin in rpm, plus Spin = |ω| in rpm)
+- **Angular velocity** (ωx, ωy, ωz in rad/s, plus |ω| in rad/s)
+- **Spin efficiency** and spin axis angles
+- **Home plate crossing** — simulated vs. Statcast actual, with difference in cm
+- **Spin movement** — horizontal and vertical displacement due to spin (cm)
+- **Batter's strike zone** — adjusted per batter (sz_top, sz_bot from Statcast)
+
+## Tips
+
+- The **batter silhouette** and **3D batter figure** automatically adjust based on the batter's handedness (R/L) from the Statcast data
+- The **pitcher silhouette** flips based on the pitcher's throwing hand
+- When you overlay multiple pitches, the **Overlay Statistics** panel appears automatically with mean, standard deviation, min, and max for all parameters

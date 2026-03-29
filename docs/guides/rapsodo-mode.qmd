@@ -1,0 +1,73 @@
+---
+title: "Rapsodo Input"
+subtitle: "Enter your Rapsodo measurements and simulate the trajectory"
+---
+
+## Overview
+
+If you use a Rapsodo pitching unit, you can enter its measurements directly into the simulator. The system converts Rapsodo's output format (speed, spin direction, gyro angle) into the physics parameters needed for trajectory simulation.
+
+## Opening the Rapsodo Dialog
+
+Click the **Rapsodo** button in the toolbar (next to the Simulate button). A dialog appears with input fields.
+
+## Input Fields
+
+### Pitcher
+
+| Field | Description | Default |
+|-------|-------------|---------|
+| **Hand** | Pitcher's throwing hand (R/L) | Right |
+| **Batter Hand** | Batter's stance (R/L) | Right |
+
+### Velocity
+
+| Field | Description | Example |
+|-------|-------------|---------|
+| **Speed (km/h)** | Release speed | 131.6 |
+| **Vertical Angle (°)** | Upward/downward release angle | 0.1 |
+| **Horizontal Angle (°)** | Left/right release angle | −2.6 |
+
+### Spin
+
+| Field | Description | Example |
+|-------|-------------|---------|
+| **Spin Rate (rpm)** | Total spin rate | 1772 |
+| **Spin Direction (HH:MM)** | Clock-face spin direction | 01:18 |
+| **Gyro Angle (°)** | Gyroscopic spin angle | 21 |
+
+### Release Position
+
+| Field | Description | Default |
+|-------|-------------|---------|
+| **Height (m)** | Release height | 1.50 |
+| **Side (m)** | Lateral offset from center | 0.47 |
+
+## How the Conversion Works
+
+The simulator internally converts Rapsodo measurements to the BSG (Backspin/Sidespin/Gyrospin) decomposition:
+
+1. **Spin Direction** (clock time like "01:18") → spin tilt angle in degrees
+2. **Spin Rate + Tilt + Gyro Angle** → angular velocity vector (ωx, ωy, ωz)
+3. **Angular velocity** → Backspin, Sidespin, Gyrospin (via the M matrix)
+
+The converted values are shown at the bottom of the dialog after you click Simulate.
+
+::: {.callout-tip}
+## Your data is saved
+
+The numeric values you enter are saved in your browser's local storage. Next time you open the Rapsodo dialog, the last values are pre-filled (except pitcher/batter hand, which always resets to Right).
+:::
+
+## Overlay Mode
+
+Check the **Overlay** box in the Rapsodo dialog to overlay the Rapsodo-simulated pitch on top of an existing trajectory. This is useful for:
+
+- Comparing your bullpen data (Rapsodo) with an MLB pitcher's Statcast data
+- Overlaying multiple bullpen pitches to check consistency
+
+## Limitations
+
+- Rapsodo does not provide the ball's position at home plate, so there is no Statcast comparison marker
+- The release position uses the values you enter (or defaults), not a measured position
+- Environmental parameters (air density, temperature) are held constant at standard conditions

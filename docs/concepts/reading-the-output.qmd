@@ -1,0 +1,119 @@
+---
+title: "Reading the Output"
+subtitle: "What all the numbers and lines mean"
+---
+
+## The 3D View
+
+### Trajectory Lines
+
+| Line | Color | Meaning |
+|------|-------|---------|
+| **Spin trajectory** | Orange (or overlay color) | The ball's actual path, including all spin effects |
+| **No-spin trajectory** | Cyan dashed | Where the ball would go with gravity only (no spin) |
+| **Gap between them** | — | This *is* the spin movement |
+
+### Markers at Home Plate
+
+| Marker | Color | Meaning |
+|--------|-------|---------|
+| **Filled circle** | Orange (or overlay color) | Simulated home plate crossing |
+| **Dashed ring** | Same color | Statcast actual crossing (Hawk-Eye measured) |
+| **Filled circle** | Cyan | No-spin crossing |
+| **ω arrow** | Same as trajectory | Spin axis direction at home plate |
+
+### The Ball
+
+The animated baseball has a **procedural seam texture** and rotates at the actual angular velocity. When the **Spin Axis** button is enabled, an arrow through the ball shows the spin axis:
+
+- **Arrow with head** → spin axis positive direction
+- **Arrow without head** → opposite direction
+- **Arrow length** → proportional to spin rate (longer = faster spin)
+
+## The Left Panel
+
+### Position and Velocity
+
+```
+Position: (-0.774, 16.37, 1.740) m
+v0: 38.69 m/s  theta: -0.67°  phi: 1.41°
+```
+
+- **Position** — release point in meters (x = lateral, y = toward home, z = height)
+- **v₀** — release speed in m/s
+- **θ (theta)** — vertical angle (negative = downward)
+- **φ (phi)** — horizontal angle
+
+### Spin Components
+
+```
+Backspin: 759 rpm  Side: 1824 rpm  Gyro: 1516 rpm  Spin: 2467 rpm
+ωx: -108.2 rad/s  ωy: -42.3 rad/s  ωz: 191.0 rad/s  |ω|: 225.1 rad/s
+```
+
+| Value | Meaning |
+|-------|---------|
+| **Backspin** | Rotation creating vertical movement (rpm) |
+| **Sidespin** | Rotation creating horizontal movement (rpm) |
+| **Gyrospin** | Rotation along the ball's travel direction — no movement effect (rpm) |
+| **Spin** | Total angular velocity magnitude (= \|ω\| in rpm) |
+| **ωx, ωy, ωz** | Angular velocity in the absolute coordinate system (rad/s) |
+| **\|ω\|** | Same as Spin, in rad/s |
+
+### Spin Efficiency and Axis
+
+```
+Spin eff: 79.3%  Axis(pfx): 112.6°  Axis(SC): 69.0°  Batter: R
+```
+
+| Value | Meaning |
+|-------|---------|
+| **Spin eff** | Percentage of spin that creates movement (100% = all active spin) |
+| **Axis(pfx)** | Spin axis angle computed from the simulation's pitch movement |
+| **Axis(SC)** | Spin axis angle as reported by Statcast |
+| **Batter** | Batter handedness (R or L) |
+
+### Home Plate Results
+
+```
+● Sim (spin) Home: x=0.102m, z=0.806m
+● Sim (no spin) Home: x=-0.371m, z=0.619m
+● Spin movement: horiz 47.4cm, vert 18.8cm
+○ Statcast actual Home: x=0.028m, z=0.813m
+● Sim vs Statcast diff: horiz 7.4cm, vert -0.7cm
+```
+
+| Value | Meaning |
+|-------|---------|
+| **Sim (spin) Home** | Where the simulation says the ball crosses home plate |
+| **Sim (no spin) Home** | Where the ball would cross without spin |
+| **Spin movement** | The difference = how much spin moved the ball |
+| **Statcast actual** | Where Hawk-Eye actually measured the ball |
+| **Sim vs Statcast diff** | Accuracy of the simulation (smaller = better) |
+
+::: {.callout-note}
+## Typical accuracy
+
+The simulation typically matches Statcast within **5–10 cm**. Differences come from:
+
+- Gyrospin estimation (Statcast doesn't measure all 3 spin components directly)
+- Environmental conditions (the simulation uses standard air density)
+- Seam orientation effects (not modeled)
+:::
+
+## Overlay Statistics
+
+When 2+ pitches are overlaid, a collapsible **Overlay Statistics** section appears showing mean ± σ, min, and max for all parameters. This includes both simulated values and Statcast-measured spin movement (SC Move Horiz/Vert).
+
+## The Chart
+
+Below the 3D view, a chart shows the drag coefficient (Cd) and lift coefficient (Cl) along the trajectory. These values come from the aerodynamic model and are useful for researchers. The chart can be hidden by collapsing its section.
+
+## CSV Export
+
+Click **CSV Export** to download two files:
+
+1. **pitch_summary.csv** — one row per parameter, one column per pitch. Includes statistics rows (mean, std, min, max) when multiple pitches are overlaid.
+2. **trajectory_detail.csv** — full time-step data: position, velocity, acceleration, drag force, Magnus force, gravity, Cd, Cl.
+
+Both files include a header comment crediting Alan Nathan's trajectory calculator.

@@ -1,0 +1,59 @@
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "Baseball Pitch Trajectory Simulator"
+  description: "Visualize how spin creates movement — with real MLB Statcast data"
+  site-url: https://baseball.skill-vis.com
+  navbar:
+    left:
+      - text: Home
+        href: index.qmd
+      - text: Quick Start
+        href: getting-started.qmd
+      - text: Guides
+        menu:
+          - text: Statcast Mode
+            href: guides/statcast-mode.qmd
+          - text: Manual Input
+            href: guides/manual-mode.qmd
+          - text: Rapsodo Input
+            href: guides/rapsodo-mode.qmd
+          - text: Overlay Comparison
+            href: guides/overlay-comparison.qmd
+          - text: "Batter's Eye"
+            href: guides/batters-eye.qmd
+          - text: Pitch Tunnel
+            href: guides/pitch-tunnel.qmd
+      - text: Concepts
+        menu:
+          - text: Spin & Movement
+            href: concepts/spin-and-movement.qmd
+          - text: Pitch Tunneling
+            href: concepts/pitch-tunneling.qmd
+          - text: Reading the Output
+            href: concepts/reading-the-output.qmd
+    right:
+      - icon: github
+        href: https://github.com/skill-vis/MyTrajectorySimulator-API
+      - text: Launch Simulator
+        href: https://baseball.skill-vis.com
+        target: _blank
+
+  page-footer:
+    center: |
+      Physics model: [Alan Nathan](https://baseball.physics.illinois.edu/) &nbsp;|&nbsp;
+      Built with [Quarto](https://quarto.org)
+
+format:
+  html:
+    theme:
+      dark: darkly
+    css: styles.css
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    code-tools: false
+
+lang: en

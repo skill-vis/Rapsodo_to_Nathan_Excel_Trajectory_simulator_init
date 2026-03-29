@@ -1,0 +1,65 @@
+---
+title: "Pitch Tunneling"
+subtitle: "Why the best pitch pairs look identical — until it's too late"
+---
+
+## The Decision Point
+
+A 95-mph fastball reaches home plate in about **400 milliseconds**. But the batter must commit to swinging — or not — roughly **170 ms before the ball arrives**. At that moment, the ball is still about **23–24 feet from the plate**.
+
+This is the **decision point**: the last instant where the batter can change their mind.
+
+## What Is a Tunnel?
+
+A pitch tunnel exists when **two different pitches occupy the same space at the decision point**.
+
+If a fastball and a changeup pass through the same location 23.8 feet from home plate, traveling at a similar angle, the batter cannot tell them apart at the moment of decision. They are forced to guess.
+
+After the decision point, the two pitches diverge — the fastball stays up, the changeup drops. But by then, the batter has already committed.
+
+**The greater the separation at home plate, and the smaller the separation at the tunnel point, the more effective the pair.**
+
+## Using the Simulator for Tunnel Analysis
+
+### Step-by-step
+
+1. **Turn on Overlay mode** (toggle button near Simulate)
+2. **Simulate a fastball** (e.g., select an FF from the pitch list)
+3. **Simulate a changeup** (select a CH from the same game)
+4. **Turn on Tunnel visualization** (Tunnel button in the toolbar)
+
+You will see:
+
+- Two trajectory lines, color-coded by pitch type
+- A transparent **tunnel cylinder** from the release point to the 23.8-ft crossing point
+- **Ring markers** at the tunnel point for each pitch
+
+**If the rings overlap, the pitches tunnel well.** The batter sees the same thing at the point of decision.
+
+### What to look for
+
+| Good tunnel | Poor tunnel |
+|------------|-------------|
+| Rings nearly overlap at 23.8 ft | Rings are far apart |
+| Pitches diverge only after the tunnel point | Pitches are already separated at the tunnel point |
+| Similar release point | Different release points |
+| Large separation at home plate | Small separation at home plate |
+
+### Best tunnel pairs to test
+
+- **FF + CH** (fastball / changeup) — speed difference with similar trajectory
+- **FF + FS** (fastball / splitter) — similar top of zone, splitter falls late
+- **FF + SL** (fastball / slider) — horizontal divergence after tunnel
+- **FC + CH** (cutter / changeup) — similar arm action
+
+::: {.callout-tip}
+## Try Batter's Eye + Tunnel
+
+Enable Batter's Eye view while looking at a tunneled pair. You will see both pitches arriving from the batter's perspective — and experience firsthand why the batter can't distinguish them until it's too late.
+:::
+
+## Why Tunneling Works
+
+The human visual system needs time to process changes in trajectory. Research suggests that batters track the ball's position and velocity, then extrapolate forward. If two pitches have the same position and direction at the decision point, the batter's brain generates the same prediction for both — even though they will end up in different locations.
+
+Effective tunneling is not just about having a good fastball or a good changeup. It's about **how well they pair together** — and that's exactly what the simulator lets you evaluate.

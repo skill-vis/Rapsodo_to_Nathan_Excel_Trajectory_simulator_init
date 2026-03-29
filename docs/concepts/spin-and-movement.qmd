@@ -1,0 +1,90 @@
+---
+title: "Spin and Movement"
+subtitle: "How backspin, sidespin, and gyrospin create pitch movement"
+---
+
+## The One-Sentence Version
+
+**Spin makes the ball move.** The direction and amount of spin determine whether a pitch "rises," slides, drops, or cuts.
+
+## The Three Components of Spin
+
+Every pitch's spin can be broken down into three components. Think of them as three independent dials that control three different effects:
+
+### Backspin — The "Rise" Dial
+
+Backspin is the rotation you see on a four-seam fastball: the top of the ball spins backward, against the direction of travel.
+
+**What it does:** Creates an upward force (Magnus force) that fights gravity. The ball doesn't actually rise — it just falls *less than the batter expects*. This is why a high-spin fastball feels like it "hops" or "rises."
+
+**Typical values:**
+
+| Pitch Type | Backspin | Effect |
+|-----------|---------|--------|
+| Four-seam fastball | 1800–2500 rpm | Strong "ride," ball stays up |
+| Curveball | −1500 to −2500 rpm | Negative backspin = topspin = extra drop |
+| Changeup | 1200–1600 rpm | Less ride than fastball → drops more |
+
+### Sidespin — The "Slide" Dial
+
+Sidespin is the rotation that makes the ball move left or right.
+
+**What it does:** Creates a horizontal force. A slider's lateral break comes almost entirely from sidespin. A curveball combines topspin (negative backspin) with sidespin to create diagonal movement.
+
+**Typical values:**
+
+| Pitch Type | Sidespin | Effect |
+|-----------|---------|--------|
+| Slider | 1500–2500 rpm | Strong lateral movement |
+| Curveball | 500–1500 rpm | Combined with topspin → diagonal break |
+| Four-seam fastball | 0–500 rpm | Slight arm-side run |
+
+### Gyrospin — The "Bullet" Dial
+
+Gyrospin is the rotation around the direction of travel — like a football spiral or a rifle bullet.
+
+**What it does:** Nothing, as far as movement goes. Gyrospin does not create any force on the ball. A pitch with 2500 rpm of total spin but 50% gyrospin will move like a pitch with only 1250 rpm of active spin.
+
+**Why it matters:** Spin rate alone doesn't tell you how much a pitch moves. **Spin efficiency** — the percentage of spin that is backspin + sidespin (not gyrospin) — is what determines movement.
+
+::: {.callout-tip}
+## The Simulator Shows You This
+
+In the simulator, the **orange trajectory** includes spin effects. The **gray trajectory** shows no spin (gravity only). The gap between them *is* the movement.
+
+When you overlay two pitch types, you can see exactly where their trajectories diverge — and whether the batter has enough time to recognize the difference.
+:::
+
+## Seeing Spin in the Simulator
+
+![Spin axis arrow on the ball — showing the direction of rotation](../images/spin-axis.png){fig-alt="Close-up of baseball with spin axis arrow and seam texture"}
+
+The animated baseball in the simulator rotates at the actual angular velocity of the pitch. An arrow attached to the ball shows the spin axis:
+
+- **Arrow pointing up** → mostly backspin (four-seamer)
+- **Arrow pointing sideways** → mostly sidespin (slider)
+- **Arrow pointing forward** → mostly gyrospin (gyro slider, bullet spin)
+
+## Spin Efficiency
+
+Spin efficiency is simply:
+
+> **Spin efficiency = active spin / total spin**
+
+where active spin = backspin + sidespin (the components that actually move the ball).
+
+A four-seam fastball typically has 90–100% spin efficiency. A gyro slider might have 30–50% spin efficiency — it spins fast, but much of that spin is "wasted" as gyrospin.
+
+::: {.callout-note collapse="true" title="Technical detail: Spin decomposition (BSG)"}
+
+The spin axis is described in the Nathan model by three components: **B**ackspin, **S**idespin, and **G**yrospin (BSG decomposition).
+
+Given the angular velocity vector $(\omega_x, \omega_y, \omega_z)$ and the velocity direction, the BSG components are obtained by decomposing $\omega$ relative to the velocity vector:
+
+- **G** (gyrospin): component of $\omega$ along the velocity direction
+- **B** (backspin): horizontal component perpendicular to velocity
+- **S** (sidespin): remaining component
+
+Note: The B and S axes are always perpendicular to each other, but neither is exactly perpendicular to G. The BSG coordinate system is an **oblique basis**, not an orthogonal one.
+
+:::

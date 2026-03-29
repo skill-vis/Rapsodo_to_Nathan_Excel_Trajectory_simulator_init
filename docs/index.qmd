@@ -1,0 +1,97 @@
+---
+title: "Baseball Pitch Trajectory Simulator"
+subtitle: "See how any pitch moves through space — from release to the catcher's glove"
+---
+
+::: {.hero-section}
+
+A free, browser-based tool that simulates the 3D trajectory of a pitched baseball using real physics.
+Search any MLB pitcher, pick a pitch, and watch it fly.
+
+[**Launch the Simulator**](https://baseball.skill-vis.com){.btn .btn-primary .btn-lg target="_blank"}
+&nbsp;&nbsp;
+[Quick Start Guide](getting-started.qmd){.btn .btn-outline-light .btn-lg}
+
+:::
+
+![The simulator in action — Ohtani's fastball trajectory with spin and no-spin comparison](images/hero.png){fig-alt="Simulator showing a pitch trajectory with orange spin path and cyan no-spin path"}
+
+## What It Does
+
+You type a pitcher's name. The simulator pulls their actual pitch data from MLB Statcast — every four-seam fastball, slider, curveball, and changeup they threw. Data is available from **2016 to the current season** (default: 2025). Pick any pitch, hit Simulate, and watch the ball travel from the pitcher's hand to home plate in 3D.
+
+The trajectory is not an animation based on video. It is a **physics simulation**. The ball's path is computed from its release speed, spin rate, and spin axis using the same aerodynamic model developed by [Prof. Alan Nathan](https://baseball.physics.illinois.edu/) at the University of Illinois — the standard reference for baseball trajectory research.
+
+## Why It Matters
+
+::: {.feature-cards}
+
+::: {.feature-card}
+### For Pitching Coaches
+Overlay a pitcher's fastball and changeup to see if they tunnel effectively. See exactly where and when the two trajectories diverge.
+:::
+
+::: {.feature-card}
+### For Analysts
+Compare spin decomposition (backspin, sidespin, gyrospin) across pitchers. Export full trajectory data — position, velocity, acceleration, and force components — to CSV for further analysis.
+:::
+
+::: {.feature-card}
+### For Player Development
+Enter Rapsodo measurements directly and simulate the resulting trajectory. Test "what if" scenarios by adjusting spin rate or axis.
+:::
+
+:::
+
+
+## Key Features
+
+| Feature | Description |
+|---------|-------------|
+| **MLB Statcast Integration** | Search any pitcher, browse their game-by-game pitch data, simulate any individual pitch |
+| **Multiple Input Modes** | Statcast data, manual sliders, or Rapsodo measurements |
+| **Overlay Comparison** | Stack multiple pitches to compare trajectories side by side |
+| **Batter's Eye View** | First-person camera from the batter's box — see what the hitter sees |
+| **Pitch Tunnel** | Visualize the tunnel point (23.8 ft) where the batter must decide |
+| **Spin Axis on the Ball** | Animated baseball with procedural seam texture, rotating at real angular velocity |
+| **CSV Import / Export** | Full trajectory data with velocity, acceleration, and force breakdown |
+| **Video Recording** | Export the 3D view as MP4 |
+
+## Pitch Types at a Glance
+
+The simulator uses the same pitch type classification and color coding as MLB Statcast:
+
+<span class="pitch-type-badge pt-ff">FF</span> 4-Seam Fastball &nbsp;
+<span class="pitch-type-badge pt-si">SI</span> Sinker &nbsp;
+<span class="pitch-type-badge pt-fc">FC</span> Cutter &nbsp;
+<span class="pitch-type-badge pt-sl">SL</span> Slider &nbsp;
+<span class="pitch-type-badge pt-cu">CU</span> Curveball &nbsp;
+<span class="pitch-type-badge pt-ch">CH</span> Changeup &nbsp;
+<span class="pitch-type-badge pt-fs">FS</span> Splitter &nbsp;
+<span class="pitch-type-badge pt-st">ST</span> Sweeper
+
+
+## How the Physics Works
+
+::: {.callout-note collapse="true" title="For the curious (optional)"}
+
+The simulator solves the equations of motion for a spinning ball in air:
+
+- **Drag force** slows the ball down (opposing its velocity)
+- **Magnus force** pushes the ball sideways and/or upward, perpendicular to both the spin axis and the velocity
+- **Gravity** pulls the ball down
+
+The spin is decomposed into three components:
+
+- **Backspin** — creates "rise" (resists gravity). A four-seamer with 2200 rpm backspin drops about 40 cm less than a ball with no spin.
+- **Sidespin** — creates horizontal movement. A slider's lateral break comes from sidespin.
+- **Gyrospin** — spin around the direction of travel (like a bullet). Does **not** create movement. A pitch with high gyrospin and low backspin/sidespin will have less movement despite high total spin rate.
+
+The simulation uses 4th-order Runge-Kutta integration with 0.001-second time steps, matching the accuracy of Nathan's original trajectory calculator.
+:::
+
+## Credits
+
+- Physics model: [Alan Nathan's Trajectory Calculator](https://baseball.physics.illinois.edu/)
+- Pitch data: [MLB Statcast](https://baseballsavant.mlb.com/) via Hawk-Eye tracking
+- Baseball seam curve: [mathcurve.com](https://mathcurve.com/courbes3d.gb/couture/couture.shtml) parametrization

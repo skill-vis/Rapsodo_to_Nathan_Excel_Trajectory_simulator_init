@@ -1,0 +1,499 @@
+[
+  {
+    "objectID": "concepts/pitch-tunneling.html",
+    "href": "concepts/pitch-tunneling.html",
+    "title": "Pitch Tunneling",
+    "section": "",
+    "text": "A 95-mph fastball reaches home plate in about 400 milliseconds. But the batter must commit to swinging — or not — roughly 170 ms before the ball arrives. At that moment, the ball is still about 23–24 feet from the plate.\nThis is the decision point: the last instant where the batter can change their mind."
+  },
+  {
+    "objectID": "concepts/pitch-tunneling.html#the-decision-point",
+    "href": "concepts/pitch-tunneling.html#the-decision-point",
+    "title": "Pitch Tunneling",
+    "section": "",
+    "text": "A 95-mph fastball reaches home plate in about 400 milliseconds. But the batter must commit to swinging — or not — roughly 170 ms before the ball arrives. At that moment, the ball is still about 23–24 feet from the plate.\nThis is the decision point: the last instant where the batter can change their mind."
+  },
+  {
+    "objectID": "concepts/pitch-tunneling.html#what-is-a-tunnel",
+    "href": "concepts/pitch-tunneling.html#what-is-a-tunnel",
+    "title": "Pitch Tunneling",
+    "section": "What Is a Tunnel?",
+    "text": "What Is a Tunnel?\nA pitch tunnel exists when two different pitches occupy the same space at the decision point.\nIf a fastball and a changeup pass through the same location 23.8 feet from home plate, traveling at a similar angle, the batter cannot tell them apart at the moment of decision. They are forced to guess.\nAfter the decision point, the two pitches diverge — the fastball stays up, the changeup drops. But by then, the batter has already committed.\nThe greater the separation at home plate, and the smaller the separation at the tunnel point, the more effective the pair."
+  },
+  {
+    "objectID": "concepts/pitch-tunneling.html#using-the-simulator-for-tunnel-analysis",
+    "href": "concepts/pitch-tunneling.html#using-the-simulator-for-tunnel-analysis",
+    "title": "Pitch Tunneling",
+    "section": "Using the Simulator for Tunnel Analysis",
+    "text": "Using the Simulator for Tunnel Analysis\n\nStep-by-step\n\nTurn on Overlay mode (toggle button near Simulate)\nSimulate a fastball (e.g., select an FF from the pitch list)\nSimulate a changeup (select a CH from the same game)\nTurn on Tunnel visualization (Tunnel button in the toolbar)\n\nYou will see:\n\nTwo trajectory lines, color-coded by pitch type\nA transparent tunnel cylinder from the release point to the 23.8-ft crossing point\nRing markers at the tunnel point for each pitch\n\nIf the rings overlap, the pitches tunnel well. The batter sees the same thing at the point of decision.\n\n\nWhat to look for\n\n\n\n\n\n\n\nGood tunnel\nPoor tunnel\n\n\n\n\nRings nearly overlap at 23.8 ft\nRings are far apart\n\n\nPitches diverge only after the tunnel point\nPitches are already separated at the tunnel point\n\n\nSimilar release point\nDifferent release points\n\n\nLarge separation at home plate\nSmall separation at home plate\n\n\n\n\n\nBest tunnel pairs to test\n\nFF + CH (fastball / changeup) — speed difference with similar trajectory\nFF + FS (fastball / splitter) — similar top of zone, splitter falls late\nFF + SL (fastball / slider) — horizontal divergence after tunnel\nFC + CH (cutter / changeup) — similar arm action\n\n\n\n\n\n\n\nTipTry Batter’s Eye + Tunnel\n\n\n\nEnable Batter’s Eye view while looking at a tunneled pair. You will see both pitches arriving from the batter’s perspective — and experience firsthand why the batter can’t distinguish them until it’s too late."
+  },
+  {
+    "objectID": "concepts/pitch-tunneling.html#why-tunneling-works",
+    "href": "concepts/pitch-tunneling.html#why-tunneling-works",
+    "title": "Pitch Tunneling",
+    "section": "Why Tunneling Works",
+    "text": "Why Tunneling Works\nThe human visual system needs time to process changes in trajectory. Research suggests that batters track the ball’s position and velocity, then extrapolate forward. If two pitches have the same position and direction at the decision point, the batter’s brain generates the same prediction for both — even though they will end up in different locations.\nEffective tunneling is not just about having a good fastball or a good changeup. It’s about how well they pair together — and that’s exactly what the simulator lets you evaluate."
+  },
+  {
+    "objectID": "concepts/reading-the-output.html",
+    "href": "concepts/reading-the-output.html",
+    "title": "Reading the Output",
+    "section": "",
+    "text": "Line\nColor\nMeaning\n\n\n\n\nSpin trajectory\nOrange (or overlay color)\nThe ball’s actual path, including all spin effects\n\n\nNo-spin trajectory\nCyan dashed\nWhere the ball would go with gravity only (no spin)\n\n\nGap between them\n—\nThis is the spin movement\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMarker\nColor\nMeaning\n\n\n\n\nFilled circle\nOrange (or overlay color)\nSimulated home plate crossing\n\n\nDashed ring\nSame color\nStatcast actual crossing (Hawk-Eye measured)\n\n\nFilled circle\nCyan\nNo-spin crossing\n\n\nω arrow\nSame as trajectory\nSpin axis direction at home plate\n\n\n\n\n\n\nThe animated baseball has a procedural seam texture and rotates at the actual angular velocity. When the Spin Axis button is enabled, an arrow through the ball shows the spin axis:\n\nArrow with head → spin axis positive direction\nArrow without head → opposite direction\nArrow length → proportional to spin rate (longer = faster spin)"
+  },
+  {
+    "objectID": "concepts/reading-the-output.html#the-3d-view",
+    "href": "concepts/reading-the-output.html#the-3d-view",
+    "title": "Reading the Output",
+    "section": "",
+    "text": "Line\nColor\nMeaning\n\n\n\n\nSpin trajectory\nOrange (or overlay color)\nThe ball’s actual path, including all spin effects\n\n\nNo-spin trajectory\nCyan dashed\nWhere the ball would go with gravity only (no spin)\n\n\nGap between them\n—\nThis is the spin movement\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMarker\nColor\nMeaning\n\n\n\n\nFilled circle\nOrange (or overlay color)\nSimulated home plate crossing\n\n\nDashed ring\nSame color\nStatcast actual crossing (Hawk-Eye measured)\n\n\nFilled circle\nCyan\nNo-spin crossing\n\n\nω arrow\nSame as trajectory\nSpin axis direction at home plate\n\n\n\n\n\n\nThe animated baseball has a procedural seam texture and rotates at the actual angular velocity. When the Spin Axis button is enabled, an arrow through the ball shows the spin axis:\n\nArrow with head → spin axis positive direction\nArrow without head → opposite direction\nArrow length → proportional to spin rate (longer = faster spin)"
+  },
+  {
+    "objectID": "concepts/reading-the-output.html#the-left-panel",
+    "href": "concepts/reading-the-output.html#the-left-panel",
+    "title": "Reading the Output",
+    "section": "The Left Panel",
+    "text": "The Left Panel\n\nPosition and Velocity\nPosition: (-0.774, 16.37, 1.740) m\nv0: 38.69 m/s  theta: -0.67°  phi: 1.41°\n\nPosition — release point in meters (x = lateral, y = toward home, z = height)\nv₀ — release speed in m/s\nθ (theta) — vertical angle (negative = downward)\nφ (phi) — horizontal angle\n\n\n\nSpin Components\nBackspin: 759 rpm  Side: 1824 rpm  Gyro: 1516 rpm  Spin: 2467 rpm\nωx: -108.2 rad/s  ωy: -42.3 rad/s  ωz: 191.0 rad/s  |ω|: 225.1 rad/s\n\n\n\n\n\n\n\nValue\nMeaning\n\n\n\n\nBackspin\nRotation creating vertical movement (rpm)\n\n\nSidespin\nRotation creating horizontal movement (rpm)\n\n\nGyrospin\nRotation along the ball’s travel direction — no movement effect (rpm)\n\n\nSpin\nTotal angular velocity magnitude (= |ω| in rpm)\n\n\nωx, ωy, ωz\nAngular velocity in the absolute coordinate system (rad/s)\n\n\n|ω|\nSame as Spin, in rad/s\n\n\n\n\n\nSpin Efficiency and Axis\nSpin eff: 79.3%  Axis(pfx): 112.6°  Axis(SC): 69.0°  Batter: R\n\n\n\n\n\n\n\nValue\nMeaning\n\n\n\n\nSpin eff\nPercentage of spin that creates movement (100% = all active spin)\n\n\nAxis(pfx)\nSpin axis angle computed from the simulation’s pitch movement\n\n\nAxis(SC)\nSpin axis angle as reported by Statcast\n\n\nBatter\nBatter handedness (R or L)\n\n\n\n\n\nHome Plate Results\n● Sim (spin) Home: x=0.102m, z=0.806m\n● Sim (no spin) Home: x=-0.371m, z=0.619m\n● Spin movement: horiz 47.4cm, vert 18.8cm\n○ Statcast actual Home: x=0.028m, z=0.813m\n● Sim vs Statcast diff: horiz 7.4cm, vert -0.7cm\n\n\n\n\n\n\n\nValue\nMeaning\n\n\n\n\nSim (spin) Home\nWhere the simulation says the ball crosses home plate\n\n\nSim (no spin) Home\nWhere the ball would cross without spin\n\n\nSpin movement\nThe difference = how much spin moved the ball\n\n\nStatcast actual\nWhere Hawk-Eye actually measured the ball\n\n\nSim vs Statcast diff\nAccuracy of the simulation (smaller = better)\n\n\n\n\n\n\n\n\n\nNoteTypical accuracy\n\n\n\nThe simulation typically matches Statcast within 5–10 cm. Differences come from:\n\nGyrospin estimation (Statcast doesn’t measure all 3 spin components directly)\nEnvironmental conditions (the simulation uses standard air density)\nSeam orientation effects (not modeled)"
+  },
+  {
+    "objectID": "concepts/reading-the-output.html#overlay-statistics",
+    "href": "concepts/reading-the-output.html#overlay-statistics",
+    "title": "Reading the Output",
+    "section": "Overlay Statistics",
+    "text": "Overlay Statistics\nWhen 2+ pitches are overlaid, a collapsible Overlay Statistics section appears showing mean ± σ, min, and max for all parameters. This includes both simulated values and Statcast-measured spin movement (SC Move Horiz/Vert)."
+  },
+  {
+    "objectID": "concepts/reading-the-output.html#the-chart",
+    "href": "concepts/reading-the-output.html#the-chart",
+    "title": "Reading the Output",
+    "section": "The Chart",
+    "text": "The Chart\nBelow the 3D view, a chart shows the drag coefficient (Cd) and lift coefficient (Cl) along the trajectory. These values come from the aerodynamic model and are useful for researchers. The chart can be hidden by collapsing its section."
+  },
+  {
+    "objectID": "concepts/reading-the-output.html#csv-export",
+    "href": "concepts/reading-the-output.html#csv-export",
+    "title": "Reading the Output",
+    "section": "CSV Export",
+    "text": "CSV Export\nClick CSV Export to download two files:\n\npitch_summary.csv — one row per parameter, one column per pitch. Includes statistics rows (mean, std, min, max) when multiple pitches are overlaid.\ntrajectory_detail.csv — full time-step data: position, velocity, acceleration, drag force, Magnus force, gravity, Cd, Cl.\n\nBoth files include a header comment crediting Alan Nathan’s trajectory calculator."
+  },
+  {
+    "objectID": "guides/batters-eye.html",
+    "href": "guides/batters-eye.html",
+    "title": "Batter’s Eye",
+    "section": "",
+    "text": "Batter’s Eye places the camera at the batter’s eye position in the batter’s box. You see the pitch coming toward you — just as the hitter does."
+  },
+  {
+    "objectID": "guides/batters-eye.html#overview",
+    "href": "guides/batters-eye.html#overview",
+    "title": "Batter’s Eye",
+    "section": "",
+    "text": "Batter’s Eye places the camera at the batter’s eye position in the batter’s box. You see the pitch coming toward you — just as the hitter does."
+  },
+  {
+    "objectID": "guides/batters-eye.html#activating-batters-eye",
+    "href": "guides/batters-eye.html#activating-batters-eye",
+    "title": "Batter’s Eye",
+    "section": "Activating Batter’s Eye",
+    "text": "Activating Batter’s Eye\nClick one of two buttons in the toolbar:\n\n\n\n\n\n\n\nButton\nDescription\n\n\n\n\nBatter’s Eye\nView from the batter’s box matching the current batter’s handedness\n\n\nOpposite Eye\nView from the opposite batter’s box\n\n\n\nThe camera moves to the batter’s eye position. The 3D batter figure hides so it doesn’t block your view.\n\n\n\nBatter’s Eye view — seeing the pitch approach from the batter’s box"
+  },
+  {
+    "objectID": "guides/batters-eye.html#camera-position",
+    "href": "guides/batters-eye.html#camera-position",
+    "title": "Batter’s Eye",
+    "section": "Camera Position",
+    "text": "Camera Position\nThe eye position is determined by:\n\nX (lateral): ±0.65 m from center, based on batter handedness (R = right box, L = left box)\nY (depth): 0.216 m behind home plate\nZ (height): When Statcast data is available, the height is set to sz_top + 0.3 m (strike zone top + 30 cm). Without Statcast data, it defaults to 1.45 m (batter model head height)."
+  },
+  {
+    "objectID": "guides/batters-eye.html#controls-in-first-person-mode",
+    "href": "guides/batters-eye.html#controls-in-first-person-mode",
+    "title": "Batter’s Eye",
+    "section": "Controls in First-Person Mode",
+    "text": "Controls in First-Person Mode\n\nLooking Around\n\nMouse drag — rotate your view (turn your head)\nScroll wheel — adjust field of view (FOV)\n\n\n\nMoving Position\nYou can fine-tune the eye position with keyboard controls:\n\n\n\nKey\nDirection\nAmount\n\n\n\n\nW\nForward (toward pitcher)\n1 cm\n\n\nS\nBackward (toward catcher)\n1 cm\n\n\nA\nLeft (toward 1st base)\n1 cm\n\n\nD\nRight (toward 3rd base)\n1 cm\n\n\nE\nUp\n1 cm\n\n\nQ\nDown\n1 cm\n\n\n\nThe offset from the original position is displayed in the top-left overlay:\nEye offset: X +3cm  Y -1cm  Z +2cm\n\n\nBall Tracking\n\n\n\n\n\n\n\nMode\nDescription\n\n\n\n\nTrack: Ball (default)\nCamera automatically follows the ball during playback\n\n\nTrack: Pitcher\nCamera stays fixed, looking toward the mound\n\n\n\nClick the toggle button in the overlay to switch."
+  },
+  {
+    "objectID": "guides/batters-eye.html#best-uses",
+    "href": "guides/batters-eye.html#best-uses",
+    "title": "Batter’s Eye",
+    "section": "Best Uses",
+    "text": "Best Uses\n\nTunnel evaluation\nEnable overlay, simulate a fastball and a changeup, then switch to Batter’s Eye. Play the animation and watch both balls approach. If you can’t tell them apart until the last moment, the tunnel is effective.\n\n\nPitch recognition training\nWatch a pitch in Batter’s Eye mode at slow speed (use frame stepping with ← → keys). Notice when you can first see the difference between a fastball and a slider.\n\n\nVideo export\nRecord the Batter’s Eye view as MP4 with the REC Slow button. Share the video to show what the batter sees.\n\n\n\n\n\n\nTipCombine with Spin Axis\n\n\n\nEnable the Spin Axis button while in Batter’s Eye. You’ll see the spin axis arrow on the approaching ball — this is the visual cue that elite hitters use to identify pitch type."
+  },
+  {
+    "objectID": "guides/statcast-mode.html",
+    "href": "guides/statcast-mode.html",
+    "title": "Statcast Mode",
+    "section": "",
+    "text": "Statcast Mode lets you pull actual pitch data from any MLB game and simulate it. Every pitch tracked by the Hawk-Eye system — release speed, spin rate, spin axis, release point — feeds directly into the physics engine."
+  },
+  {
+    "objectID": "guides/statcast-mode.html#overview",
+    "href": "guides/statcast-mode.html#overview",
+    "title": "Statcast Mode",
+    "section": "",
+    "text": "Statcast Mode lets you pull actual pitch data from any MLB game and simulate it. Every pitch tracked by the Hawk-Eye system — release speed, spin rate, spin axis, release point — feeds directly into the physics engine."
+  },
+  {
+    "objectID": "guides/statcast-mode.html#finding-a-pitcher",
+    "href": "guides/statcast-mode.html#finding-a-pitcher",
+    "title": "Statcast Mode",
+    "section": "Finding a Pitcher",
+    "text": "Finding a Pitcher\n\nEnter the pitcher’s last name (e.g., “Ohtani”) in the search box\nOptionally add the first name to disambiguate\nSet the year (2016–present, default: 2025)\nClick Search or press Enter\n\nThe results show each matched player with their MLB ID and active years. If a player has no data for the selected year, a warning appears.\n\n\n\n\n\n\nTip\n\n\n\nThe autocomplete suggests names as you type — you don’t need to spell the full name."
+  },
+  {
+    "objectID": "guides/statcast-mode.html#browsing-games",
+    "href": "guides/statcast-mode.html#browsing-games",
+    "title": "Statcast Mode",
+    "section": "Browsing Games",
+    "text": "Browsing Games\nAfter selecting a pitcher, a list of game dates appears. Each entry shows:\n\nDate of the game\nNumber of pitches thrown\nPitch types used (e.g., FF, SL, CU, CH)\n\nClick a game to load its pitch-by-pitch data."
+  },
+  {
+    "objectID": "guides/statcast-mode.html#selecting-pitches",
+    "href": "guides/statcast-mode.html#selecting-pitches",
+    "title": "Statcast Mode",
+    "section": "Selecting Pitches",
+    "text": "Selecting Pitches\nThe pitch list shows every pitch from that game:\n\n\n\nColumn\nDescription\n\n\n\n\n#\nPitch index within the game\n\n\nType\nColor-coded pitch type badge\n\n\nSpeed\nRelease speed in km/h\n\n\nSpin\nSpin rate in rpm\n\n\nInn\nInning\n\n\nResult\nPitch outcome (strike, ball, foul, etc.)\n\n\n\n\nSingle pitch\nClick a pitch, then click Simulate Selected Pitch.\n\n\nMultiple pitches\n\nCmd/Ctrl + Click — toggle individual pitches\nShift + Click — select a range\nUse the pitch type buttons above the list (e.g., “All FF (12)”) to select all pitches of a type\nThe button changes to “Simulate N Pitches (Overlay)” — all selected pitches are simulated and overlaid automatically"
+  },
+  {
+    "objectID": "guides/statcast-mode.html#what-you-get",
+    "href": "guides/statcast-mode.html#what-you-get",
+    "title": "Statcast Mode",
+    "section": "What You Get",
+    "text": "What You Get\nAfter simulation, the left panel shows:\n\nRelease position (x, y, z) in meters\nVelocity vector (v₀, θ, φ)\nSpin decomposition (Backspin, Sidespin, Gyrospin in rpm, plus Spin = |ω| in rpm)\nAngular velocity (ωx, ωy, ωz in rad/s, plus |ω| in rad/s)\nSpin efficiency and spin axis angles\nHome plate crossing — simulated vs. Statcast actual, with difference in cm\nSpin movement — horizontal and vertical displacement due to spin (cm)\nBatter’s strike zone — adjusted per batter (sz_top, sz_bot from Statcast)"
+  },
+  {
+    "objectID": "guides/statcast-mode.html#tips",
+    "href": "guides/statcast-mode.html#tips",
+    "title": "Statcast Mode",
+    "section": "Tips",
+    "text": "Tips\n\nThe batter silhouette and 3D batter figure automatically adjust based on the batter’s handedness (R/L) from the Statcast data\nThe pitcher silhouette flips based on the pitcher’s throwing hand\nWhen you overlay multiple pitches, the Overlay Statistics panel appears automatically with mean, standard deviation, min, and max for all parameters"
+  },
+  {
+    "objectID": "guides/rapsodo-mode.html",
+    "href": "guides/rapsodo-mode.html",
+    "title": "Rapsodo Input",
+    "section": "",
+    "text": "If you use a Rapsodo pitching unit, you can enter its measurements directly into the simulator. The system converts Rapsodo’s output format (speed, spin direction, gyro angle) into the physics parameters needed for trajectory simulation."
+  },
+  {
+    "objectID": "guides/rapsodo-mode.html#overview",
+    "href": "guides/rapsodo-mode.html#overview",
+    "title": "Rapsodo Input",
+    "section": "",
+    "text": "If you use a Rapsodo pitching unit, you can enter its measurements directly into the simulator. The system converts Rapsodo’s output format (speed, spin direction, gyro angle) into the physics parameters needed for trajectory simulation."
+  },
+  {
+    "objectID": "guides/rapsodo-mode.html#opening-the-rapsodo-dialog",
+    "href": "guides/rapsodo-mode.html#opening-the-rapsodo-dialog",
+    "title": "Rapsodo Input",
+    "section": "Opening the Rapsodo Dialog",
+    "text": "Opening the Rapsodo Dialog\nClick the Rapsodo button in the toolbar (next to the Simulate button). A dialog appears with input fields."
+  },
+  {
+    "objectID": "guides/rapsodo-mode.html#input-fields",
+    "href": "guides/rapsodo-mode.html#input-fields",
+    "title": "Rapsodo Input",
+    "section": "Input Fields",
+    "text": "Input Fields\n\nPitcher\n\n\n\nField\nDescription\nDefault\n\n\n\n\nHand\nPitcher’s throwing hand (R/L)\nRight\n\n\nBatter Hand\nBatter’s stance (R/L)\nRight\n\n\n\n\n\nVelocity\n\n\n\nField\nDescription\nExample\n\n\n\n\nSpeed (km/h)\nRelease speed\n131.6\n\n\nVertical Angle (°)\nUpward/downward release angle\n0.1\n\n\nHorizontal Angle (°)\nLeft/right release angle\n−2.6\n\n\n\n\n\nSpin\n\n\n\nField\nDescription\nExample\n\n\n\n\nSpin Rate (rpm)\nTotal spin rate\n1772\n\n\nSpin Direction (HH:MM)\nClock-face spin direction\n01:18\n\n\nGyro Angle (°)\nGyroscopic spin angle\n21\n\n\n\n\n\nRelease Position\n\n\n\nField\nDescription\nDefault\n\n\n\n\nHeight (m)\nRelease height\n1.50\n\n\nSide (m)\nLateral offset from center\n0.47"
+  },
+  {
+    "objectID": "guides/rapsodo-mode.html#how-the-conversion-works",
+    "href": "guides/rapsodo-mode.html#how-the-conversion-works",
+    "title": "Rapsodo Input",
+    "section": "How the Conversion Works",
+    "text": "How the Conversion Works\nThe simulator internally converts Rapsodo measurements to the BSG (Backspin/Sidespin/Gyrospin) decomposition:\n\nSpin Direction (clock time like “01:18”) → spin tilt angle in degrees\nSpin Rate + Tilt + Gyro Angle → angular velocity vector (ωx, ωy, ωz)\nAngular velocity → Backspin, Sidespin, Gyrospin (via the M matrix)\n\nThe converted values are shown at the bottom of the dialog after you click Simulate.\n\n\n\n\n\n\nTipYour data is saved\n\n\n\nThe numeric values you enter are saved in your browser’s local storage. Next time you open the Rapsodo dialog, the last values are pre-filled (except pitcher/batter hand, which always resets to Right)."
+  },
+  {
+    "objectID": "guides/rapsodo-mode.html#overlay-mode",
+    "href": "guides/rapsodo-mode.html#overlay-mode",
+    "title": "Rapsodo Input",
+    "section": "Overlay Mode",
+    "text": "Overlay Mode\nCheck the Overlay box in the Rapsodo dialog to overlay the Rapsodo-simulated pitch on top of an existing trajectory. This is useful for:\n\nComparing your bullpen data (Rapsodo) with an MLB pitcher’s Statcast data\nOverlaying multiple bullpen pitches to check consistency"
+  },
+  {
+    "objectID": "guides/rapsodo-mode.html#limitations",
+    "href": "guides/rapsodo-mode.html#limitations",
+    "title": "Rapsodo Input",
+    "section": "Limitations",
+    "text": "Limitations\n\nRapsodo does not provide the ball’s position at home plate, so there is no Statcast comparison marker\nThe release position uses the values you enter (or defaults), not a measured position\nEnvironmental parameters (air density, temperature) are held constant at standard conditions"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Baseball Pitch Trajectory Simulator",
+    "section": "",
+    "text": "A free, browser-based tool that simulates the 3D trajectory of a pitched baseball using real physics. Search any MLB pitcher, pick a pitch, and watch it fly.\nLaunch the Simulator    Quick Start Guide"
+  },
+  {
+    "objectID": "index.html#what-it-does",
+    "href": "index.html#what-it-does",
+    "title": "Baseball Pitch Trajectory Simulator",
+    "section": "What It Does",
+    "text": "What It Does\nYou type a pitcher’s name. The simulator pulls their actual pitch data from MLB Statcast — every four-seam fastball, slider, curveball, and changeup they threw. Data is available from 2016 to the current season (default: 2025). Pick any pitch, hit Simulate, and watch the ball travel from the pitcher’s hand to home plate in 3D.\nThe trajectory is not an animation based on video. It is a physics simulation. The ball’s path is computed from its release speed, spin rate, and spin axis using the same aerodynamic model developed by Prof. Alan Nathan at the University of Illinois — the standard reference for baseball trajectory research."
+  },
+  {
+    "objectID": "index.html#why-it-matters",
+    "href": "index.html#why-it-matters",
+    "title": "Baseball Pitch Trajectory Simulator",
+    "section": "Why It Matters",
+    "text": "Why It Matters\n\n\nFor Pitching Coaches\nOverlay a pitcher’s fastball and changeup to see if they tunnel effectively. See exactly where and when the two trajectories diverge.\n\n\nFor Analysts\nCompare spin decomposition (backspin, sidespin, gyrospin) across pitchers. Export full trajectory data — position, velocity, acceleration, and force components — to CSV for further analysis.\n\n\nFor Player Development\nEnter Rapsodo measurements directly and simulate the resulting trajectory. Test “what if” scenarios by adjusting spin rate or axis."
+  },
+  {
+    "objectID": "index.html#key-features",
+    "href": "index.html#key-features",
+    "title": "Baseball Pitch Trajectory Simulator",
+    "section": "Key Features",
+    "text": "Key Features\n\n\n\n\n\n\n\nFeature\nDescription\n\n\n\n\nMLB Statcast Integration\nSearch any pitcher, browse their game-by-game pitch data, simulate any individual pitch\n\n\nMultiple Input Modes\nStatcast data, manual sliders, or Rapsodo measurements\n\n\nOverlay Comparison\nStack multiple pitches to compare trajectories side by side\n\n\nBatter’s Eye View\nFirst-person camera from the batter’s box — see what the hitter sees\n\n\nPitch Tunnel\nVisualize the tunnel point (23.8 ft) where the batter must decide\n\n\nSpin Axis on the Ball\nAnimated baseball with procedural seam texture, rotating at real angular velocity\n\n\nCSV Import / Export\nFull trajectory data with velocity, acceleration, and force breakdown\n\n\nVideo Recording\nExport the 3D view as MP4"
+  },
+  {
+    "objectID": "index.html#pitch-types-at-a-glance",
+    "href": "index.html#pitch-types-at-a-glance",
+    "title": "Baseball Pitch Trajectory Simulator",
+    "section": "Pitch Types at a Glance",
+    "text": "Pitch Types at a Glance\nThe simulator uses the same pitch type classification and color coding as MLB Statcast:\nFF 4-Seam Fastball   SI Sinker   FC Cutter   SL Slider   CU Curveball   CH Changeup   FS Splitter   ST Sweeper"
+  },
+  {
+    "objectID": "index.html#how-the-physics-works",
+    "href": "index.html#how-the-physics-works",
+    "title": "Baseball Pitch Trajectory Simulator",
+    "section": "How the Physics Works",
+    "text": "How the Physics Works\n\n\n\n\n\n\nNoteFor the curious (optional)\n\n\n\n\n\nThe simulator solves the equations of motion for a spinning ball in air:\n\nDrag force slows the ball down (opposing its velocity)\nMagnus force pushes the ball sideways and/or upward, perpendicular to both the spin axis and the velocity\nGravity pulls the ball down\n\nThe spin is decomposed into three components:\n\nBackspin — creates “rise” (resists gravity). A four-seamer with 2200 rpm backspin drops about 40 cm less than a ball with no spin.\nSidespin — creates horizontal movement. A slider’s lateral break comes from sidespin.\nGyrospin — spin around the direction of travel (like a bullet). Does not create movement. A pitch with high gyrospin and low backspin/sidespin will have less movement despite high total spin rate.\n\nThe simulation uses 4th-order Runge-Kutta integration with 0.001-second time steps, matching the accuracy of Nathan’s original trajectory calculator."
+  },
+  {
+    "objectID": "index.html#credits",
+    "href": "index.html#credits",
+    "title": "Baseball Pitch Trajectory Simulator",
+    "section": "Credits",
+    "text": "Credits\n\nPhysics model: Alan Nathan’s Trajectory Calculator\nPitch data: MLB Statcast via Hawk-Eye tracking\nBaseball seam curve: mathcurve.com parametrization"
+  },
+  {
+    "objectID": "getting-started.html",
+    "href": "getting-started.html",
+    "title": "Quick Start",
+    "section": "",
+    "text": "Go to baseball.skill-vis.com. The simulator runs entirely in your browser — nothing to install."
+  },
+  {
+    "objectID": "getting-started.html#step-1-open-the-simulator",
+    "href": "getting-started.html#step-1-open-the-simulator",
+    "title": "Quick Start",
+    "section": "",
+    "text": "Go to baseball.skill-vis.com. The simulator runs entirely in your browser — nothing to install."
+  },
+  {
+    "objectID": "getting-started.html#step-2-search-for-a-pitcher",
+    "href": "getting-started.html#step-2-search-for-a-pitcher",
+    "title": "Quick Start",
+    "section": "Step 2: Search for a Pitcher",
+    "text": "Step 2: Search for a Pitcher\nIn the left panel, type a pitcher’s name (e.g., “Ohtani”) in the search box and press Enter. Select the pitcher from the results.\n\n\n\nSearching for a pitcher by name"
+  },
+  {
+    "objectID": "getting-started.html#step-3-pick-a-game",
+    "href": "getting-started.html#step-3-pick-a-game",
+    "title": "Quick Start",
+    "section": "Step 3: Pick a Game",
+    "text": "Step 3: Pick a Game\nA list of game dates appears. Each entry shows the date, number of pitches, and pitch types thrown. Click a game to load its pitches.\n\n\n\nGame list and pitch selection"
+  },
+  {
+    "objectID": "getting-started.html#step-4-pick-a-pitch",
+    "href": "getting-started.html#step-4-pick-a-pitch",
+    "title": "Quick Start",
+    "section": "Step 4: Pick a Pitch",
+    "text": "Step 4: Pick a Pitch\nThe pitch list shows every pitch from that game. Each row shows:\n\nPitch type — color-coded badge (FF = four-seam, SL = slider, etc.)\nSpeed (mph)\nSpin rate (rpm)\n\nClick a pitch, then click Simulate."
+  },
+  {
+    "objectID": "getting-started.html#step-5-watch-the-trajectory",
+    "href": "getting-started.html#step-5-watch-the-trajectory",
+    "title": "Quick Start",
+    "section": "Step 5: Watch the Trajectory",
+    "text": "Step 5: Watch the Trajectory\n\n\n\nSimulation result — 3D trajectory with left panel parameters\n\n\nThe 3D view shows:\n\nOrange line — the ball’s actual path (with spin effects)\nGray line — where the ball would go with no spin (gravity only)\nGap between the two — this is the movement created by spin\nAnimated baseball — rotating at the real spin rate, with the spin axis arrow\n\nDrag to rotate the view. Scroll to zoom."
+  },
+  {
+    "objectID": "getting-started.html#step-6-try-batters-eye",
+    "href": "getting-started.html#step-6-try-batters-eye",
+    "title": "Quick Start",
+    "section": "Step 6: Try Batter’s Eye",
+    "text": "Step 6: Try Batter’s Eye\nClick the Batter’s Eye button in the toolbar. The camera moves to the batter’s box, showing you the pitch from the hitter’s perspective. You can toggle between Track: Ball (camera follows the ball) and Track: Pitcher (camera stays fixed)."
+  },
+  {
+    "objectID": "getting-started.html#whats-next",
+    "href": "getting-started.html#whats-next",
+    "title": "Quick Start",
+    "section": "What’s Next?",
+    "text": "What’s Next?\n\nCompare two pitches: Turn on Overlay mode, simulate a second pitch, and see both trajectories stacked\nTry different pitch types: Use the filter buttons (FF, SL, CH, etc.) above the pitch list\nEnter your own data: Switch to Manual Input or Rapsodo Input\nUnderstand the physics: Read Spin & Movement to learn what backspin, sidespin, and gyrospin mean for pitch design"
+  },
+  {
+    "objectID": "guides/overlay-comparison.html",
+    "href": "guides/overlay-comparison.html",
+    "title": "Overlay Comparison",
+    "section": "",
+    "text": "Overlay mode lets you simulate multiple pitches and display their trajectories simultaneously. This is the core feature for pitch comparison — tunneling analysis, pitch design evaluation, and consistency checks."
+  },
+  {
+    "objectID": "guides/overlay-comparison.html#overview",
+    "href": "guides/overlay-comparison.html#overview",
+    "title": "Overlay Comparison",
+    "section": "",
+    "text": "Overlay mode lets you simulate multiple pitches and display their trajectories simultaneously. This is the core feature for pitch comparison — tunneling analysis, pitch design evaluation, and consistency checks."
+  },
+  {
+    "objectID": "guides/overlay-comparison.html#turning-on-overlay",
+    "href": "guides/overlay-comparison.html#turning-on-overlay",
+    "title": "Overlay Comparison",
+    "section": "Turning On Overlay",
+    "text": "Turning On Overlay\nCheck the Overlay checkbox next to the Simulate button. Once enabled:\n\nThe first pitch clears the view and draws normally\nEach subsequent pitch adds its trajectory on top, in a different color\n\n\n\n\nTwo pitches overlaid — FF (orange) and ST (green) with different trajectories"
+  },
+  {
+    "objectID": "guides/overlay-comparison.html#selecting-multiple-pitches-at-once",
+    "href": "guides/overlay-comparison.html#selecting-multiple-pitches-at-once",
+    "title": "Overlay Comparison",
+    "section": "Selecting Multiple Pitches at Once",
+    "text": "Selecting Multiple Pitches at Once\nWhen viewing a game’s pitch list, you can select multiple pitches:\n\n\n\nAction\nEffect\n\n\n\n\nCmd/Ctrl + Click\nToggle individual pitches on/off\n\n\nShift + Click\nSelect a range\n\n\n“All FF (12)” button\nSelect all pitches of a type\n\n\n“Clear All” button\nDeselect everything\n\n\n\nWhen multiple pitches are selected, the Simulate button changes to “Simulate N Pitches (Overlay)”. Click it, and all selected pitches are simulated sequentially with automatic overlay.\n\n\n\n\n\n\nWarning\n\n\n\nSelecting more than 30 pitches triggers a confirmation dialog. Each pitch requires an API call, so large batches take time."
+  },
+  {
+    "objectID": "guides/overlay-comparison.html#animated-playback",
+    "href": "guides/overlay-comparison.html#animated-playback",
+    "title": "Overlay Comparison",
+    "section": "Animated Playback",
+    "text": "Animated Playback\nWhen overlaying multiple pitches:\n\nUp to 3 balls animate simultaneously during playback\nEach ball is a textured baseball rotating at its real angular velocity\nBalls are time-synchronized — a 155 km/h fastball arrives at home plate before a 130 km/h curveball\nAfter the fastest ball arrives, playback continues until the slowest ball reaches home plate\nFrame stepping (← → keys) covers the full time range including slower overlay balls"
+  },
+  {
+    "objectID": "guides/overlay-comparison.html#overlay-statistics",
+    "href": "guides/overlay-comparison.html#overlay-statistics",
+    "title": "Overlay Comparison",
+    "section": "Overlay Statistics",
+    "text": "Overlay Statistics\nAfter overlaying 2 or more pitches, the Overlay Statistics panel appears in the left panel (scroll down). It shows:\n\nInput Parameters\n\nSpeed, release position, angles, BSG spin components, angular velocity (ωx, ωy, ωz), |ω|, component ratios\n\n\n\nSimulation Output\n\nHome plate crossing, spin movement, Statcast comparison, tunnel point\n\n\n\nStatcast Measured\n\nSC Move Horiz/Vert (cm) — the actual Statcast-measured spin movement (pfx)\n\nAll values show Mean ± σ, Min, Max. The section is collapsible."
+  },
+  {
+    "objectID": "guides/overlay-comparison.html#csv-export-with-statistics",
+    "href": "guides/overlay-comparison.html#csv-export-with-statistics",
+    "title": "Overlay Comparison",
+    "section": "CSV Export with Statistics",
+    "text": "CSV Export with Statistics\nWhen you click CSV Export with overlay data:\n\nThe summary CSV includes one column per pitch, plus Statistics rows (mean, std, min, max) at the bottom\nThe trajectory CSV includes all pitches side by side"
+  },
+  {
+    "objectID": "guides/overlay-comparison.html#tips",
+    "href": "guides/overlay-comparison.html#tips",
+    "title": "Overlay Comparison",
+    "section": "Tips",
+    "text": "Tips\n\nOverlay FF + ST to evaluate fastball-sweeper tunneling\nOverlay all FF in a game to check fastball consistency (look at standard deviation)\nUse Batter’s Eye view with overlay to see the pitches from the hitter’s perspective\nThe Tunnel button shows the 23.8-ft tunnel cylinder for each pitch"
+  },
+  {
+    "objectID": "guides/manual-mode.html",
+    "href": "guides/manual-mode.html",
+    "title": "Manual Input",
+    "section": "",
+    "text": "Manual Input mode lets you control every parameter directly using sliders. This is useful for:\n\nTesting “what if” scenarios (e.g., what happens if I add 200 rpm of backspin?)\nUnderstanding how each parameter affects trajectory\nEntering data from sources other than Statcast or Rapsodo"
+  },
+  {
+    "objectID": "guides/manual-mode.html#overview",
+    "href": "guides/manual-mode.html#overview",
+    "title": "Manual Input",
+    "section": "",
+    "text": "Manual Input mode lets you control every parameter directly using sliders. This is useful for:\n\nTesting “what if” scenarios (e.g., what happens if I add 200 rpm of backspin?)\nUnderstanding how each parameter affects trajectory\nEntering data from sources other than Statcast or Rapsodo"
+  },
+  {
+    "objectID": "guides/manual-mode.html#parameters",
+    "href": "guides/manual-mode.html#parameters",
+    "title": "Manual Input",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\nSlider\nRange\nDescription\n\n\n\n\nSpeed\n100–170 km/h\nRelease speed\n\n\nBackspin\n−3000 to 3000 rpm\nBackspin component (negative = topspin)\n\n\nSidespin\n−3000 to 3000 rpm\nSidespin component\n\n\nGyrospin\n−3000 to 3000 rpm\nGyrospin component\n\n\nVert angle (θ)\n−10° to 10°\nVertical release angle\n\n\nHoriz angle (φ)\n−10° to 10°\nHorizontal release angle\n\n\n\nClick Simulate to run the physics simulation with these values."
+  },
+  {
+    "objectID": "guides/manual-mode.html#release-position",
+    "href": "guides/manual-mode.html#release-position",
+    "title": "Manual Input",
+    "section": "Release Position",
+    "text": "Release Position\nThe release position (x₀, y₀, z₀) is set based on the most recent Statcast pitch or the default values:\n\nx₀ = pitcher’s lateral offset (R: −0.47m, L: +0.47m)\ny₀ = 16.764m (55 ft from home plate — standard release distance)\nz₀ = 1.50m (approximate release height)\n\nWhen using Rapsodo mode, the release position updates automatically."
+  },
+  {
+    "objectID": "guides/manual-mode.html#experimenting",
+    "href": "guides/manual-mode.html#experimenting",
+    "title": "Manual Input",
+    "section": "Experimenting",
+    "text": "Experimenting\n\nChanging one thing at a time\nThe best way to learn what each parameter does:\n\nStart with a typical fastball (speed 150, backspin 2200, sidespin 0, gyrospin 0)\nHit Simulate\nChange one slider (e.g., add 500 rpm sidespin)\nTurn on Overlay, hit Simulate again\nCompare the two trajectories\n\n\n\nQuick presets to try\n\n\n\nPreset\nSpeed\nBS\nSS\nGS\nθ\nφ\n\n\n\n\nFour-seam fastball\n155\n2200\n200\n0\n−1\n2\n\n\nCurveball\n125\n−2000\n800\n0\n2\n1\n\n\nSlider\n135\n200\n1800\n1000\n0\n1\n\n\nChangeup\n140\n1400\n400\n0\n−1\n2\n\n\nGyro slider\n135\n100\n500\n2000\n0\n1\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nThese are rough approximations. Every pitcher is different — that’s what makes Statcast mode valuable."
+  },
+  {
+    "objectID": "guides/pitch-tunnel.html",
+    "href": "guides/pitch-tunnel.html",
+    "title": "Pitch Tunnel Visualization",
+    "section": "",
+    "text": "The Tunnel feature shows where each pitch crosses the 23.8-ft decision point — the last moment the batter can change their swing decision."
+  },
+  {
+    "objectID": "guides/pitch-tunnel.html#overview",
+    "href": "guides/pitch-tunnel.html#overview",
+    "title": "Pitch Tunnel Visualization",
+    "section": "",
+    "text": "The Tunnel feature shows where each pitch crosses the 23.8-ft decision point — the last moment the batter can change their swing decision."
+  },
+  {
+    "objectID": "guides/pitch-tunnel.html#turning-on-the-tunnel",
+    "href": "guides/pitch-tunnel.html#turning-on-the-tunnel",
+    "title": "Pitch Tunnel Visualization",
+    "section": "Turning On the Tunnel",
+    "text": "Turning On the Tunnel\nClick the Tunnel button in the toolbar. It toggles on/off (green = on)."
+  },
+  {
+    "objectID": "guides/pitch-tunnel.html#what-you-see",
+    "href": "guides/pitch-tunnel.html#what-you-see",
+    "title": "Pitch Tunnel Visualization",
+    "section": "What You See",
+    "text": "What You See\n\n\n\nPitch tunnel visualization — the yellow cylinder shows the corridor from release to the decision point\n\n\nWhen Tunnel is enabled, the 3D view shows:\n\nYellow rings — one at the release point and one at the 23.8-ft crossing point\nTransparent yellow cylinder — connecting the two points, showing the “tunnel” corridor\n\nWhen you overlay multiple pitches, each pitch gets its own tunnel cylinder. If the 23.8-ft rings overlap, those pitches tunnel well."
+  },
+  {
+    "objectID": "guides/pitch-tunnel.html#reading-the-tunnel-data",
+    "href": "guides/pitch-tunnel.html#reading-the-tunnel-data",
+    "title": "Pitch Tunnel Visualization",
+    "section": "Reading the Tunnel Data",
+    "text": "Reading the Tunnel Data\nThe left panel shows the tunnel crossing coordinates:\n● Tunnel (23.8ft) x=-0.404m, z=1.410m\nThis is the ball’s position when it crosses the 23.8-ft plane. Compare these coordinates across overlaid pitches — the closer they are, the better the tunnel."
+  },
+  {
+    "objectID": "guides/pitch-tunnel.html#tunnel-overlay-a-practical-example",
+    "href": "guides/pitch-tunnel.html#tunnel-overlay-a-practical-example",
+    "title": "Pitch Tunnel Visualization",
+    "section": "Tunnel + Overlay: A Practical Example",
+    "text": "Tunnel + Overlay: A Practical Example\n\nOhtani’s FF vs ST (2026-03-24)\n\nSearch “Ohtani”, select 2026-03-24\nSelect pitch #7 (FF, 97 mph) — Simulate with Overlay checked\nSelect pitch #83 (ST, 81 mph) — Simulate\nEnable Tunnel\n\nThese two pitches have a release angle difference of only 0.234°. Despite a 16 mph speed difference, they pass through nearly the same point at 23.8 ft.\n\n\nSenga’s FF vs FO (2026-03-19)\n\nSearch “Senga”, select 2026-03-19\nSelect pitch #54 (FF, 95 mph) — Simulate with Overlay\nSelect pitch #30 (FO, 87 mph) — Simulate\nEnable Tunnel and Batter’s Eye\n\nRelease angle difference: only 0.095°. The forkball (“ghost fork”) looks identical to the fastball at the decision point."
+  },
+  {
+    "objectID": "guides/pitch-tunnel.html#tips",
+    "href": "guides/pitch-tunnel.html#tips",
+    "title": "Pitch Tunnel Visualization",
+    "section": "Tips",
+    "text": "Tips\n\nThe tunnel visualization works in all view modes including Batter’s Eye\nUse frame stepping (← → keys) to pause the animation at exactly the tunnel crossing point\nThe tunnel cylinder radius is approximately 2× the ball diameter — representing the area where the batter cannot reliably distinguish between pitches"
+  },
+  {
+    "objectID": "concepts/spin-and-movement.html",
+    "href": "concepts/spin-and-movement.html",
+    "title": "Spin and Movement",
+    "section": "",
+    "text": "Spin makes the ball move. The direction and amount of spin determine whether a pitch “rises,” slides, drops, or cuts."
+  },
+  {
+    "objectID": "concepts/spin-and-movement.html#the-one-sentence-version",
+    "href": "concepts/spin-and-movement.html#the-one-sentence-version",
+    "title": "Spin and Movement",
+    "section": "",
+    "text": "Spin makes the ball move. The direction and amount of spin determine whether a pitch “rises,” slides, drops, or cuts."
+  },
+  {
+    "objectID": "concepts/spin-and-movement.html#the-three-components-of-spin",
+    "href": "concepts/spin-and-movement.html#the-three-components-of-spin",
+    "title": "Spin and Movement",
+    "section": "The Three Components of Spin",
+    "text": "The Three Components of Spin\nEvery pitch’s spin can be broken down into three components. Think of them as three independent dials that control three different effects:\n\nBackspin — The “Rise” Dial\nBackspin is the rotation you see on a four-seam fastball: the top of the ball spins backward, against the direction of travel.\nWhat it does: Creates an upward force (Magnus force) that fights gravity. The ball doesn’t actually rise — it just falls less than the batter expects. This is why a high-spin fastball feels like it “hops” or “rises.”\nTypical values:\n\n\n\n\n\n\n\n\nPitch Type\nBackspin\nEffect\n\n\n\n\nFour-seam fastball\n1800–2500 rpm\nStrong “ride,” ball stays up\n\n\nCurveball\n−1500 to −2500 rpm\nNegative backspin = topspin = extra drop\n\n\nChangeup\n1200–1600 rpm\nLess ride than fastball → drops more\n\n\n\n\n\nSidespin — The “Slide” Dial\nSidespin is the rotation that makes the ball move left or right.\nWhat it does: Creates a horizontal force. A slider’s lateral break comes almost entirely from sidespin. A curveball combines topspin (negative backspin) with sidespin to create diagonal movement.\nTypical values:\n\n\n\nPitch Type\nSidespin\nEffect\n\n\n\n\nSlider\n1500–2500 rpm\nStrong lateral movement\n\n\nCurveball\n500–1500 rpm\nCombined with topspin → diagonal break\n\n\nFour-seam fastball\n0–500 rpm\nSlight arm-side run\n\n\n\n\n\nGyrospin — The “Bullet” Dial\nGyrospin is the rotation around the direction of travel — like a football spiral or a rifle bullet.\nWhat it does: Nothing, as far as movement goes. Gyrospin does not create any force on the ball. A pitch with 2500 rpm of total spin but 50% gyrospin will move like a pitch with only 1250 rpm of active spin.\nWhy it matters: Spin rate alone doesn’t tell you how much a pitch moves. Spin efficiency — the percentage of spin that is backspin + sidespin (not gyrospin) — is what determines movement.\n\n\n\n\n\n\nTipThe Simulator Shows You This\n\n\n\nIn the simulator, the orange trajectory includes spin effects. The gray trajectory shows no spin (gravity only). The gap between them is the movement.\nWhen you overlay two pitch types, you can see exactly where their trajectories diverge — and whether the batter has enough time to recognize the difference."
+  },
+  {
+    "objectID": "concepts/spin-and-movement.html#seeing-spin-in-the-simulator",
+    "href": "concepts/spin-and-movement.html#seeing-spin-in-the-simulator",
+    "title": "Spin and Movement",
+    "section": "Seeing Spin in the Simulator",
+    "text": "Seeing Spin in the Simulator\n\n\n\nSpin axis arrow on the ball — showing the direction of rotation\n\n\nThe animated baseball in the simulator rotates at the actual angular velocity of the pitch. An arrow attached to the ball shows the spin axis:\n\nArrow pointing up → mostly backspin (four-seamer)\nArrow pointing sideways → mostly sidespin (slider)\nArrow pointing forward → mostly gyrospin (gyro slider, bullet spin)"
+  },
+  {
+    "objectID": "concepts/spin-and-movement.html#spin-efficiency",
+    "href": "concepts/spin-and-movement.html#spin-efficiency",
+    "title": "Spin and Movement",
+    "section": "Spin Efficiency",
+    "text": "Spin Efficiency\nSpin efficiency is simply:\n\nSpin efficiency = active spin / total spin\n\nwhere active spin = backspin + sidespin (the components that actually move the ball).\nA four-seam fastball typically has 90–100% spin efficiency. A gyro slider might have 30–50% spin efficiency — it spins fast, but much of that spin is “wasted” as gyrospin.\n\n\n\n\n\n\nNoteTechnical detail: Spin decomposition (BSG)\n\n\n\n\n\nThe spin axis is described in the Nathan model by three components: Backspin, Sidespin, and Gyrospin (BSG decomposition).\nGiven the angular velocity vector \\((\\omega_x, \\omega_y, \\omega_z)\\) and the velocity direction, the BSG components are obtained by decomposing \\(\\omega\\) relative to the velocity vector:\n\nG (gyrospin): component of \\(\\omega\\) along the velocity direction\nB (backspin): horizontal component perpendicular to velocity\nS (sidespin): remaining component\n\nNote: The B and S axes are always perpendicular to each other, but neither is exactly perpendicular to G. The BSG coordinate system is an oblique basis, not an orthogonal one."
+  }
+]
