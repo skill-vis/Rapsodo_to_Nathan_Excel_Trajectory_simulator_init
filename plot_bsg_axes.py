@@ -20,11 +20,11 @@ def get_bsg_axes(theta_deg, phi_deg):
     ph = np.radians(phi_deg)
     cth, sth = np.cos(th), np.sin(th)
     cph, sph = np.cos(ph), np.sin(ph)
-    # ジャイロ軸 = 速度方向
-    g = np.array([cth * sph, -cth * cph, -sth])
-    # バックスピン軸（水平・速度の水平成分に垂直）
+    # ジャイロ軸 = 速度方向（Nathan Excel: uz = +sinθ）
+    g = np.array([cth * sph, -cth * cph, sth])
+    # バックスピン軸（Nathan Excel: b = [-cosφ, sinφ, 0]）
     b = np.array([-cph, sph, 0])
-    # サイドスピン軸
+    # サイドスピン軸（Nathan Excel: s = [-sinθsinφ, -sinθcosφ, cosθ]）
     s = np.array([-sth * sph, -sth * cph, cth])
     return b, s, g
 
