@@ -578,7 +578,7 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
 })();
 
 // =========================================================================
-// Widget 2: BSG Decomposition & Pitch Type ω Map
+// Widget 2: BSG Decomposition & Pitch Type ω Map with spinning ball
 // =========================================================================
 (function() {
     const canvas = document.getElementById('bsg-canvas');
@@ -589,39 +589,119 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x0a0a1a);
     const camera = new THREE.PerspectiveCamera(45, W/H, 0.1, 100);
-    camera.position.set(3, 2.5, 3);
+    camera.position.set(2, 2.5, 4);
     const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
     renderer.setSize(W, H);
     renderer.setPixelRatio(window.devicePixelRatio);
 
     const controls = new THREE.OrbitControls(camera, canvas);
     controls.enableDamping = true;
-    controls.target.set(0, 0.5, 0);
+    controls.target.set(0, 0.8, -1.5);
 
-    // Grid
-    scene.add(new THREE.GridHelper(4, 10, 0x333355, 0x222244));
-    scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+    // Lighting
+    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+    dirLight.position.set(3, 5, 3);
+    scene.add(dirLight);
 
-    // Coordinate axes (Nathan convention displayed in Three.js)
-    // Three.js: x=-sim_x, y=sim_z, z=sim_y
-    // Show: X(3B), Y(up), Z(toward catcher) in natural orientation
-    const axLen = 1.8;
-    scene.add(new THREE.ArrowHelper(new THREE.Vector3(1,0,0), new THREE.Vector3(-axLen,0,0), axLen*2, 0x666666, 0.05, 0.04));
-    scene.add(new THREE.ArrowHelper(new THREE.Vector3(0,1,0), new THREE.Vector3(0,0,0), axLen, 0x666666, 0.05, 0.04));
-    scene.add(new THREE.ArrowHelper(new THREE.Vector3(0,0,-1), new THREE.Vector3(0,0,axLen), axLen*2, 0x666666, 0.05, 0.04));
+    // Ground grid
+    const grid = new THREE.GridHelper(8, 16, 0x333355, 0x1a1a33);
+    scene.add(grid);
 
-    // Ohtani 2025 pitch data (approximate ω vectors in rad/s, Nathan coords)
-    // Nathan: X=3B+, Y=catcher-, Z=up+
-    // Three.js display: x=3B, y=up, z=catcher(toward viewer)
+    // --- Pitcher plate (simplified, at z=+2) ---
+    const pitcherPlateGeo = new THREE.BoxGeometry(0.5, 0.02, 0.12);
+    const pitcherPlateMat = new THREE.MeshBasicMaterial({color: 0xcccccc, transparent: true, opacity: 0.6});
+    const pitcherPlate = new THREE.Mesh(pitcherPlateGeo, pitcherPlateMat);
+    pitcherPlate.position.set(0, 0.01, 2);
+    scene.add(pitcherPlate);
+
+    // Pitcher label
+    function makeTextSprite(text, pos, color, size) {
+        const c = document.createElement('canvas');
+        c.width = 256; c.height = 64;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = color;
+        ctx.font = `bold ${size || 28}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText(text, 128, 40);
+        const tex = new THREE.CanvasTexture(c);
+        const sp = new THREE.Sprite(new THREE.SpriteMaterial({map: tex, transparent: true}));
+        sp.position.copy(pos);
+        sp.scale.set(1.2, 0.3, 1);
+        scene.add(sp);
+        return sp;
+    }
+    makeTextSprite('投手', new THREE.Vector3(0, 0.3, 2.3), '#888888');
+
+    // --- Home plate (pentagon, at z=-3) ---
+    const hpShape = new THREE.Shape();
+    const hs = 0.2;
+    hpShape.moveTo(0, -hs*1.2);
+    hpShape.lineTo(-hs, -hs*0.4);
+    hpShape.lineTo(-hs, hs*0.4);
+    hpShape.lineTo(hs, hs*0.4);
+    hpShape.lineTo(hs, -hs*0.4);
+    hpShape.lineTo(0, -hs*1.2);
+    const hpGeo = new THREE.ShapeGeometry(hpShape);
+    const hpMat = new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.5, side: THREE.DoubleSide});
+    const homePlate = new THREE.Mesh(hpGeo, hpMat);
+    homePlate.rotation.x = -Math.PI / 2;
+    homePlate.position.set(0, 0.01, -3);
+    scene.add(homePlate);
+    makeTextSprite('ホーム', new THREE.Vector3(0, 0.3, -3.3), '#888888');
+
+    // --- Velocity arrow (green, pitcher→catcher direction) ---
+    const vArrow = new THREE.ArrowHelper(
+        new THREE.Vector3(0, 0, -1), new THREE.Vector3(0, 0.8, 1.5), 2.0, 0x44ff44, 0.12, 0.08
+    );
+    scene.add(vArrow);
+    makeTextSprite('v (速度)', new THREE.Vector3(0.5, 1.1, 0.3), '#44ff44', 22);
+
+    // --- Baseball with seam-like texture ---
+    const ballRadius = 0.18;
+    const ballGeo = new THREE.SphereGeometry(ballRadius, 32, 32);
+    // Create procedural seam texture
+    const seamCanvas = document.createElement('canvas');
+    seamCanvas.width = 256; seamCanvas.height = 256;
+    const sctx = seamCanvas.getContext('2d');
+    sctx.fillStyle = '#e8e0d0';
+    sctx.fillRect(0, 0, 256, 256);
+    // Draw seam lines
+    sctx.strokeStyle = '#cc2222';
+    sctx.lineWidth = 3;
+    sctx.beginPath();
+    for (let i = 0; i < 256; i += 2) {
+        const y = 128 + 40 * Math.sin(i * Math.PI * 4 / 256);
+        if (i === 0) sctx.moveTo(i, y);
+        else sctx.lineTo(i, y);
+    }
+    sctx.stroke();
+    sctx.beginPath();
+    for (let i = 0; i < 256; i += 2) {
+        const y = 128 - 40 * Math.sin(i * Math.PI * 4 / 256 + Math.PI);
+        if (i === 0) sctx.moveTo(i, y);
+        else sctx.lineTo(i, y);
+    }
+    sctx.stroke();
+    const seamTex = new THREE.CanvasTexture(seamCanvas);
+    const ballMat = new THREE.MeshPhongMaterial({map: seamTex});
+    const ball = new THREE.Mesh(ballGeo, ballMat);
+    ball.position.set(0, 0.8, 0);
+    scene.add(ball);
+
+    // Ball rotation state
+    let ballOmega = new THREE.Vector3(0, 0, 0);  // Three.js coords
+
+    // --- Pitch data ---
     const RPM = Math.PI / 30;
     const pitchData = {
-        ff:  {name:'FF ストレート', color:0xff4444, wx:-120*RPM, wy:-210*RPM, wz:5*RPM,  speed:98.4, spin:2493},
-        si:  {name:'SI シンカー',   color:0x44cc44, wx:-90*RPM,  wy:-195*RPM, wz:-40*RPM, speed:96.2, spin:2150},
-        fc:  {name:'FC カッター',   color:0x9933cc, wx:-20*RPM,  wy:-250*RPM, wz:10*RPM,  speed:93.8, spin:2548},
-        sl:  {name:'SL スライダー', color:0x44bbff, wx:-10*RPM,  wy:-260*RPM, wz:20*RPM,  speed:88.3, spin:2566},
-        st:  {name:'ST スイーパー', color:0xff8800, wx:50*RPM,   wy:-230*RPM, wz:70*RPM,  speed:85.2, spin:2614},
-        cu:  {name:'CU カーブ',     color:0x4444ff, wx:100*RPM,  wy:-180*RPM, wz:-80*RPM, speed:78.4, spin:2676},
-        fs:  {name:'FS スプリット', color:0x996633, wx:-60*RPM,  wy:-80*RPM,  wz:-20*RPM, speed:89.5, spin:1451},
+        ff:  {name:'FF ストレート', color:0xff4444, wx:-1650, wz:100,  wy:-1550, speed:98.4, spin:2493},
+        si:  {name:'SI シンカー',   color:0x44cc44, wx:-750,  wz:-400, wy:-1800, speed:96.2, spin:2150},
+        fc:  {name:'FC カッター',   color:0x9933cc, wx:-550,  wz:150,  wy:-2450, speed:93.8, spin:2548},
+        sl:  {name:'SL スライダー', color:0x44bbff, wx:-30,   wz:200,  wy:-2550, speed:88.3, spin:2566},
+        st:  {name:'ST スイーパー', color:0xff8800, wx:350,   wz:1100, wy:-2300, speed:85.2, spin:2614},
+        cu:  {name:'CU カーブ',     color:0x4444ff, wx:1450,  wz:-1200,wy:-1850, speed:78.4, spin:2676},
+        fs:  {name:'FS スプリット', color:0x996633, wx:-220,  wz:-600, wy:-60,   speed:89.5, spin:1451},
     };
 
     let currentArrows = [];
@@ -631,33 +711,30 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
         currentArrows = [];
     }
 
-    function addPitchArrow(key) {
+    function addPitchArrow(key, origin) {
         const d = pitchData[key];
         if (!d) return;
 
-        // Convert Nathan ω to Three.js display coords
-        // Display: x = Nathan X (3B), y = Nathan Z (up), z = -Nathan Y (toward viewer = catcher)
-        const scale = 0.008;  // scale to fit display
+        // Nathan → Three.js: x = Nathan X (3B), y = Nathan Z (up), z = Nathan Y (catcher neg → Three.js neg)
+        const scale = 0.001;
         const dir = new THREE.Vector3(
-            d.wx * scale,   // 3B direction
-            d.wz * scale,   // up direction
-            d.wy * scale    // -catcher direction (Nathan Y is toward catcher negative)
+            d.wx * scale,
+            d.wz * scale,
+            d.wy * scale
         );
         const len = dir.length();
         if (len < 0.01) return;
         const dirNorm = dir.clone().normalize();
+        const org = origin || new THREE.Vector3(0, 0.8, 0);
 
-        const arrow = new THREE.ArrowHelper(dirNorm, new THREE.Vector3(0, 0.5, 0), len, d.color, 0.1, 0.07);
+        const arrow = new THREE.ArrowHelper(dirNorm, org, len, d.color, 0.08, 0.06);
         scene.add(arrow);
         currentArrows.push(arrow);
 
-        // Add small sphere at tip
-        const tipGeo = new THREE.SphereGeometry(0.06, 8, 8);
-        const tipMat = new THREE.MeshBasicMaterial({color: d.color});
-        const tip = new THREE.Mesh(tipGeo, tipMat);
-        tip.position.set(dir.x, dir.y + 0.5, dir.z);
-        scene.add(tip);
-        currentArrows.push(tip);
+        // Label at tip
+        const tipPos = org.clone().add(dir.clone().multiplyScalar(1.05));
+        const label = makeTextSprite(key, tipPos, '#' + d.color.toString(16).padStart(6, '0'), 24);
+        currentArrows.push(label);
 
         return {dir, len, data: d};
     }
@@ -670,19 +747,21 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
             let text = '';
             Object.keys(pitchData).forEach(k => {
                 const r = addPitchArrow(k);
-                if (r) {
-                    const d = r.data;
-                    text += `${d.name}: ${d.speed}mph ${d.spin}rpm  `;
-                }
+                if (r) text += `${r.data.name}  `;
             });
             info.textContent = text;
+            ballOmega.set(0, 0, 0);
         } else {
             const r = addPitchArrow(pitchKey);
             if (r) {
                 const d = r.data;
-                const totalOmega = Math.sqrt(d.wx**2 + d.wy**2 + d.wz**2);
-                const totalRPM = totalOmega / RPM;
-                info.textContent = `${d.name}: ${d.speed}mph, ${d.spin}rpm, |ω|=${totalRPM.toFixed(0)}rpm`;
+                const totalRPM = Math.sqrt(d.wx**2 + d.wy**2 + d.wz**2);
+                const eff = Math.sqrt(d.wx**2 + d.wz**2) / totalRPM * 100;
+                info.textContent = `${d.name}: ${d.speed}mph, ${d.spin}rpm, スピン効率=${eff.toFixed(0)}%`;
+
+                // Set ball rotation (scaled down for visual)
+                const rotScale = 0.0003;
+                ballOmega.set(d.wx * rotScale, d.wz * rotScale, d.wy * rotScale);
             }
         }
     }
@@ -693,8 +772,18 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
 
     updateBSG('ff');
 
+    const clock = new THREE.Clock();
     function animate() {
         requestAnimationFrame(animate);
+        const dt = clock.getDelta();
+
+        // Rotate ball
+        if (ballOmega.length() > 0.0001) {
+            const axis = ballOmega.clone().normalize();
+            const angle = ballOmega.length() * dt * 60;
+            ball.rotateOnWorldAxis(axis, angle);
+        }
+
         controls.update();
         renderer.render(scene, camera);
     }
