@@ -297,20 +297,18 @@ $$C_L = \frac{c_2 \cdot S}{c_0 + c_1 \cdot S}$$
 
 <p>ジャイロ成分が多いほど、同じ回転数でも実際の変化量は小さくなる。これが<strong>スピン効率</strong>（Active Spin %）の概念だ。</p>
 
-<p>下のウィジェットで、大谷翔平の各球種のωベクトルを3Dで確認できる。球種を選択すると、<span style="color:#ff8a65">ω矢印</span>の方向と大きさ、およびBSG分解が表示される。マウスドラッグで視点を変更できる。</p>
+<p>下のウィジェットで、今永昇太の各球種のωベクトルを3Dで確認できる。今永のストレートはスピン効率96%と非常に高く、回転のほぼ全てが変化に寄与する。球種を選択すると、<span style="color:#ff8a65">ω矢印</span>の方向と<span style="color:#4fc3f7">マグヌス力の方向</span>、そして投手→ホームの軌跡が表示される。マウスドラッグで視点を変更できる。</p>
 
 <div style="background:#111;border-radius:8px;padding:16px;margin:20px 0;">
 <canvas id="bsg-canvas" style="width:100%;height:420px;border-radius:8px;cursor:grab;"></canvas>
 <div style="margin-top:12px;">
 <label style="color:#aaa;font-size:13px;">球種:
 <select id="bsg-pitch" style="font-size:13px;background:#222;color:#ddd;border:1px solid #555;padding:2px 6px;">
-<option value="ff">FF (ストレート)</option>
-<option value="si">SI (シンカー)</option>
-<option value="fc">FC (カッター)</option>
-<option value="sl">SL (スライダー)</option>
-<option value="st">ST (スイーパー)</option>
-<option value="cu">CU (カーブ)</option>
-<option value="fs">FS (スプリット)</option>
+<option value="ff">FF ストレート (今永)</option>
+<option value="si">SI シンカー (今永)</option>
+<option value="sl">SL スライダー (今永)</option>
+<option value="cu">CU カーブ (今永)</option>
+<option value="ch">CH チェンジアップ (今永)</option>
 <option value="all">全球種表示</option>
 </select>
 </label>
@@ -704,16 +702,14 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
     // Ball rotation state
     let ballOmega = new THREE.Vector3(0, 0, 0);  // Three.js coords
 
-    // --- Pitch data ---
+    // --- Pitch data (Imanaga 2025, high spin efficiency on FF) ---
     const RPM = Math.PI / 30;
     const pitchData = {
-        ff:  {name:'FF ストレート', color:0xff4444, wx:-1650, wz:100,  wy:-1550, speed:98.4, spin:2493},
-        si:  {name:'SI シンカー',   color:0x44cc44, wx:-750,  wz:-400, wy:-1800, speed:96.2, spin:2150},
-        fc:  {name:'FC カッター',   color:0x9933cc, wx:-550,  wz:150,  wy:-2450, speed:93.8, spin:2548},
-        sl:  {name:'SL スライダー', color:0x44bbff, wx:-30,   wz:200,  wy:-2550, speed:88.3, spin:2566},
-        st:  {name:'ST スイーパー', color:0xff8800, wx:350,   wz:1100, wy:-2300, speed:85.2, spin:2614},
-        cu:  {name:'CU カーブ',     color:0x4444ff, wx:1450,  wz:-1200,wy:-1850, speed:78.4, spin:2676},
-        fs:  {name:'FS スプリット', color:0x996633, wx:-220,  wz:-600, wy:-60,   speed:89.5, spin:1451},
+        ff:  {name:'FF ストレート (今永)', color:0xff4444, wx:-2066, wz:742,  wy:-654,  speed:95.1, spin:2219},
+        si:  {name:'SI シンカー (今永)',   color:0x44cc44, wx:-965,  wz:1906, wy:-709,  speed:93.3, spin:2213},
+        sl:  {name:'SL スライダー (今永)', color:0x44bbff, wx:-388,  wz:-292, wy:-2254, speed:87.7, spin:2256},
+        cu:  {name:'CU カーブ (今永)',     color:0x4444ff, wx:200,   wz:-339, wy:-2408, speed:80.5, spin:2491},
+        ch:  {name:'CH チェンジアップ (今永)', color:0x888888, wx:-586, wz:1289, wy:-0, speed:87.0, spin:1543},
     };
 
     let currentArrows = [];
@@ -816,9 +812,16 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
         forceObjs.push(label);
     }
 
+    // Store all trajectory objects for cleanup
+    let trajObjs = [];
+
+    function clearTrajectories() {
+        trajObjs.forEach(o => scene.remove(o));
+        trajObjs = [];
+        if (trajLine) { scene.remove(trajLine); trajLine = null; }
+    }
+
     function addTrajectory(d) {
-        // Simple trajectory: ball moves from pitcher to home, with deflection from Magnus
-        // v direction = -Z, F direction = ω × v
         const scale = 0.001;
         const omegaVec = new THREE.Vector3(d.wx * scale, d.wz * scale, d.wy * scale);
         const omegaNorm = omegaVec.clone().normalize();
@@ -827,55 +830,63 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
         if (fDir.length() < 0.001) return;
         fDir.normalize();
 
-        // Deflection magnitude (proportional to transverse spin)
         const transverse = Math.sqrt(d.wx**2 + d.wz**2);
-        const deflectScale = transverse / 2500 * 1.2;  // normalize to typical FF
+        const deflectScale = transverse / 2500 * 1.2;
 
-        const points = [];
-        const nSteps = 60;
-        const startZ = 2.0;  // pitcher
-        const endZ = -3.0;   // home
+        const nSteps = 80;
+        const startZ = 2.0;
+        const endZ = -3.0;
         const totalDist = startZ - endZ;
+        const releaseHeight = 0.8;
 
+        // Spin trajectory (stop at ground)
+        const points = [];
         for (let i = 0; i <= nSteps; i++) {
             const t = i / nSteps;
             const z = startZ - t * totalDist;
-            // Deflection ∝ t² (constant force → parabolic)
             const deflect = deflectScale * t * t;
-            // Gravity drop (additional)
-            const gravDrop = -0.8 * t * t;  // ~80cm total drop
+            const gravDrop = -0.8 * t * t;
             const x = fDir.x * deflect;
-            const y = 0.8 + fDir.y * deflect + gravDrop;
-            points.push(new THREE.Vector3(x, Math.max(y, 0.05), z));
+            const y = releaseHeight + fDir.y * deflect + gravDrop;
+            if (y < 0.01) break;  // Stop at ground
+            points.push(new THREE.Vector3(x, y, z));
         }
 
-        // Also no-spin trajectory (dashed, cyan)
+        // No-spin trajectory (stop at ground)
         const noSpinPoints = [];
         for (let i = 0; i <= nSteps; i++) {
             const t = i / nSteps;
             const z = startZ - t * totalDist;
             const gravDrop = -0.8 * t * t;
-            noSpinPoints.push(new THREE.Vector3(0, Math.max(0.8 + gravDrop, 0.05), z));
+            const y = releaseHeight + gravDrop;
+            if (y < 0.01) break;
+            noSpinPoints.push(new THREE.Vector3(0, y, z));
         }
 
         // No-spin trajectory (dashed cyan)
-        const nsGeo = new THREE.BufferGeometry().setFromPoints(noSpinPoints);
-        const nsMat = new THREE.LineDashedMaterial({color: 0x00cccc, dashSize: 0.15, gapSize: 0.1});
-        const nsLine = new THREE.Line(nsGeo, nsMat);
-        nsLine.computeLineDistances();
-        scene.add(nsLine);
-        forceObjs.push(nsLine);
+        if (noSpinPoints.length > 1) {
+            const nsGeo = new THREE.BufferGeometry().setFromPoints(noSpinPoints);
+            const nsMat = new THREE.LineDashedMaterial({color: 0x00cccc, dashSize: 0.15, gapSize: 0.1});
+            const nsLine = new THREE.Line(nsGeo, nsMat);
+            nsLine.computeLineDistances();
+            scene.add(nsLine);
+            trajObjs.push(nsLine);
+        }
 
         // Spin trajectory (solid, pitch color)
-        const tGeo = new THREE.BufferGeometry().setFromPoints(points);
-        const tMat = new THREE.LineBasicMaterial({color: d.color || 0xff8800, linewidth: 2});
-        trajLine = new THREE.Line(tGeo, tMat);
-        scene.add(trajLine);
+        if (points.length > 1) {
+            const tGeo = new THREE.BufferGeometry().setFromPoints(points);
+            const tMat = new THREE.LineBasicMaterial({color: d.color || 0xff8800, linewidth: 2});
+            const tLine = new THREE.Line(tGeo, tMat);
+            scene.add(tLine);
+            trajObjs.push(tLine);
+        }
     }
 
     function updateBSG(pitchKey) {
         clearArrows();
         clearForceAndTraj();
+        clearTrajectories();
         const info = document.getElementById('bsg-info');
         const ballCenter = new THREE.Vector3(0, 0.8, 0);
 
