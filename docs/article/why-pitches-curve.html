@@ -649,9 +649,9 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
     scene.add(homePlate);
     makeTextSprite('ホーム', new THREE.Vector3(0, 0.3, -3.5), '#888888');
 
-    // --- Velocity arrow (green dashed, from ball toward catcher = -Z, half length) ---
+    // --- Velocity arrow (green dashed, from ball toward catcher, slightly upward) ---
     const vStart = new THREE.Vector3(0, 0.8, 0);
-    const vEnd = new THREE.Vector3(0, 0.8, -1.2);
+    const vEnd = new THREE.Vector3(0, 0.8 + 0.08, -1.2);
     const vLineGeo = new THREE.BufferGeometry().setFromPoints([vStart, vEnd]);
     const vLineMat = new THREE.LineDashedMaterial({color: 0x44ff44, dashSize: 0.12, gapSize: 0.06, linewidth: 1});
     const vLine = new THREE.Line(vLineGeo, vLineMat);
@@ -662,8 +662,9 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
     const vConeMat = new THREE.MeshBasicMaterial({color: 0x44ff44});
     const vCone = new THREE.Mesh(vConeGeo, vConeMat);
     vCone.position.copy(vEnd);
-    // Cone default: +Y. To point -Z: rotate +90° around X axis
-    vCone.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), new THREE.Vector3(0,0,-1));
+    // Point cone in velocity direction (slightly upward toward catcher)
+    const vDirNorm = vEnd.clone().sub(vStart).normalize();
+    vCone.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), vDirNorm);
     scene.add(vCone);
     makeTextSprite('v (速度)', new THREE.Vector3(0.35, 1.05, -0.6), '#44ff44', 22);
 
@@ -855,7 +856,8 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
         const startZ = 2.0;
         const endZ = -3.0;
         const totalDist = startZ - endZ;
-        const releaseHeight = 0.8;
+        const releaseHeight = 1.6;    // higher release point
+        const initUpAngle = 0.06;     // slight upward initial velocity
 
         // Spin trajectory (stop at ground)
         const points = [];
@@ -864,9 +866,10 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
             const z = startZ - t * totalDist;
             const deflect = deflectScale * t * t;
             const gravDrop = -0.8 * t * t;
+            const initUp = initUpAngle * totalDist * t;  // initial upward component
             const x = fDir.x * deflect;
-            const y = releaseHeight + fDir.y * deflect + gravDrop;
-            if (y < 0.01) break;  // Stop at ground
+            const y = releaseHeight + fDir.y * deflect + gravDrop + initUp;
+            if (y < 0.01) break;
             points.push(new THREE.Vector3(x, y, z));
         }
 
@@ -876,7 +879,8 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
             const t = i / nSteps;
             const z = startZ - t * totalDist;
             const gravDrop = -0.8 * t * t;
-            const y = releaseHeight + gravDrop;
+            const initUp = initUpAngle * totalDist * t;
+            const y = releaseHeight + gravDrop + initUp;
             if (y < 0.01) break;
             noSpinPoints.push(new THREE.Vector3(0, y, z));
         }
@@ -891,13 +895,14 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
             trajObjs.push(nsLine);
         }
 
-        // Spin trajectory (solid, pitch color)
-        if (points.length > 1) {
-            const tGeo = new THREE.BufferGeometry().setFromPoints(points);
-            const tMat = new THREE.LineBasicMaterial({color: d.color || 0xff8800, linewidth: 2});
-            const tLine = new THREE.Line(tGeo, tMat);
-            scene.add(tLine);
-            trajObjs.push(tLine);
+        // Spin trajectory (thick tube, pitch color)
+        if (points.length > 2) {
+            const curve = new THREE.CatmullRomCurve3(points);
+            const tubeGeo = new THREE.TubeGeometry(curve, points.length * 2, 0.018, 6, false);
+            const tubeMat = new THREE.MeshBasicMaterial({color: d.color || 0xff8800});
+            const tube = new THREE.Mesh(tubeGeo, tubeMat);
+            scene.add(tube);
+            trajObjs.push(tube);
         }
     }
 
