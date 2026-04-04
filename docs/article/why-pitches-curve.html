@@ -297,19 +297,19 @@ $$C_L = \frac{c_2 \cdot S}{c_0 + c_1 \cdot S}$$
 
 <p>ジャイロ成分が多いほど、同じ回転数でも実際の変化量は小さくなる。これが<strong>スピン効率</strong>（Active Spin %）の概念だ。</p>
 
-<p>下のウィジェットで、今永昇太の各球種のωベクトルを3Dで確認できる。今永のストレートはスピン効率96%と非常に高く、回転のほぼ全てが変化に寄与する。球種を選択すると、<span style="color:#ff8a65">ω矢印</span>の方向と<span style="color:#4fc3f7">マグヌス力の方向</span>、そして投手→ホームの軌跡が表示される。マウスドラッグで視点を変更できる。</p>
+<p>下のウィジェットで、山本由伸（右投手）と今永昇太（左投手）の各球種のωベクトルを3Dで確認できる。投手を切り替えて、右投手と左投手の回転方向の違いも観察してみよう。球種を選択すると、<span style="color:#ff8a65">ω矢印</span>の方向と<span style="color:#4fc3f7">マグヌス力の方向</span>、そして投手→ホームの軌跡が表示される。マウスドラッグで視点を変更できる。</p>
 
 <div style="background:#111;border-radius:8px;padding:16px;margin:20px 0;">
 <canvas id="bsg-canvas" style="width:100%;height:420px;border-radius:8px;cursor:grab;"></canvas>
-<div style="margin-top:12px;">
+<div style="margin-top:12px;display:flex;gap:16px;flex-wrap:wrap;">
+<label style="color:#aaa;font-size:13px;">投手:
+<select id="bsg-pitcher" style="font-size:13px;background:#222;color:#ddd;border:1px solid #555;padding:2px 6px;">
+<option value="yamamoto">山本由伸 (右投手)</option>
+<option value="imanaga">今永昇太 (左投手)</option>
+</select>
+</label>
 <label style="color:#aaa;font-size:13px;">球種:
 <select id="bsg-pitch" style="font-size:13px;background:#222;color:#ddd;border:1px solid #555;padding:2px 6px;">
-<option value="ff">FF ストレート (今永)</option>
-<option value="si">SI シンカー (今永)</option>
-<option value="sl">SL スライダー (今永)</option>
-<option value="cu">CU カーブ (今永)</option>
-<option value="ch">CH チェンジアップ (今永)</option>
-<option value="all">全球種表示</option>
 </select>
 </label>
 </div>
@@ -702,15 +702,33 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
     // Ball rotation state
     let ballOmega = new THREE.Vector3(0, 0, 0);  // Three.js coords
 
-    // --- Pitch data (Imanaga 2025, high spin efficiency on FF) ---
+    // --- Pitch data for two pitchers ---
     const RPM = Math.PI / 30;
-    const pitchData = {
-        ff:  {name:'FF ストレート (今永)', color:0xff4444, wx:-2066, wz:742,  wy:-654,  speed:95.1, spin:2219},
-        si:  {name:'SI シンカー (今永)',   color:0x44cc44, wx:-965,  wz:1906, wy:-709,  speed:93.3, spin:2213},
-        sl:  {name:'SL スライダー (今永)', color:0x44bbff, wx:-388,  wz:-292, wy:-2254, speed:87.7, spin:2256},
-        cu:  {name:'CU カーブ (今永)',     color:0x4444ff, wx:200,   wz:-339, wy:-2408, speed:80.5, spin:2491},
-        ch:  {name:'CH チェンジアップ (今永)', color:0x888888, wx:-586, wz:1289, wy:-0, speed:87.0, spin:1543},
+    const pitcherData = {
+        imanaga: {
+            name: '今永昇太 (左投手)',
+            pitches: {
+                ff:  {name:'FF ストレート', color:0xff4444, wx:-2066, wz:742,  wy:-654,  speed:95.1, spin:2219},
+                si:  {name:'SI シンカー',   color:0x44cc44, wx:-965,  wz:1906, wy:-709,  speed:93.3, spin:2213},
+                sl:  {name:'SL スライダー', color:0x44bbff, wx:-388,  wz:-292, wy:-2254, speed:87.7, spin:2256},
+                cu:  {name:'CU カーブ',     color:0x4444ff, wx:200,   wz:-339, wy:-2408, speed:80.5, spin:2491},
+                ch:  {name:'CH チェンジアップ', color:0x888888, wx:-586, wz:1289, wy:-0, speed:87.0, spin:1543},
+            }
+        },
+        yamamoto: {
+            name: '山本由伸 (右投手)',
+            pitches: {
+                ff:  {name:'FF ストレート', color:0xff4444, wx:-862,  wz:-601, wy:-1756, speed:95.0, spin:2167},
+                si:  {name:'SI シンカー',   color:0x44cc44, wx:-786,  wz:-786, wy:-1843, speed:94.4, spin:2204},
+                fc:  {name:'FC カッター',   color:0x9933cc, wx:-311,  wz:311,  wy:-2407, speed:90.8, spin:2399},
+                sl:  {name:'SL スライダー', color:0x44bbff, wx:264,   wz:279,  wy:-2834, speed:85.6, spin:2764},
+                cu:  {name:'CU カーブ',     color:0x4444ff, wx:1589,  wz:1463, wy:-1847, speed:76.2, spin:2757},
+                fs:  {name:'FS スプリット', color:0x996633, wx:50,    wz:-325, wy:-1234, speed:90.6, spin:1350},
+            }
+        }
     };
+    let currentPitcher = 'yamamoto';
+    let pitchData = pitcherData[currentPitcher].pitches;
 
     let currentArrows = [];
 
@@ -921,10 +939,33 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
         }
     }
 
+    function rebuildPitchSelect() {
+        const sel = document.getElementById('bsg-pitch');
+        sel.innerHTML = '';
+        Object.keys(pitchData).forEach(k => {
+            const opt = document.createElement('option');
+            opt.value = k;
+            opt.textContent = pitchData[k].name;
+            sel.appendChild(opt);
+        });
+        const allOpt = document.createElement('option');
+        allOpt.value = 'all';
+        allOpt.textContent = '全球種表示';
+        sel.appendChild(allOpt);
+    }
+
+    document.getElementById('bsg-pitcher').addEventListener('change', function() {
+        currentPitcher = this.value;
+        pitchData = pitcherData[currentPitcher].pitches;
+        rebuildPitchSelect();
+        updateBSG('ff');
+    });
+
     document.getElementById('bsg-pitch').addEventListener('change', function() {
         updateBSG(this.value);
     });
 
+    rebuildPitchSelect();
     updateBSG('ff');
 
     const clock = new THREE.Clock();
