@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>なぜ変化球は曲がるのか — 角速度ベクトルで理解するボールの変化</title>
+<title>なぜ変化球は曲がるのか — 動かして学ぶ変化球の物理</title>
 <meta name="description" content="ストレートを含む全ての投球がなぜ曲がるのか、角速度ベクトルとマグヌス効果で解説。インタラクティブ3D可視化付き。">
-<meta property="og:title" content="なぜ変化球は曲がるのか">
+<meta property="og:title" content="なぜ変化球は曲がるのか — 動かして学ぶ変化球の物理">
 <meta property="og:description" content="角速度ベクトルで理解するボールの変化。インタラクティブ3D可視化付き。">
 <meta property="og:image" content="https://baseball.skill-vis.com/static/ogp.png">
 <meta property="og:url" content="https://skill-vis.github.io/MyTrajectorySimulator/article/why-pitches-curve.html">
@@ -39,8 +39,10 @@ h1 {
     line-height: 1.4;
 }
 .subtitle {
-    font-size: 1.1em;
-    color: #888;
+    font-size: 1.4em;
+    color: var(--accent2);
+    font-weight: bold;
+    letter-spacing: 0.05em;
     margin-bottom: 40px;
 }
 h2 {
@@ -164,11 +166,12 @@ MathJax = { tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] } };
 <div class="container">
 
 <h1>なぜ変化球は曲がるのか</h1>
-<p class="subtitle">角速度ベクトルで理解するボールの変化</p>
+<p class="subtitle">動かして学ぶ変化球の物理</p>
+<p style="color:#888;font-size:0.95em;margin-top:-30px;margin-bottom:40px;">— 角速度ベクトルで理解するボールの変化 —</p>
 
 <!-- ========== 序章 ========== -->
 <div class="highlight">
-<strong>「ストレートは最高の変化球である」</strong>（溝田武人 教授）<br>
+<strong>「ストレートは最高の変化球である」</strong>（溝田武人 福岡工大名誉教授）<br>
 全ての投球は「変化」している。重力だけで飛ぶボールに比べ、回転するボールは大きく軌道を変える。ストレートも例外ではない。
 </div>
 
@@ -192,19 +195,125 @@ MathJax = { tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] } };
 <!-- ========== 第1章 ========== -->
 <h2 id="ch1">第1章: ボールに作用する力</h2>
 
-<p>飛行中の野球ボールには、主に3つの力が作用する。</p>
+<p>飛翔中の野球ボールには、主に3つの力が作用する。</p>
+
+<figure style="margin:24px auto;text-align:center;">
+<svg viewBox="0 0 520 380" style="max-width:520px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Ball gradient for 3D look -->
+    <radialGradient id="ballGrad" cx="40%" cy="38%" r="50%">
+      <stop offset="0%" stop-color="#f5f0e5"/>
+      <stop offset="70%" stop-color="#d8d0c0"/>
+      <stop offset="100%" stop-color="#b0a890"/>
+    </radialGradient>
+    <!-- Shadow ellipse -->
+    <radialGradient id="shadowGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#000" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="520" height="380" rx="8" fill="#12122a"/>
+
+  <!-- Shadow under ball -->
+  <ellipse cx="265" cy="310" rx="50" ry="12" fill="url(#shadowGrad)"/>
+
+  <!-- Velocity arrow (blue, going right and slightly forward/down) -->
+  <line x1="295" y1="185" x2="440" y2="220" stroke="#4488ff" stroke-width="2.5" stroke-dasharray="8,5"/>
+  <polygon points="445,221 428,214 430,226" fill="#4488ff"/>
+  <text x="390" y="248" fill="#4488ff" font-size="15" font-weight="bold" font-family="sans-serif">v</text>
+  <text x="370" y="265" fill="#4488ff" font-size="12" font-family="sans-serif">(速度)</text>
+
+  <!-- Drag arrow (opposite to velocity, going left and slightly back/up) -->
+  <line x1="225" y1="180" x2="90" y2="148" stroke="#aaaaaa" stroke-width="4"/>
+  <polygon points="85,147 102,140 100,154" fill="#aaaaaa"/>
+  <text x="42" y="132" fill="#aaaaaa" font-size="14" font-weight="bold" font-family="sans-serif">抗力</text>
+  <text x="50" y="150" fill="#aaaaaa" font-size="14" font-weight="bold" font-family="sans-serif">F<tspan font-size="10" dy="3">D</tspan></text>
+
+  <!-- Magnus force arrow (up and slightly left, perpendicular-ish to v) -->
+  <line x1="255" y1="140" x2="220" y2="30" stroke="#4fc3f7" stroke-width="4"/>
+  <polygon points="218,25 212,43 226,40" fill="#4fc3f7"/>
+  <text x="155" y="48" fill="#4fc3f7" font-size="14" font-weight="bold" font-family="sans-serif">マグヌス力</text>
+  <text x="178" y="66" fill="#4fc3f7" font-size="14" font-weight="bold" font-family="sans-serif">F<tspan font-size="10" dy="3">M</tspan></text>
+
+  <!-- Gravity arrow (straight down) -->
+  <line x1="260" y1="215" x2="260" y2="330" stroke="#ffcc44" stroke-width="4"/>
+  <polygon points="260,336 253,320 267,320" fill="#ffcc44"/>
+  <text x="272" y="320" fill="#ffcc44" font-size="14" font-weight="bold" font-family="sans-serif">重力 mg</text>
+
+  <!-- Ball (3D shaded sphere) -->
+  <circle cx="260" cy="180" r="45" fill="url(#ballGrad)" stroke="#999" stroke-width="1"/>
+
+  <!-- Backspin rotation arrows (curved arrows on the ball surface) -->
+  <!-- Front face rotation: clockwise when viewed from right = backspin -->
+  <path d="M240,148 A30,30 0 0,1 280,170" fill="none" stroke="#cc4444" stroke-width="1.8"/>
+  <polygon points="281,170 274,162 278,175" fill="#cc4444"/>
+  <path d="M280,195 A30,30 0 0,1 240,213" fill="none" stroke="#cc4444" stroke-width="1.8"/>
+  <polygon points="239,213 247,207 243,218" fill="#cc4444"/>
+
+  <!-- ω arrow (dashed, pointing out of screen = toward viewer, slightly left-down) -->
+  <line x1="260" y1="180" x2="175" y2="245" stroke="#ff8a65" stroke-width="2" stroke-dasharray="6,4"/>
+  <polygon points="170,249 182,240 178,252" fill="#ff8a65"/>
+  <text x="130" y="268" fill="#ff8a65" font-size="13" font-weight="bold" font-family="sans-serif">ω</text>
+  <text x="100" y="285" fill="#ff8a65" font-size="11" font-family="sans-serif">(回転軸)</text>
+
+  <!-- Caption -->
+  <text x="260" y="368" fill="#888" font-size="12" font-family="sans-serif" text-anchor="middle">バックスピン（ストレート）の場合の3力と回転軸の関係</text>
+</svg>
+<figcaption>飛翔中のボールに作用する3つの力: 重力（黄・下向き）、抗力（灰・進行方向と逆）、マグヌス力（青・回転による偏向力）。回転軸 ω（オレンジ破線）は右ねじの回転方向。</figcaption>
+</figure>
 
 <h3>1-1. 重力 — ボールを下に引く力</h3>
 
 <p>全ての物体に作用する下向きの力。95 mph（約153 km/h）のストレートでも、投手のリリースからホームプレートまでの約0.4秒間に、重力だけで<strong>約80 cm</strong>も落下する。</p>
 
-<p>もし回転が全くなければ、ボールは放物線を描いて落ちるだけだ。次のシミュレーションで、回転なし（水色の破線）と実際の投球（オレンジ）の軌道を比較してみよう。</p>
+<figure style="margin:24px auto;text-align:center;">
+<svg viewBox="0 0 520 240" style="max-width:520px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg">
+  <rect width="520" height="240" rx="8" fill="#12122a"/>
 
-<a href="https://baseball.skill-vis.com/?mlbam_id=660271&year=2025&date=2025-06-28&pitch=0" target="_blank" class="sim-link">🔵 大谷のストレートを3Dで見る</a>
+  <!-- Axis labels -->
+  <text x="30" y="30" fill="#888" font-size="11" font-family="sans-serif">リリース</text>
+  <text x="450" y="30" fill="#888" font-size="11" font-family="sans-serif">ホーム</text>
 
-<div class="highlight">
-<strong>ポイント:</strong> 水色の破線（スピンなし）とオレンジの実線（スピンあり）の差が、回転によって生まれる「変化」の大きさ。ストレートでさえ、40 cm 以上の変化量がある。
-</div>
+  <!-- Release point marker -->
+  <circle cx="60" cy="60" r="4" fill="#ff8a65"/>
+  <text x="68" y="56" fill="#ff8a65" font-size="10" font-family="sans-serif">リリース (1.8m)</text>
+
+  <!-- Straight line: no gravity, no drag, no spin (dashed) -->
+  <line x1="60" y1="60" x2="470" y2="60" stroke="#00cccc" stroke-width="2" stroke-dasharray="8,5"/>
+  <text x="330" y="52" fill="#00cccc" font-size="11" font-family="sans-serif">重力なし・スピンなし（直線）</text>
+
+  <!-- Parabolic arc: gravity only, no drag, no spin (solid) -->
+  <!-- y = y0 + vy0*t - 0.5*g*t^2, with slight upward release angle -->
+  <!-- At t=0.4s, drop ≈ 0.5*9.8*0.16 = 0.78m ≈ 80cm -->
+  <!-- Scale: 410px = 18.44m horizontal, so 80cm ≈ 80/180*160 ≈ 71px vertical -->
+  <path d="M60,60 Q180,55 300,72 Q390,95 470,132" fill="none" stroke="#ffcc44" stroke-width="2.5"/>
+  <circle cx="470" cy="132" r="4" fill="#ffcc44"/>
+  <text x="330" y="148" fill="#ffcc44" font-size="11" font-family="sans-serif">重力あり・スピンなし（放物線）</text>
+
+  <!-- Dimension arrow showing ~80cm drop -->
+  <line x1="482" y1="60" x2="482" y2="132" stroke="#ff6666" stroke-width="1.5"/>
+  <line x1="476" y1="60" x2="488" y2="60" stroke="#ff6666" stroke-width="1.5"/>
+  <line x1="476" y1="132" x2="488" y2="132" stroke="#ff6666" stroke-width="1.5"/>
+  <polygon points="482,63 479,70 485,70" fill="#ff6666"/>
+  <polygon points="482,129 479,122 485,122" fill="#ff6666"/>
+  <text x="492" y="100" fill="#ff6666" font-size="13" font-weight="bold" font-family="sans-serif">≈80cm</text>
+
+  <!-- Ground reference line -->
+  <line x1="40" y1="200" x2="500" y2="200" stroke="#333355" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="42" y="215" fill="#555" font-size="10" font-family="sans-serif">地面</text>
+
+  <!-- Distance label -->
+  <line x1="60" y1="190" x2="470" y2="190" stroke="#555" stroke-width="0.8"/>
+  <line x1="60" y1="186" x2="60" y2="194" stroke="#555" stroke-width="0.8"/>
+  <line x1="470" y1="186" x2="470" y2="194" stroke="#555" stroke-width="0.8"/>
+  <text x="240" y="186" fill="#555" font-size="10" font-family="sans-serif" text-anchor="middle">18.44 m（投手→ホーム）</text>
+</svg>
+<figcaption>真横から見た軌道比較（抗力・スピンなし）。重力だけで約80cm落下する。</figcaption>
+</figure>
+
+<p>もし回転が全くなければ、ボールは放物線を描いて落ちるだけだ。</p>
 
 <h3>1-2. 空気抵抗（抗力）— ボールを減速させる力</h3>
 
@@ -218,31 +327,96 @@ MathJax = { tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] } };
 
 <p>回転方向と同じ向きに空気が流れる側では、空気の速度が<strong>速く</strong>なり、圧力が<strong>低く</strong>なる。逆側では空気が<strong>遅く</strong>なり、圧力が<strong>高く</strong>なる。この圧力差がボールを低圧側に押す力 — <strong>マグヌス力</strong> — を生む。</p>
 
+<figure style="margin:24px auto;text-align:center;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 400" style="max-width:480px;width:100%;height:auto;" font-family="'Hiragino Sans', 'Noto Sans JP', sans-serif">
+  <defs>
+    <marker id="arrowB" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#9999bb"/>
+    </marker>
+    <radialGradient id="magBallGrad2" cx="60%" cy="38%" r="50%">
+      <stop offset="0%" stop-color="#f5f0e5"/>
+      <stop offset="70%" stop-color="#d8d0c0"/>
+      <stop offset="100%" stop-color="#a09880"/>
+    </radialGradient>
+    <filter id="magShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="2" dy="3" stdDeviation="4" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- Background (dark theme) -->
+  <rect width="480" height="400" fill="#12122a" rx="8"/>
+
+  <!-- Airflow lines -->
+  <g stroke="#8888aa" stroke-width="1.5" fill="none">
+    <!-- Top: fast flow, wider spacing (low pressure) -->
+    <path d="M 420,90 Q 330,88 255,78 Q 180,68 140,85" marker-end="url(#arrowB)"/>
+    <path d="M 420,110 Q 340,106 270,92 Q 190,76 140,102" marker-end="url(#arrowB)"/>
+    <path d="M 420,130 Q 350,128 285,110 Q 210,90 140,122" marker-end="url(#arrowB)"/>
+
+    <!-- Bottom: slow flow, tighter spacing (high pressure) -->
+    <path d="M 420,270 Q 340,272 280,290 Q 205,312 140,278" marker-end="url(#arrowB)"/>
+    <path d="M 420,300 Q 340,304 280,324 Q 200,348 140,308" marker-end="url(#arrowB)"/>
+    <path d="M 420,330 Q 330,334 270,348 Q 195,366 140,338" marker-end="url(#arrowB)"/>
+  </g>
+
+  <!-- Baseball -->
+  <circle cx="255" cy="200" r="62" fill="url(#magBallGrad2)" stroke="#888" stroke-width="2" filter="url(#magShadow)"/>
+
+  <!-- Backspin rotation arrows on ball -->
+  <path d="M232,162 A45,45 0 0,1 280,170" fill="none" stroke="#cc4444" stroke-width="2.2"/>
+  <polygon points="281,170 273,163 276,176" fill="#cc4444"/>
+  <path d="M280,232 A45,45 0 0,1 232,224" fill="none" stroke="#cc4444" stroke-width="2.2"/>
+  <polygon points="231,224 240,231 237,218" fill="#cc4444"/>
+
+  <!-- Velocity arrow (dashed, left) -->
+  <line x1="62" y1="200" x2="130" y2="200" stroke="#4488ff" stroke-width="2" stroke-dasharray="6,4"/>
+  <polygon points="58,200 70,195 70,205" fill="#4488ff"/>
+  <text x="62" y="190" fill="#4488ff" font-size="12" font-weight="bold">← v (進行方向)</text>
+
+  <!-- Magnus force arrow (upward, centered on ball) -->
+  <line x1="255" y1="275" x2="255" y2="125" stroke="#4fc3f7" stroke-width="10" opacity="0.85"/>
+  <polygon points="255,115 244,133 266,133" fill="#4fc3f7"/>
+  <text x="268" y="125" fill="#4fc3f7" font-size="14" font-weight="bold">マグヌス力 F<tspan font-size="10" dy="3">M</tspan></text>
+
+  <!-- Rotation axis ω (pointing into screen) overlaid on Magnus arrow -->
+  <circle cx="255" cy="200" r="12" fill="#12122a" stroke="#ff8a65" stroke-width="2.5"/>
+  <line x1="247" y1="192" x2="263" y2="208" stroke="#ff8a65" stroke-width="2.5"/>
+  <line x1="263" y1="192" x2="247" y2="208" stroke="#ff8a65" stroke-width="2.5"/>
+  <text x="275" y="210" fill="#ff8a65" font-size="13" font-weight="bold">ω</text>
+  <text x="272" y="224" fill="#ff8a65" font-size="10">(回転軸: 奥向き)</text>
+
+  <!-- Pressure labels -->
+  <text x="390" y="82" fill="#4fc3f7" font-size="13" font-weight="bold">圧力 低</text>
+  <text x="390" y="98" fill="#4fc3f7" font-size="10">流れが速い</text>
+  <text x="390" y="290" fill="#ff8a65" font-size="13" font-weight="bold">圧力 高</text>
+  <text x="390" y="306" fill="#ff8a65" font-size="10">流れが遅い</text>
+
+  <!-- Caption -->
+  <text x="240" y="386" fill="#888" font-size="11" text-anchor="middle">バックスピン（ストレート）: 圧力差がボールを低圧側（上方）に押す</text>
+</svg>
+<figcaption>バックスピン（ストレート）の場合: 上側は流速が速く低圧、下側は流速が遅く高圧。この圧力差がマグヌス力を生む。</figcaption>
+</figure>
+
 <div class="highlight orange">
-<strong>マグヌス力の方向:</strong> 回転軸と進行方向の両方に<strong>直交する</strong>方向にボールが移動する。回転軸を矢印で表現すると、<strong>矢印 × 進行方向</strong>（外積）の向きに力が働く。
+<strong>マグヌス力の方向:</strong> マグヌス力は<strong>進行方向と回転軸方向の両方に垂直な方向</strong>に作用する。すなわち、速度方向（= ジャイロ方向）まわりの回転は、ボールの縦横変化に寄与しない。
 </div>
 
-<p>この「回転軸と進行方向に直交する方向に曲がる」というルールが、全ての球種の変化を統一的に説明する鍵だ。</p>
+<p>この「回転軸と進行方向に直交する方向に曲がる」ルールが、全ての球種の変化を統一的に説明する。</p>
 
-<p>下の3Dウィジェットで、回転軸（<span style="color:#ff8a65">オレンジの矢印 ω</span>）をスライダーで動かすと、マグヌス力（<span style="color:#4fc3f7">青の矢印 F</span>）の方向がどう変わるか体験できる。速度は常に手前方向（捕手方向）。</p>
+<p>下の3Dウィジェットで、回転軸（<span style="color:#ff8a65">オレンジの矢印 ω</span>）をスライダーで動かすと、マグヌス力（<span style="color:#4fc3f7">青の矢印 F</span>）の方向と軌道がどう変わるか体験できる。まずはストレートの状態から、スライダーを動かしてみよう。</p>
 
 <div style="background:#111;border-radius:8px;padding:16px;margin:20px 0;">
-<canvas id="magnus-canvas" style="width:100%;height:400px;border-radius:8px;cursor:grab;"></canvas>
-<div style="display:flex;gap:20px;margin-top:12px;flex-wrap:wrap;">
-<label style="color:#aaa;font-size:13px;">ω 上下角: <input type="range" id="omega-tilt" min="-90" max="90" value="0" style="width:140px;vertical-align:middle;"> <span id="tilt-val">0°</span></label>
-<label style="color:#aaa;font-size:13px;">ω 横角: <input type="range" id="omega-yaw" min="-90" max="90" value="0" style="width:140px;vertical-align:middle;"> <span id="yaw-val">0°</span></label>
-<label style="color:#aaa;font-size:13px;">球種プリセット:
-<select id="preset-select" style="font-size:13px;background:#222;color:#ddd;border:1px solid #555;padding:2px 6px;">
-<option value="custom">-- 自由 --</option>
-<option value="ff">ストレート (FF)</option>
-<option value="cu">カーブ (CU)</option>
-<option value="sl">スライダー (SL)</option>
-<option value="si">シンカー (SI)</option>
-<option value="gyro">ジャイロ</option>
-</select>
-</label>
+<canvas id="magnus-canvas" style="width:100%;height:420px;border-radius:8px;cursor:grab;"></canvas>
+<div style="margin-top:10px;display:flex;flex-direction:column;gap:8px;">
+<div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center;">
+<label style="color:#aaa;font-size:13px;">T (トップスピン角): <input type="range" id="m1-tilt" min="-90" max="90" value="-70" style="width:160px;vertical-align:middle;"> <span id="m1-tilt-val" style="color:#ff8a65;font-weight:bold;">-70°</span></label>
+<label style="color:#aaa;font-size:13px;">サイドスピン角: <input type="range" id="m1-yaw" min="-90" max="90" value="-10" style="width:160px;vertical-align:middle;"> <span id="m1-yaw-val" style="color:#ff8a65;font-weight:bold;">-10°</span></label>
 </div>
-<div id="magnus-info" style="color:#888;font-size:12px;margin-top:6px;"></div>
+<div style="display:flex;gap:8px;align-items:center;">
+<button id="m1-reset-ff" style="font-size:12px;background:#333;color:#ff4444;border:1px solid #555;border-radius:4px;padding:3px 12px;cursor:pointer;">↩ ストレートに戻す</button>
+</div>
+</div>
+<div id="m1-info" style="color:#888;font-size:12px;margin-top:6px;"></div>
 </div>
 
 <details>
@@ -250,12 +424,20 @@ MathJax = { tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] } };
 <div>
 <p>マグヌス力は次のように記述される:</p>
 $$\mathbf{F}_M = \frac{1}{2} C_L \rho A v^2 \, (\hat{\boldsymbol{\omega}} \times \hat{\mathbf{v}})$$
-<p>ここで $C_L$ は揚力係数（スピンパラメータ $S = R\omega/v$ の関数）、$\rho$ は空気密度、$A$ はボールの断面積、$v$ は速度、$\hat{\boldsymbol{\omega}}$ は回転軸の単位ベクトル、$\hat{\mathbf{v}}$ は速度の単位ベクトルである。</p>
-<p>$C_L(S)$ のモデルとしては Nathan の有理関数型が広く用いられる:</p>
+<p>ここで $C_L$ は揚力係数、$\rho$ は空気密度、$A$ はボールの断面積、$v$ は速度、$\hat{\boldsymbol{\omega}}$ は回転軸の単位ベクトル、$\hat{\mathbf{v}}$ は速度の単位ベクトルである。</p>
+<p>$C_L$ はスピンパラメータ $S = R\omega/v$（ボール表面速度と並進速度の比）の関数であり、<a href="https://baseball.skill-vis.com" target="_blank" style="color:#4fc3f7;">baseball.skill-vis.com</a> のシミュレータでは、以下の Nathan の有理関数型モデルを用いている:</p>
 $$C_L = \frac{c_2 \cdot S}{c_0 + c_1 \cdot S}$$
-<p>($c_0 = 0.583$, $c_1 = 2.333$, $c_2 = 1.045$)</p>
+<p>Nathan オリジナルの係数は $c_0 = 0.583$, $c_1 = 2.333$, $c_2 = 1.12$ であるが、本シミュレータでは Statcast データへのフィッティングに基づき $c_2 = 1.045$ に修正した値を用いている。</p>
 </div>
 </details>
+
+<p>次のシミュレーションで、回転なし（水色の破線）と実際の投球（オレンジ）の軌道を比較できる。</p>
+
+<a href="https://baseball.skill-vis.com/?mlbam_id=660271&year=2025&date=2025-06-28&pitch=0" target="_blank" class="sim-link">🔵 大谷のストレートを3Dで見る</a>
+
+<div class="highlight">
+<strong>ポイント:</strong> 水色の破線（スピンなし）とオレンジの実線（スピンあり）の差が、回転によって生まれる「変化」の大きさ。ストレートでさえ、40 cm 以上の変化量がある。
+</div>
 
 <!-- ========== 第2章 ========== -->
 <h2 id="ch2">第2章: 回転を矢印（ベクトル）で理解する</h2>
@@ -269,7 +451,12 @@ $$C_L = \frac{c_2 \cdot S}{c_0 + c_1 \cdot S}$$
 <li><strong>長さ</strong>: 回転の速さ（回転数, rpm）</li>
 </ul>
 
-<p>右ねじの法則とは、右手の指を回転方向に巻いたとき、親指が指す向きが矢印の方向だ。バックスピンなら矢印は1塁方向、トップスピンなら3塁方向を向く。</p>
+<p>右ねじの法則とは、右手の指を回転方向に巻いたとき、親指が指す向きが矢印の方向だ。</p>
+
+<figure style="margin:24px auto;text-align:center;background:#12122a;border-radius:8px;padding:16px;">
+<img src="img/screw_with_string.png" alt="角速度ベクトル: 矢印の方向が回転軸（右ねじが進む向き）、長さが回転の速さ" style="max-width:360px;width:100%;height:auto;">
+<figcaption>角速度ベクトル ω: 矢印の方向が回転軸（右ねじが進む向き）、長さが回転の速さを表す。</figcaption>
+</figure>
 
 <h3>2-2. なぜ「角度」ではなく「ベクトル」なのか</h3>
 
@@ -285,23 +472,80 @@ $$C_L = \frac{c_2 \cdot S}{c_0 + c_1 \cdot S}$$
 
 <p>ベクトル表現なら、<strong>方向と大きさを同時に</strong>表現でき、2つの投球の「似ている度」をベクトルの距離として計算できる。</p>
 
-<h3>2-3. 3つの成分: バックスピン・サイドスピン・ジャイロスピン</h3>
+<h3>2-3. 3つの成分: トップスピン・サイドスピン・ジャイロスピン</h3>
 
 <p>角速度ベクトルは、投球に対して意味のある3つの成分に分解できる:</p>
 
 <ul>
-<li><span class="vector-arrow">バックスピン (B)</span>: 速度に垂直で水平な軸周りの回転。ストレートの「ホップ」を生む</li>
-<li><span class="vector-arrow">サイドスピン (S)</span>: 速度とBの両方に垂直な軸周りの回転。横方向の変化を生む</li>
+<li><span class="vector-arrow">トップスピン (T)</span>: 速度に垂直で水平な軸周りの回転。T &gt; 0 でドロップ方向の力、T &lt; 0 で「ホップ」方向の力（バックスピン）が発生する</li>
+<li><span class="vector-arrow">サイドスピン (S)</span>: 速度とTの両方に垂直な軸周りの回転。横方向の変化を生む</li>
 <li><span class="vector-arrow">ジャイロスピン (G)</span>: 速度方向の回転（弾丸のような回転）。マグヌス力を<strong>生まない</strong></li>
 </ul>
 
-<p>ジャイロ成分が多いほど、同じ回転数でも実際の変化量は小さくなる。これが<strong>スピン効率</strong>（Active Spin %）の概念だ。</p>
+<p>この T, S, G の3つの軸は互いに<strong>直交</strong>し、<strong>TSG座標系</strong>（右手系: $\hat{\mathbf{e}}_T \times \hat{\mathbf{e}}_S = \hat{\mathbf{e}}_G$）を構成する。名前の並び順がそのまま数学的な右手系の巡回順であり、任意の角速度ベクトル $\boldsymbol{\omega}$ はこの3軸への射影として一意に分解できる。下の3Dウィジェットで、TSG座標系の3軸と速度ベクトルの関係を確認しよう。マウスドラッグで視点を回転できる。</p>
+
+<div style="background:#111;border-radius:8px;padding:16px;margin:20px 0;">
+<canvas id="bsg-axes-canvas" style="width:100%;height:420px;border-radius:8px;cursor:grab;"></canvas>
+<div style="margin-top:10px;display:flex;flex-direction:column;gap:8px;">
+<div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center;">
+<label style="color:#aaa;font-size:13px;">T (トップスピン): <input type="range" id="bsg0-t" min="-90" max="90" value="-70" style="width:140px;vertical-align:middle;"> <span id="bsg0-t-val" style="color:#ff4444;font-weight:bold;">-70°</span></label>
+<label style="color:#aaa;font-size:13px;">S (サイドスピン): <input type="range" id="bsg0-s" min="-90" max="90" value="10" style="width:140px;vertical-align:middle;"> <span id="bsg0-s-val" style="color:#4488ff;font-weight:bold;">10°</span></label>
+<label style="color:#aaa;font-size:13px;">G (ジャイロ): <input type="range" id="bsg0-g" min="-90" max="0" value="-10" style="width:120px;vertical-align:middle;"> <span id="bsg0-g-val" style="color:#44ff44;font-weight:bold;">-10°</span></label>
+</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+<span style="color:#666;font-size:12px;">プリセット:</span>
+<button class="bsg0-preset" data-t="-70" data-s="10" data-g="-10" style="font-size:11px;background:#333;color:#ff4444;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">FF ストレート</button>
+<button class="bsg0-preset" data-t="55" data-s="25" data-g="-10" style="font-size:11px;background:#333;color:#4444ff;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">CU カーブ</button>
+<button class="bsg0-preset" data-t="-5" data-s="-5" data-g="-65" style="font-size:11px;background:#333;color:#44bbff;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">SL スライダー</button>
+<button class="bsg0-preset" data-t="-55" data-s="-25" data-g="-5" style="font-size:11px;background:#333;color:#44cc44;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">SI シンカー</button>
+<button class="bsg0-preset" data-t="0" data-s="0" data-g="-90" style="font-size:11px;background:#333;color:#999;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">ジャイロ</button>
+</div>
+</div>
+<div id="bsg-axes-info" style="color:#888;font-size:12px;margin-top:6px;"></div>
+</div>
+
+<details>
+<summary>📐 研究者向け: TSG座標系と従来のBSG表記について</summary>
+<div>
+<p>TSG座標系は $\hat{\mathbf{e}}_T \times \hat{\mathbf{e}}_S = \hat{\mathbf{e}}_G$ を満たす右手系であり、名前の順番がそのまま座標系の巡回順と一致する。</p>
+<p>従来の文献では「BSG」（Backspin, Sidespin, Gyro）の表記が用いられることがある。$\hat{\mathbf{e}}_B = -\hat{\mathbf{e}}_T$ であるため、B &gt; 0 がホップ方向（バックスピン）に対応するが、この場合の右手系巡回順は <strong>B → G → S</strong>（BGS）となり、名前の並び順と軸の数学的順序が一致しないという問題がある。TSG表記ではこの不整合が解消される。</p>
+</div>
+</details>
+
+<h3>2-4. スピン効率</h3>
+
+<p>ジャイロ成分（G）はマグヌス力を生まないため、全回転数のうち<strong>実際に変化に寄与する割合</strong>が重要になる。これを<strong>スピン効率</strong>（Active Spin %）と呼ぶ。</p>
+
+<p>TSG座標系では、スピン効率は次のように定義される:</p>
+
+<div class="math-box">
+スピン効率 = $\frac{\sqrt{T^2 + S^2}}{\sqrt{T^2 + S^2 + G^2}} \times 100$ (%)
+</div>
+
+<p>分子の $\sqrt{T^2 + S^2}$ は<strong>transverse spin</strong>（速度に垂直な回転成分）であり、マグヌス力を生む「有効な回転」の量だ。分母は全回転数である。</p>
+
+<ul>
+<li><strong>スピン効率 100%</strong>: ジャイロ成分がゼロ。全ての回転がボールの変化に寄与する（純粋なバックスピン、トップスピン、サイドスピンなど）</li>
+<li><strong>スピン効率 0%</strong>: 全てがジャイロ回転。弾丸のように回転軸が速度方向を向いており、回転数が多くてもボールは曲がらない</li>
+</ul>
+
+<p>例えば、大谷翔平のストレートは全回転数 2500 rpm に対してスピン効率は約72%。つまり有効な transverse spin は約 1800 rpm であり、残りの約 700 rpm はジャイロ成分として変化に寄与していない。</p>
+
+<div class="highlight">
+<strong>同じ回転数でも変化量が異なる理由:</strong> 2500 rpm で効率 100% のストレートと、2500 rpm で効率 50% のストレートでは、後者の有効回転は 1250 rpm しかなく、変化量は大幅に小さくなる。回転数だけでなくスピン効率を見ることで、投球の「真の変化力」がわかる。
+</div>
 
 <p>下のウィジェットで、山本由伸（右投手）と今永昇太（左投手）の各球種のωベクトルを3Dで確認できる。投手を切り替えて、右投手と左投手の回転方向の違いも観察してみよう。球種を選択すると、<span style="color:#ff8a65">ω矢印</span>の方向と<span style="color:#4fc3f7">マグヌス力の方向</span>、そして投手→ホームの軌跡が表示される。マウスドラッグで視点を変更できる。</p>
 
 <div style="background:#111;border-radius:8px;padding:16px;margin:20px 0;">
 <canvas id="bsg-canvas" style="width:100%;height:420px;border-radius:8px;cursor:grab;"></canvas>
-<div style="margin-top:12px;display:flex;gap:16px;flex-wrap:wrap;">
+<!-- Mode tabs -->
+<div style="margin-top:12px;display:flex;gap:0;">
+<button id="w2-mode-pitcher" style="flex:1;padding:8px;font-size:13px;background:#335;color:#4fc3f7;border:1px solid #555;border-radius:6px 0 0 6px;cursor:pointer;font-weight:bold;">📊 投手データ</button>
+<button id="w2-mode-free" style="flex:1;padding:8px;font-size:13px;background:#222;color:#888;border:1px solid #555;border-radius:0 6px 6px 0;cursor:pointer;">🎛️ 自由スライダー</button>
+</div>
+<!-- Pitcher mode controls -->
+<div id="w2-ctrl-pitcher" style="margin-top:10px;display:flex;gap:16px;flex-wrap:wrap;">
 <label style="color:#aaa;font-size:13px;">投手:
 <select id="bsg-pitcher" style="font-size:13px;background:#222;color:#ddd;border:1px solid #555;padding:2px 6px;">
 <option value="yamamoto">山本由伸 (右投手)</option>
@@ -313,17 +557,33 @@ $$C_L = \frac{c_2 \cdot S}{c_0 + c_1 \cdot S}$$
 </select>
 </label>
 </div>
+<!-- Free slider mode controls -->
+<div id="w2-ctrl-free" style="margin-top:10px;display:none;flex-direction:column;gap:8px;">
+<div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center;">
+<label style="color:#aaa;font-size:13px;">T (トップスピン): <input type="range" id="w2-t" min="-90" max="90" value="-70" style="width:140px;vertical-align:middle;"> <span id="w2-t-val" style="color:#ff4444;font-weight:bold;">-70°</span></label>
+<label style="color:#aaa;font-size:13px;">S (サイドスピン): <input type="range" id="w2-s" min="-90" max="90" value="10" style="width:140px;vertical-align:middle;"> <span id="w2-s-val" style="color:#4488ff;font-weight:bold;">10°</span></label>
+<label style="color:#aaa;font-size:13px;">G (ジャイロ): <input type="range" id="w2-g" min="-90" max="0" value="-10" style="width:120px;vertical-align:middle;"> <span id="w2-g-val" style="color:#44ff44;font-weight:bold;">-10°</span></label>
+</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+<span style="color:#666;font-size:12px;">プリセット:</span>
+<button class="w2-preset" data-t="-70" data-s="10" data-g="-10" style="font-size:11px;background:#333;color:#ff4444;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">FF ストレート</button>
+<button class="w2-preset" data-t="55" data-s="25" data-g="-10" style="font-size:11px;background:#333;color:#4444ff;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">CU カーブ</button>
+<button class="w2-preset" data-t="-5" data-s="-5" data-g="-65" style="font-size:11px;background:#333;color:#44bbff;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">SL スライダー</button>
+<button class="w2-preset" data-t="-55" data-s="-25" data-g="-5" style="font-size:11px;background:#333;color:#44cc44;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">SI シンカー</button>
+<button class="w2-preset" data-t="0" data-s="0" data-g="-90" style="font-size:11px;background:#333;color:#999;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">ジャイロ</button>
+</div>
+</div>
 <div id="bsg-info" style="color:#888;font-size:12px;margin-top:6px;"></div>
 </div>
 
 <details>
-<summary>📐 研究者向け: 正規直交BSG基底</summary>
+<summary>📐 研究者向け: 正規直交TSG基底</summary>
 <div>
 <p>本シミュレータでは以下の正規直交基底を用いる:</p>
-$$\hat{\mathbf{e}}_g = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
-\hat{\mathbf{e}}_b = \frac{\hat{\mathbf{e}}_g \times \hat{\mathbf{e}}_Z}{|\hat{\mathbf{e}}_g \times \hat{\mathbf{e}}_Z|}, \quad
-\hat{\mathbf{e}}_s = \hat{\mathbf{e}}_b \times \hat{\mathbf{e}}_g$$
-<p>ここで $\hat{\mathbf{e}}_Z$ は鉛直上向き単位ベクトル。$(\hat{\mathbf{e}}_g, \hat{\mathbf{e}}_b, \hat{\mathbf{e}}_s)$ は右手系 (GBS) を成す。B &gt; 0 でホップ方向の力が発生する。</p>
+$$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
+\hat{\mathbf{e}}_T = -\frac{\hat{\mathbf{e}}_G \times \hat{\mathbf{e}}_Z}{|\hat{\mathbf{e}}_G \times \hat{\mathbf{e}}_Z|}, \quad
+\hat{\mathbf{e}}_S = \hat{\mathbf{e}}_T \times \hat{\mathbf{e}}_G$$
+<p>ここで $\hat{\mathbf{e}}_Z$ は鉛直上向き単位ベクトル。$(\hat{\mathbf{e}}_T, \hat{\mathbf{e}}_S, \hat{\mathbf{e}}_G)$ は右手系（$\hat{\mathbf{e}}_T \times \hat{\mathbf{e}}_S = \hat{\mathbf{e}}_G$）を成す。T &gt; 0 でドロップ方向、T &lt; 0 でホップ方向の力が発生する。</p>
 </div>
 </details>
 
@@ -332,13 +592,17 @@ $$\hat{\mathbf{e}}_g = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 
 <h3>3-1. ストレート（4シーム, FF）</h3>
 
-<p>ストレートの角速度ベクトルは、ほぼ水平で進行方向に垂直な方向を向いている。つまり<strong>バックスピン成分が最大</strong>だ。</p>
+<p>ストレートの角速度ベクトルは、ほぼ水平で進行方向に垂直な方向を向いている。TSG座標系では<strong>T成分が大きな負の値</strong>（= バックスピン）だ。</p>
 
 <p>$\boldsymbol{\omega} \times \mathbf{v}$ で計算される力は<strong>上向き</strong>になる。これが重力に抗い、ボールを「浮かせる」（正確には「落ちにくくする」）効果を生む。</p>
 
-<p>大谷翔平のストレートは球速98 mph、回転数2500 rpm。スピン効率は約72%で、有効なバックスピンは約1800 rpm。これにより、スピンなしに比べて<strong>約40 cm 高い位置</strong>でホームプレートに到達する。</p>
+<p>大谷翔平のストレートは球速98 mph、回転数2500 rpm。スピン効率は約72%で、有効なバックスピン（負のトップスピン）は約1800 rpm。これにより、スピンなしに比べて<strong>約40 cm 高い位置</strong>でホームプレートに到達する。</p>
 
-<a href="https://baseball.skill-vis.com/?mlbam_id=660271&year=2025&date=2025-06-28&pitch=0" target="_blank" class="sim-link">🔵 大谷のストレートを3Dで見る</a>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w2-show-pitch" data-pitcher="yamamoto" data-pitch="ff" style="font-size:12px;background:#333;color:#e94560;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ 山本 FF を表示</button>
+<button class="w2-show-pitch" data-pitcher="imanaga" data-pitch="ff" style="font-size:12px;background:#333;color:#e94560;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ 今永 FF を表示</button>
+<a href="https://baseball.skill-vis.com/?mlbam_id=660271&year=2025&date=2025-06-28&pitch=0" target="_blank" class="sim-link" style="margin:0;">🔵 大谷のFFを3Dで見る</a>
+</div>
 
 <div class="highlight">
 <strong>ストレートこそ最大の変化球:</strong> バックスピンによる上向きの力で、40 cm以上の「変化」を生む。これは多くの変化球よりも大きな変化量だ。
@@ -348,9 +612,13 @@ $$\hat{\mathbf{e}}_g = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 
 <p>カーブの角速度ベクトルは、ストレートとほぼ<strong>逆方向</strong>（トップスピン方向）を向く。$\boldsymbol{\omega} \times \mathbf{v}$ は<strong>下向き + 横方向</strong>の力を生み、ボールが大きく落下しながら曲がる。</p>
 
-<p>球速は低い（75-80 mph）が、回転数は高く（2500-2700 rpm）、バックスピン（負の値 = トップスピン）とサイドスピンの両方が大きい。</p>
+<p>球速は低い（75-80 mph）が、回転数は高く（2500-2700 rpm）、トップスピン（T &gt; 0）とサイドスピンの両方が大きい。</p>
 
-<a href="https://baseball.skill-vis.com/?mlbam_id=660271&year=2025&date=2025-08-27&pitch=5" target="_blank" class="sim-link orange">🟠 大谷のカーブを3Dで見る</a>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w2-show-pitch" data-pitcher="yamamoto" data-pitch="cu" style="font-size:12px;background:#333;color:#44ccff;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ 山本 CU を表示</button>
+<button class="w2-show-pitch" data-pitcher="imanaga" data-pitch="cu" style="font-size:12px;background:#333;color:#44ccff;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ 今永 CU を表示</button>
+<a href="https://baseball.skill-vis.com/?mlbam_id=660271&year=2025&date=2025-08-27&pitch=5" target="_blank" class="sim-link orange" style="margin:0;">🟠 大谷のCUを3Dで見る</a>
+</div>
 
 <h3>3-3. スライダー / スイーパー（SL/ST）</h3>
 
@@ -358,11 +626,28 @@ $$\hat{\mathbf{e}}_g = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 
 <p>大谷の2023年のスイーパーは、pfx_x（横変化量）が最大25インチに達し、MLBでも最大級の横変化を記録した。</p>
 
-<a href="https://baseball.skill-vis.com/?mlbam_id=660271&year=2023&date=2023-03-30&pitch=25" target="_blank" class="sim-link orange">🟠 大谷のスイーパー(2023)を3Dで見る</a>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w2-show-pitch" data-pitcher="yamamoto" data-pitch="sl" style="font-size:12px;background:#333;color:#4488ff;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ 山本 SL を表示</button>
+<button class="w2-show-pitch" data-pitcher="imanaga" data-pitch="sl" style="font-size:12px;background:#333;color:#4488ff;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ 今永 SL を表示</button>
+<a href="https://baseball.skill-vis.com/?mlbam_id=660271&year=2023&date=2023-03-30&pitch=25" target="_blank" class="sim-link orange" style="margin:0;">🟠 大谷のST(2023)を3Dで見る</a>
+</div>
 
 <h3>3-4. シンカー（SI）</h3>
 
-<p>シンカーはストレートと似た角速度方向だが、ωの傾きがわずかに異なる。この小さな角度差が、ストレートにはない<strong>横変化（シュート成分）</strong>を生む。バックスピンもストレートより少ないため、やや沈む軌道になる。</p>
+<p>シンカーはストレートと同じバックスピン系だが、回転軸が<strong>鉛直方向に傾いている</strong>。右投手の場合、捕手から見た回転軸が12時方向（FF）から<strong>1時半〜2時方向</strong>に傾く。この傾きにより:</p>
+
+<ul>
+<li><strong>バックスピン成分（|T|）が減少</strong> → FFよりホップ量が小さく、沈む軌道になる</li>
+<li><strong>サイドスピン成分（S）が増加</strong> → アームサイド（右投手なら一塁方向）への横変化が生まれる</li>
+</ul>
+
+<p>典型的なシンカーはスピン効率が高く（ジャイロ成分が小さい）、回転のほとんどがボールの変化に寄与する。ダルビッシュのシンカー（Spin Axis ≈ 233°）はこの教科書的な例で、93-95 mph の球速でアームサイドに鋭く沈む。</p>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w2-show-pitch" data-pitcher="yamamoto" data-pitch="si" style="font-size:12px;background:#333;color:#ff8844;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ 山本 SI を表示</button>
+<button class="w2-show-pitch" data-pitcher="imanaga" data-pitch="si" style="font-size:12px;background:#333;color:#ff8844;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ 今永 SI を表示</button>
+<a href="https://baseball.skill-vis.com/?mlbam_id=506433&year=2025&date=2025-08-17&pitch=0" target="_blank" class="sim-link orange" style="margin:0;">🟠 ダルビッシュのSIを3Dで見る</a>
+</div>
 
 <h3>3-5. フォーク / スプリット（FS）</h3>
 
@@ -370,17 +655,31 @@ $$\hat{\mathbf{e}}_g = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 
 <p>「落ちる」のではなく、「ストレートのように浮かない」と表現する方が物理的に正確だ。スピン効率は高い（80%以上）が、絶対的なtransverse spin が少ないため変化量が小さい。</p>
 
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w2-show-pitch" data-pitcher="yamamoto" data-pitch="fs" style="font-size:12px;background:#333;color:#88cc88;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ 山本 FS を表示</button>
+<a href="https://baseball.skill-vis.com/?mlbam_id=808963&year=2025&date=2025-05-03&pitch=7" target="_blank" class="sim-link orange" style="margin:0;">🟠 佐々木朗希のFSを3Dで見る</a>
+</div>
+
 <h3>3-6. カッター（FC）</h3>
 
 <p>カッターはストレートとスライダーの中間的なω方向を持つ。球速はストレート並みだが、ωの傾きがわずかにスライダー寄りで、小さな横変化が加わる。</p>
 
 <p>ストレート → カッター → スライダーと、ωベクトルの方向が連続的に変化していることがわかる。球種は離散的なカテゴリではなく、<strong>ω空間上の連続的な分布</strong>だ。</p>
 
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w2-show-pitch" data-pitcher="yamamoto" data-pitch="fc" style="font-size:12px;background:#333;color:#cc6600;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ 山本 FC を表示</button>
+<a href="https://baseball.skill-vis.com/?mlbam_id=506433&year=2025&date=2025-08-27&pitch=5" target="_blank" class="sim-link orange" style="margin:0;">🟠 ダルビッシュのFCを3Dで見る</a>
+</div>
+
 <h3>球種の比較</h3>
 
 <p>複数の球種の軌道を重ねて比較すると、角速度の違いが軌道の違いとして表れることが直感的にわかる:</p>
 
-<a href="https://baseball.skill-vis.com/?compare=660271,2025,2025-06-28,0|660271,2025,2025-08-27,5|660271,2025,2025-06-28,10" target="_blank" class="sim-link">🔵 大谷のFF vs CU vs STを3Dで比較</a>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w2-show-pitch" data-pitcher="yamamoto" data-pitch="all" style="font-size:12px;background:#333;color:#ddd;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ 山本 全球種を表示</button>
+<button class="w2-show-pitch" data-pitcher="imanaga" data-pitch="all" style="font-size:12px;background:#333;color:#ddd;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ 今永 全球種を表示</button>
+<a href="https://baseball.skill-vis.com/?compare=660271,2025,2025-06-28,0|660271,2025,2025-08-27,5|660271,2025,2025-06-28,10" target="_blank" class="sim-link" style="margin:0;">🔵 大谷のFF vs CU vs STを3Dで比較</a>
+</div>
 
 <!-- ========== 第4章 ========== -->
 <h2 id="ch4">第4章: ω空間で見る球種マップ</h2>
@@ -450,125 +749,309 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
 
 <script>
 // =========================================================================
-// Widget 1: Magnus Force Direction (ω → F = ω × v)
+// Widget 0: TSG Coordinate System with pitcher/home, ω slider
 // =========================================================================
 (function() {
-    const canvas = document.getElementById('magnus-canvas');
+    const canvas = document.getElementById('bsg-axes-canvas');
     if (!canvas) return;
     const W = Math.max(canvas.clientWidth, 600);
-    const H = 400;
+    const H = 420;
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x0a0a1a);
     const camera = new THREE.PerspectiveCamera(45, W/H, 0.1, 100);
-    camera.position.set(2.5, 2, 3);
+    camera.position.set(2, 2.5, 4);
     const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
     renderer.setSize(W, H);
     renderer.setPixelRatio(window.devicePixelRatio);
 
     const controls = new THREE.OrbitControls(camera, canvas);
     controls.enableDamping = true;
-    controls.target.set(0, 0, 0);
+    controls.target.set(0, 0.8, -0.5);
 
-    // Grid
-    const grid = new THREE.GridHelper(4, 10, 0x333355, 0x222244);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    dirLight.position.set(3, 5, 3);
+    scene.add(dirLight);
+
+    // Ground grid
+    const grid = new THREE.GridHelper(8, 16, 0x333355, 0x1a1a33);
     scene.add(grid);
 
-    // Axes labels
-    function makeLabel(text, pos, color) {
+    // Pitcher plate
+    const ppGeo = new THREE.BoxGeometry(0.5, 0.02, 0.12);
+    const ppMat = new THREE.MeshBasicMaterial({color: 0xcccccc, transparent: true, opacity: 0.6});
+    const pp = new THREE.Mesh(ppGeo, ppMat);
+    pp.position.set(0, 0.01, 2);
+    scene.add(pp);
+
+    // Home plate
+    const hpShape = new THREE.Shape();
+    const hs = 0.2;
+    hpShape.moveTo(0, hs*1.2);
+    hpShape.lineTo(-hs, hs*0.4);
+    hpShape.lineTo(-hs, -hs*0.4);
+    hpShape.lineTo(hs, -hs*0.4);
+    hpShape.lineTo(hs, hs*0.4);
+    hpShape.lineTo(0, hs*1.2);
+    const hpGeo = new THREE.ShapeGeometry(hpShape);
+    const hpMat = new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.5, side: THREE.DoubleSide});
+    const homePlate = new THREE.Mesh(hpGeo, hpMat);
+    homePlate.rotation.x = -Math.PI / 2;
+    homePlate.position.set(0, 0.01, -3);
+    scene.add(homePlate);
+
+    // Text label helper
+    function makeLabel(text, pos, color, size) {
         const c = document.createElement('canvas');
-        c.width = 64; c.height = 32;
+        c.width = 256; c.height = 64;
         const ctx = c.getContext('2d');
         ctx.fillStyle = color;
-        ctx.font = 'bold 24px sans-serif';
-        ctx.fillText(text, 4, 24);
+        ctx.font = `bold ${size || 28}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText(text, 128, 44);
         const tex = new THREE.CanvasTexture(c);
-        const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:tex, transparent:true}));
+        const sp = new THREE.Sprite(new THREE.SpriteMaterial({map: tex, transparent: true}));
         sp.position.copy(pos);
-        sp.scale.set(0.5, 0.25, 1);
+        sp.scale.set(1.2, 0.3, 1);
         scene.add(sp);
+        return sp;
+    }
+    makeLabel('投手', new THREE.Vector3(0, 0.3, 2.3), '#888888');
+    makeLabel('ホーム', new THREE.Vector3(0, 0.3, -3.5), '#888888');
+
+    // Baseball with seam texture
+    const ballRadius = 0.18;
+    const ballGeo = new THREE.SphereGeometry(ballRadius, 32, 32);
+    const seamCanvas = document.createElement('canvas');
+    seamCanvas.width = 256; seamCanvas.height = 256;
+    const sctx = seamCanvas.getContext('2d');
+    sctx.fillStyle = '#e8e0d0';
+    sctx.fillRect(0, 0, 256, 256);
+    sctx.strokeStyle = '#cc2222'; sctx.lineWidth = 3;
+    sctx.beginPath();
+    for (let i = 0; i < 256; i += 2) {
+        const y = 128 + 40 * Math.sin(i * Math.PI * 4 / 256);
+        if (i === 0) sctx.moveTo(i, y); else sctx.lineTo(i, y);
+    }
+    sctx.stroke();
+    sctx.beginPath();
+    for (let i = 0; i < 256; i += 2) {
+        const y = 128 - 40 * Math.sin(i * Math.PI * 4 / 256 + Math.PI);
+        if (i === 0) sctx.moveTo(i, y); else sctx.lineTo(i, y);
+    }
+    sctx.stroke();
+    const seamTex = new THREE.CanvasTexture(seamCanvas);
+    const ballMat = new THREE.MeshPhongMaterial({map: seamTex});
+    const ball = new THREE.Mesh(ballGeo, ballMat);
+    const ballCenter = new THREE.Vector3(0, 0.8, 0);
+    ball.position.copy(ballCenter);
+    scene.add(ball);
+
+    let ballOmega = new THREE.Vector3(0, 0, 0);
+
+    // --- Static TSG axis arrows (always visible) ---
+    // TSG right-hand system: e_T × e_S = e_G
+    // G = velocity direction: slightly down and left (from pitcher's view)
+    // In Three.js: +X = 1B side (pitcher's left), -Y = down, -Z = toward catcher
+    const axLen = 1.4;
+    const headLen = 0.12;
+    const headW = 0.07;
+
+    // G axis: velocity direction (slightly down + left)
+    const gDir = new THREE.Vector3(-0.12, -0.08, -1).normalize();
+    const gArrow = new THREE.ArrowHelper(gDir, ballCenter, axLen, 0x44ff44, headLen, headW);
+    scene.add(gArrow);
+    makeLabel('G = v', ballCenter.clone().add(gDir.clone().multiplyScalar(axLen + 0.3)), '#44ff44', 26);
+
+    // T axis: -(G × Z_up) / |G × Z_up|  (topspin direction)
+    const zUp = new THREE.Vector3(0, 1, 0);
+    const tDir = new THREE.Vector3().crossVectors(gDir, zUp).normalize().negate();
+    const tArrow = new THREE.ArrowHelper(tDir, ballCenter, axLen, 0xff4444, headLen, headW);
+    scene.add(tArrow);
+    makeLabel('T', ballCenter.clone().add(tDir.clone().multiplyScalar(axLen + 0.2)).add(new THREE.Vector3(0, 0.15, 0)), '#ff4444', 26);
+
+    // S axis: G × T (right-hand TSG: e_T × e_S = e_G → e_S = e_G × e_T)
+    const sDir = new THREE.Vector3().crossVectors(gDir, tDir).normalize();
+    const sArrow = new THREE.ArrowHelper(sDir, ballCenter, axLen, 0x4488ff, headLen, headW);
+    scene.add(sArrow);
+    makeLabel('S', ballCenter.clone().add(sDir.clone().multiplyScalar(axLen + 0.2)).add(new THREE.Vector3(0.1, 0, 0)), '#4488ff', 26);
+
+    // Right angle markers
+    function addRightAngle(d1, d2, color) {
+        const s = 0.2;
+        const pts = [
+            ballCenter.clone().add(d1.clone().multiplyScalar(s)),
+            ballCenter.clone().add(d1.clone().multiplyScalar(s)).add(d2.clone().multiplyScalar(s)),
+            ballCenter.clone().add(d2.clone().multiplyScalar(s))
+        ];
+        const geo = new THREE.BufferGeometry().setFromPoints(pts);
+        scene.add(new THREE.Line(geo, new THREE.LineBasicMaterial({color, transparent: true, opacity: 0.5})));
+    }
+    addRightAngle(tDir, sDir, 0x666688);
+    addRightAngle(tDir, gDir, 0x666688);
+    addRightAngle(sDir, gDir, 0x666688);
+
+    // --- Dynamic ω arrow + component projections ---
+    let dynamicObjs = [];
+    function clearDynamic() {
+        dynamicObjs.forEach(o => scene.remove(o));
+        dynamicObjs = [];
     }
 
-    // Velocity arrow (always -Z = toward catcher in Three.js)
-    const vDir = new THREE.Vector3(0, 0, -1);
-    const vArrow = new THREE.ArrowHelper(vDir, new THREE.Vector3(0,0,0), 1.5, 0x44ff44, 0.12, 0.08);
-    scene.add(vArrow);
-    makeLabel('v (速度)', new THREE.Vector3(0, 0.2, -1.7), '#44ff44');
+    function update() {
+        const tVal = parseFloat(document.getElementById('bsg0-t').value);
+        const sVal = parseFloat(document.getElementById('bsg0-s').value);
+        const gVal = parseFloat(document.getElementById('bsg0-g').value);
+        document.getElementById('bsg0-t-val').textContent = tVal + '°';
+        document.getElementById('bsg0-s-val').textContent = sVal + '°';
+        document.getElementById('bsg0-g-val').textContent = gVal + '°';
 
-    // Omega arrow
-    let omegaArrow = null;
-    let forceArrow = null;
+        clearDynamic();
 
-    function updateMagnus() {
-        const tilt = parseFloat(document.getElementById('omega-tilt').value);
-        const yaw = parseFloat(document.getElementById('omega-yaw').value);
-        document.getElementById('tilt-val').textContent = tilt + '°';
-        document.getElementById('yaw-val').textContent = yaw + '°';
+        // Convert angles to TSG components (unit sphere)
+        const tRad = tVal * Math.PI / 180;
+        const sRad = sVal * Math.PI / 180;
+        const gAbs = Math.abs(gVal);
+        const gRad = gAbs * Math.PI / 180;
+        const tComp = Math.sin(tRad) * Math.cos(gRad);
+        const sComp = Math.sin(sRad) * Math.cos(gRad);
+        const gComp = Math.sin(gRad);
 
-        const tiltRad = tilt * Math.PI / 180;
-        const yawRad = yaw * Math.PI / 180;
+        // Map to Three.js using tilted TSG basis vectors
+        const omegaVec = new THREE.Vector3(
+            tComp * tDir.x + sComp * sDir.x + gComp * gDir.x,
+            tComp * tDir.y + sComp * sDir.y + gComp * gDir.y,
+            tComp * tDir.z + sComp * sDir.z + gComp * gDir.z
+        );
+        const omLen = omegaVec.length();
 
-        // ω direction (in Three.js coords)
-        const omega = new THREE.Vector3(
-            Math.cos(tiltRad) * Math.sin(yawRad),
-            Math.sin(tiltRad),
-            Math.cos(tiltRad) * Math.cos(yawRad) * 0.3  // small Z component
-        ).normalize();
+        if (omLen > 0.01) {
+            const omDir = omegaVec.clone().normalize();
+            const arrowScale = 1.8;
 
-        // Force = v × ω (in Three.js coords, sign-corrected)
-        const force = new THREE.Vector3().crossVectors(vDir, omega).normalize();
+            // ω arrow (orange, through ball)
+            const halfOm = omDir.clone().multiplyScalar(arrowScale * omLen / 2);
+            const omStart = ballCenter.clone().sub(halfOm);
+            const shaftLen = arrowScale * omLen * 0.8;
+            const shaftGeo = new THREE.CylinderGeometry(0.03, 0.03, shaftLen, 8);
+            const shaftMat = new THREE.MeshBasicMaterial({color: 0xff8a65});
+            const shaft = new THREE.Mesh(shaftGeo, shaftMat);
+            const quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), omDir);
+            shaft.quaternion.copy(quat);
+            shaft.position.copy(omStart).add(omDir.clone().multiplyScalar(shaftLen / 2));
+            scene.add(shaft); dynamicObjs.push(shaft);
 
-        // Remove old arrows
-        if (omegaArrow) scene.remove(omegaArrow);
-        if (forceArrow) scene.remove(forceArrow);
+            const coneLen = arrowScale * omLen * 0.2;
+            const coneGeo = new THREE.ConeGeometry(0.07, coneLen, 8);
+            const coneMat = new THREE.MeshBasicMaterial({color: 0xff8a65});
+            const cone = new THREE.Mesh(coneGeo, coneMat);
+            cone.quaternion.copy(quat);
+            cone.position.copy(omStart).add(omDir.clone().multiplyScalar(shaftLen + coneLen / 2));
+            scene.add(cone); dynamicObjs.push(cone);
 
-        omegaArrow = new THREE.ArrowHelper(omega, new THREE.Vector3(0,0,0), 1.5, 0xff8a65, 0.12, 0.08);
-        scene.add(omegaArrow);
+            const tipPos = omStart.clone().add(omDir.clone().multiplyScalar(arrowScale * omLen * 1.15));
+            dynamicObjs.push(makeLabel('ω', tipPos, '#ff8a65', 28));
 
-        if (force.length() > 0.01) {
-            forceArrow = new THREE.ArrowHelper(force, new THREE.Vector3(0,0,0), 1.2, 0x4fc3f7, 0.12, 0.08);
-            scene.add(forceArrow);
+            // Projection: show ω decomposition as box edges
+            // Component vectors along tilted TSG basis
+            const hs = arrowScale / 2;
+            const tVec3 = tDir.clone().multiplyScalar(tComp * hs);
+            const sVec3 = sDir.clone().multiplyScalar(sComp * hs);
+            const gVec3 = gDir.clone().multiplyScalar(gComp * hs);
+
+            function addDashed(from, to, color) {
+                // Use thin cylinder segments for visible thickness
+                const dir = to.clone().sub(from);
+                const len = dir.length();
+                if (len < 0.01) return;
+                const mid = from.clone().add(to).multiplyScalar(0.5);
+                const tubeGeo = new THREE.CylinderGeometry(0.012, 0.012, len, 4);
+                const tubeMat = new THREE.MeshBasicMaterial({color, transparent: true, opacity: 0.45});
+                const tube = new THREE.Mesh(tubeGeo, tubeMat);
+                const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), dir.normalize());
+                tube.quaternion.copy(q);
+                tube.position.copy(mid);
+                scene.add(tube); dynamicObjs.push(tube);
+            }
+
+            // On-axis projection segments (bold dashed, from origin along each axis)
+            if (Math.abs(tComp) > 0.03) addDashed(ballCenter, ballCenter.clone().add(tVec3), 0xff4444);
+            if (Math.abs(sComp) > 0.03) addDashed(ballCenter, ballCenter.clone().add(sVec3), 0x4488ff);
+            if (Math.abs(gComp) > 0.03) addDashed(ballCenter, ballCenter.clone().add(gVec3), 0x44ff44);
+
+            // Box edges from ω tip back to each axis-plane
+            const omTip = ballCenter.clone().add(tVec3).add(sVec3).add(gVec3);
+            // Edges parallel to T axis (from ω tip, remove T component)
+            if (Math.abs(tComp) > 0.03) {
+                addDashed(ballCenter.clone().add(sVec3).add(gVec3), omTip, 0xff4444);
+            }
+            // Edges parallel to S axis
+            if (Math.abs(sComp) > 0.03) {
+                addDashed(ballCenter.clone().add(tVec3).add(gVec3), omTip, 0x4488ff);
+            }
+            // Edges parallel to G axis
+            if (Math.abs(gComp) > 0.03) {
+                addDashed(ballCenter.clone().add(tVec3).add(sVec3), omTip, 0x44ff44);
+            }
+
+            // Intermediate edges (gray, connecting axis projections)
+            const gray = 0x555566;
+            if (Math.abs(tComp) > 0.03 && Math.abs(sComp) > 0.03) {
+                addDashed(ballCenter.clone().add(tVec3), ballCenter.clone().add(tVec3).add(sVec3), gray);
+                addDashed(ballCenter.clone().add(sVec3), ballCenter.clone().add(tVec3).add(sVec3), gray);
+            }
+            if (Math.abs(tComp) > 0.03 && Math.abs(gComp) > 0.03) {
+                addDashed(ballCenter.clone().add(tVec3), ballCenter.clone().add(tVec3).add(gVec3), gray);
+                addDashed(ballCenter.clone().add(gVec3), ballCenter.clone().add(tVec3).add(gVec3), gray);
+            }
+            if (Math.abs(sComp) > 0.03 && Math.abs(gComp) > 0.03) {
+                addDashed(ballCenter.clone().add(sVec3), ballCenter.clone().add(sVec3).add(gVec3), gray);
+                addDashed(ballCenter.clone().add(gVec3), ballCenter.clone().add(sVec3).add(gVec3), gray);
+            }
+
+            // Ball rotation
+            const rotScale = 0.0003;
+            ballOmega.copy(omegaVec).multiplyScalar(rotScale);
+        } else {
+            ballOmega.set(0, 0, 0);
         }
 
-        // Info text
-        const info = document.getElementById('magnus-info');
+        // Info
+        const eff = omLen > 0.01 ? (Math.sqrt(tComp*tComp + sComp*sComp) / omLen * 100) : 0;
         let desc = '';
-        if (tilt > 30) desc = '→ バックスピン的: 上向きの力 (ホップ)';
-        else if (tilt < -30) desc = '→ トップスピン的: 下向きの力 (ドロップ)';
-        else if (yaw > 30) desc = '→ サイドスピン的: 横向きの力';
-        else if (yaw < -30) desc = '→ 逆サイドスピン的: 横向きの力';
-        else if (Math.abs(tilt) < 10 && Math.abs(yaw) < 10) desc = '→ ジャイロ的: 力はほぼゼロ';
+        if (tVal < -30 && Math.abs(sVal) < 30 && gAbs < 30) desc = '→ T<0 バックスピン主体（ストレート系）';
+        else if (tVal > 30 && Math.abs(sVal) < 45) desc = '→ T>0 トップスピン主体（カーブ系）';
+        else if (Math.abs(sVal) > 30 && Math.abs(tVal) < 30) desc = '→ サイドスピン主体';
+        else if (gAbs > 50) desc = '→ ジャイロ主体（マグヌス力小）';
         else desc = '→ 混合回転';
-        info.textContent = `ω角度: 上下=${tilt}°, 横=${yaw}°  ${desc}`;
+        document.getElementById('bsg-axes-info').textContent =
+            `T=${tVal}°, S=${sVal}°, G=${gVal}°  スピン効率=${eff.toFixed(0)}%  ${desc}`;
     }
 
-    document.getElementById('omega-tilt').addEventListener('input', updateMagnus);
-    document.getElementById('omega-yaw').addEventListener('input', updateMagnus);
-
-    // Presets
-    const presets = {
-        ff: {tilt: 70, yaw: 10, name: 'ストレート'},
-        cu: {tilt: -60, yaw: 20, name: 'カーブ'},
-        sl: {tilt: 5, yaw: -10, name: 'スライダー'},
-        si: {tilt: 55, yaw: 25, name: 'シンカー'},
-        gyro: {tilt: 0, yaw: 0, name: 'ジャイロ'},
-    };
-    document.getElementById('preset-select').addEventListener('change', function() {
-        const p = presets[this.value];
-        if (p) {
-            document.getElementById('omega-tilt').value = p.tilt;
-            document.getElementById('omega-yaw').value = p.yaw;
-            updateMagnus();
-        }
+    // Event listeners
+    ['bsg0-t', 'bsg0-s', 'bsg0-g'].forEach(id => {
+        document.getElementById(id).addEventListener('input', update);
+    });
+    document.querySelectorAll('.bsg0-preset').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.getElementById('bsg0-t').value = this.dataset.t;
+            document.getElementById('bsg0-s').value = this.dataset.s;
+            document.getElementById('bsg0-g').value = this.dataset.g;
+            update();
+        });
     });
 
-    // Light
-    scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+    update();
 
-    updateMagnus();
-
+    const clock = new THREE.Clock();
     function animate() {
         requestAnimationFrame(animate);
+        const dt = clock.getDelta();
+        if (ballOmega.length() > 0.0001) {
+            const axis = ballOmega.clone().normalize();
+            ball.rotateOnWorldAxis(axis, ballOmega.length() * dt * 30);
+        }
         controls.update();
         renderer.render(scene, camera);
     }
@@ -576,7 +1059,307 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
 })();
 
 // =========================================================================
-// Widget 2: BSG Decomposition & Pitch Type ω Map with spinning ball
+// Widget 1: Magnus Force Explorer (Simplified — Free slider + FF preset)
+// =========================================================================
+(function() {
+    const canvas = document.getElementById('magnus-canvas');
+    if (!canvas) return;
+    const W = Math.max(canvas.clientWidth, 600);
+    const H = 420;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0a0a1a);
+    const camera = new THREE.PerspectiveCamera(45, W/H, 0.1, 100);
+    camera.position.set(2, 2.5, 4);
+    const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
+    renderer.setSize(W, H);
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    const controls = new THREE.OrbitControls(camera, canvas);
+    controls.enableDamping = true;
+    controls.target.set(0, 0.8, -1.5);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+    dirLight.position.set(3, 5, 3);
+    scene.add(dirLight);
+
+    // Ground grid
+    const grid = new THREE.GridHelper(8, 16, 0x333355, 0x1a1a33);
+    scene.add(grid);
+
+    // Pitcher plate
+    const ppGeo = new THREE.BoxGeometry(0.5, 0.02, 0.12);
+    const ppMat = new THREE.MeshBasicMaterial({color: 0xcccccc, transparent: true, opacity: 0.6});
+    const pp = new THREE.Mesh(ppGeo, ppMat);
+    pp.position.set(0, 0.01, 2);
+    scene.add(pp);
+
+    // Labels
+    function makeTextSprite(text, pos, color, size) {
+        const c = document.createElement('canvas');
+        c.width = 256; c.height = 64;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = color;
+        ctx.font = `bold ${size || 28}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText(text, 128, 40);
+        const tex = new THREE.CanvasTexture(c);
+        const sp = new THREE.Sprite(new THREE.SpriteMaterial({map: tex, transparent: true}));
+        sp.position.copy(pos);
+        sp.scale.set(1.2, 0.3, 1);
+        scene.add(sp);
+        return sp;
+    }
+    makeTextSprite('投手', new THREE.Vector3(0, 0.3, 2.3), '#888888');
+
+    // Home plate
+    const hpShape = new THREE.Shape();
+    const hs = 0.2;
+    hpShape.moveTo(0, hs*1.2);
+    hpShape.lineTo(-hs, hs*0.4);
+    hpShape.lineTo(-hs, -hs*0.4);
+    hpShape.lineTo(hs, -hs*0.4);
+    hpShape.lineTo(hs, hs*0.4);
+    hpShape.lineTo(0, hs*1.2);
+    const hpGeo = new THREE.ShapeGeometry(hpShape);
+    const hpMat = new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.5, side: THREE.DoubleSide});
+    const homePlate = new THREE.Mesh(hpGeo, hpMat);
+    homePlate.rotation.x = -Math.PI / 2;
+    homePlate.position.set(0, 0.01, -3);
+    scene.add(homePlate);
+    makeTextSprite('ホーム', new THREE.Vector3(0, 0.3, -3.5), '#888888');
+
+    // Velocity arrow
+    const vStart = new THREE.Vector3(0, 0.8, 0);
+    const vEnd = new THREE.Vector3(0, 0.8 + 0.08, -1.2);
+    const vLineGeo = new THREE.BufferGeometry().setFromPoints([vStart, vEnd]);
+    const vLineMat = new THREE.LineDashedMaterial({color: 0x44ff44, dashSize: 0.12, gapSize: 0.06});
+    const vLine = new THREE.Line(vLineGeo, vLineMat);
+    vLine.computeLineDistances();
+    scene.add(vLine);
+    const vConeGeo = new THREE.ConeGeometry(0.05, 0.15, 8);
+    const vConeMat = new THREE.MeshBasicMaterial({color: 0x44ff44});
+    const vCone = new THREE.Mesh(vConeGeo, vConeMat);
+    vCone.position.copy(vEnd);
+    const vDirNorm = vEnd.clone().sub(vStart).normalize();
+    vCone.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), vDirNorm);
+    scene.add(vCone);
+    makeTextSprite('v (速度)', new THREE.Vector3(0.35, 1.05, -0.6), '#44ff44', 22);
+
+    // Baseball
+    const ballRadius = 0.18;
+    const ballGeo = new THREE.SphereGeometry(ballRadius, 32, 32);
+    const seamCanvas = document.createElement('canvas');
+    seamCanvas.width = 256; seamCanvas.height = 256;
+    const sctx = seamCanvas.getContext('2d');
+    sctx.fillStyle = '#e8e0d0';
+    sctx.fillRect(0, 0, 256, 256);
+    sctx.strokeStyle = '#cc2222';
+    sctx.lineWidth = 3;
+    sctx.beginPath();
+    for (let i = 0; i < 256; i += 2) {
+        const y = 128 + 40 * Math.sin(i * Math.PI * 4 / 256);
+        if (i === 0) sctx.moveTo(i, y); else sctx.lineTo(i, y);
+    }
+    sctx.stroke();
+    sctx.beginPath();
+    for (let i = 0; i < 256; i += 2) {
+        const y = 128 - 40 * Math.sin(i * Math.PI * 4 / 256 + Math.PI);
+        if (i === 0) sctx.moveTo(i, y); else sctx.lineTo(i, y);
+    }
+    sctx.stroke();
+    const seamTex = new THREE.CanvasTexture(seamCanvas);
+    const ballMat = new THREE.MeshPhongMaterial({map: seamTex});
+    const ball = new THREE.Mesh(ballGeo, ballMat);
+    ball.position.set(0, 0.8, 0);
+    scene.add(ball);
+
+    let ballOmega = new THREE.Vector3(0, 0, 0);
+    let currentObjs = [];
+
+    function clearAll() {
+        currentObjs.forEach(o => scene.remove(o));
+        currentObjs = [];
+    }
+
+    function update() {
+        const tilt = parseFloat(document.getElementById('m1-tilt').value);
+        const yaw  = parseFloat(document.getElementById('m1-yaw').value);
+        document.getElementById('m1-tilt-val').textContent = tilt + '°';
+        document.getElementById('m1-yaw-val').textContent = yaw + '°';
+
+        clearAll();
+
+        const tiltRad = tilt * Math.PI / 180;
+        const yawRad  = yaw  * Math.PI / 180;
+
+        const totalSpin = 2200;
+        // tilt is T (topspin angle): T>0 = topspin, T<0 = backspin
+        // Internal backspin component = -T
+        const tComp = Math.sin(tiltRad);
+        const sComp = Math.sin(yawRad);
+        const wx = tComp * totalSpin;  // T>0 → wx>0 → topspin (drop)
+        const wz = -sComp * totalSpin;
+        const wy = 0;
+
+        const scale = 0.001;
+        const dir = new THREE.Vector3(wx * scale, wz * scale, wy * scale);
+        const len = dir.length();
+
+        // --- Compute trajectory & ball position first ---
+        const transverse = Math.sqrt(wx*wx + wz*wz);
+        const nSteps = 80, startZ = 2.0, endZ = -3.0;
+        const totalDist = startZ - endZ;
+        const releaseH = 1.6, initUp = 0.06;
+        const ballT = (startZ - 0) / totalDist;  // t at z=0
+
+        let ballPos = new THREE.Vector3(0, releaseH + (-0.8*ballT*ballT) + (initUp*totalDist*ballT), 0);
+
+        if (transverse > 10 && len > 0.01) {
+            const dirNorm = dir.clone().normalize();
+            const vDir2 = new THREE.Vector3(0, 0, -1);
+            const fDir2 = new THREE.Vector3().crossVectors(vDir2, dirNorm).normalize();
+            const deflectScale = transverse / 2500 * 1.2;
+
+            // Ball position on spin trajectory at z=0
+            const bDeflect = deflectScale * ballT * ballT;
+            const bGrav = -0.8 * ballT * ballT;
+            const bUp = initUp * totalDist * ballT;
+            ballPos.set(fDir2.x * bDeflect, releaseH + fDir2.y * bDeflect + bGrav + bUp, 0);
+
+            // Trajectories
+            const pts = [], nsPts = [];
+            for (let i = 0; i <= nSteps; i++) {
+                const t = i / nSteps;
+                const z = startZ - t * totalDist;
+                const gDrop = -0.8 * t * t;
+                const up = initUp * totalDist * t;
+                const deflect = deflectScale * t * t;
+                const yS = releaseH + fDir2.y * deflect + gDrop + up;
+                const yNS = releaseH + gDrop + up;
+                if (yS > 0.01) pts.push(new THREE.Vector3(fDir2.x * deflect, yS, z));
+                if (yNS > 0.01) nsPts.push(new THREE.Vector3(0, yNS, z));
+            }
+
+            if (nsPts.length > 1) {
+                const nsGeo = new THREE.BufferGeometry().setFromPoints(nsPts);
+                const nsMat = new THREE.LineDashedMaterial({color: 0x00cccc, dashSize: 0.15, gapSize: 0.1});
+                const nsLine = new THREE.Line(nsGeo, nsMat);
+                nsLine.computeLineDistances();
+                scene.add(nsLine); currentObjs.push(nsLine);
+            }
+            if (pts.length > 2) {
+                const curve = new THREE.CatmullRomCurve3(pts);
+                const tubeGeo = new THREE.TubeGeometry(curve, pts.length * 2, 0.012, 6, false);
+                const tubeMat = new THREE.MeshBasicMaterial({color: 0xff4444});
+                const tube = new THREE.Mesh(tubeGeo, tubeMat);
+                scene.add(tube); currentObjs.push(tube);
+            }
+        }
+
+        // --- Place ball on trajectory ---
+        ball.position.copy(ballPos);
+
+        // --- Draw arrows at ball position ---
+        if (len > 0.01) {
+            const dirNorm = dir.clone().normalize();
+
+            // ω arrow through ball
+            const halfDir = dirNorm.clone().multiplyScalar(len / 2);
+            const arrowStart = ballPos.clone().sub(halfDir);
+            const shaftLen = len * 0.8;
+            const shaftGeo = new THREE.CylinderGeometry(0.025, 0.025, shaftLen, 8);
+            const shaftMat = new THREE.MeshBasicMaterial({color: 0xff8a65});
+            const shaft = new THREE.Mesh(shaftGeo, shaftMat);
+            const quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), dirNorm);
+            shaft.quaternion.copy(quat);
+            shaft.position.copy(arrowStart).add(dirNorm.clone().multiplyScalar(shaftLen / 2));
+            scene.add(shaft); currentObjs.push(shaft);
+
+            const coneLen = len * 0.2;
+            const coneGeo = new THREE.ConeGeometry(0.06, coneLen, 8);
+            const coneMat = new THREE.MeshBasicMaterial({color: 0xff8a65});
+            const cone = new THREE.Mesh(coneGeo, coneMat);
+            cone.quaternion.copy(quat);
+            cone.position.copy(arrowStart).add(dirNorm.clone().multiplyScalar(shaftLen + coneLen / 2));
+            scene.add(cone); currentObjs.push(cone);
+
+            const tipPos = arrowStart.clone().add(dirNorm.clone().multiplyScalar(len * 1.2));
+            currentObjs.push(makeTextSprite('ω', tipPos, '#ff8a65', 24));
+
+            // Magnus force arrow
+            const vDir = new THREE.Vector3(0, 0, -1);
+            const fDir = new THREE.Vector3().crossVectors(vDir, dirNorm);
+            if (fDir.length() > 0.001) {
+                fDir.normalize();
+                const fLen = 0.8;
+                const fShaftLen = fLen * 0.75;
+                const fShaftGeo = new THREE.CylinderGeometry(0.02, 0.02, fShaftLen, 8);
+                const fShaftMat = new THREE.MeshBasicMaterial({color: 0x4fc3f7});
+                const fShaft = new THREE.Mesh(fShaftGeo, fShaftMat);
+                const fQuat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), fDir);
+                fShaft.quaternion.copy(fQuat);
+                fShaft.position.copy(ballPos).add(fDir.clone().multiplyScalar(fShaftLen/2 + ballRadius + 0.05));
+                scene.add(fShaft); currentObjs.push(fShaft);
+
+                const fConeLen = fLen * 0.25;
+                const fConeGeo = new THREE.ConeGeometry(0.05, fConeLen, 8);
+                const fConeMat = new THREE.MeshBasicMaterial({color: 0x4fc3f7});
+                const fCone = new THREE.Mesh(fConeGeo, fConeMat);
+                fCone.quaternion.copy(fQuat);
+                fCone.position.copy(ballPos).add(fDir.clone().multiplyScalar(fShaftLen + fConeLen/2 + ballRadius + 0.05));
+                scene.add(fCone); currentObjs.push(fCone);
+
+                const fLabelPos = ballPos.clone().add(fDir.clone().multiplyScalar(fLen + ballRadius + 0.2));
+                currentObjs.push(makeTextSprite('マグヌス力 F', fLabelPos, '#4fc3f7', 20));
+            }
+
+            // Ball rotation
+            const rotScale = 0.00015;
+            ballOmega.set(wx * rotScale, wz * rotScale, wy * rotScale);
+        } else {
+            ballOmega.set(0, 0, 0);
+        }
+
+        // Info text
+        let desc = '';
+        if (tilt < -30 && Math.abs(yaw) < 30) desc = '→ T<0 バックスピン主体: 上向きの力でボールが「浮く」';
+        else if (tilt > 30 && Math.abs(yaw) < 30) desc = '→ T>0 トップスピン主体: 下向きの力でボールが落ちる';
+        else if (Math.abs(yaw) > 30 && Math.abs(tilt) < 30) desc = '→ サイドスピン主体: 横方向に曲がる';
+        else if (Math.abs(tilt) < 15 && Math.abs(yaw) < 15) desc = '→ 回転軸が速度方向に近い: マグヌス力が弱い';
+        else desc = '→ トップスピンとサイドスピンの混合';
+        document.getElementById('m1-info').textContent =
+            `T=${tilt}°, S=${yaw}°  ${desc}`;
+    }
+
+    document.getElementById('m1-tilt').addEventListener('input', update);
+    document.getElementById('m1-yaw').addEventListener('input', update);
+    document.getElementById('m1-reset-ff').addEventListener('click', function() {
+        document.getElementById('m1-tilt').value = -70;
+        document.getElementById('m1-yaw').value = -10;
+        update();
+    });
+
+    // Initial: Fastball
+    update();
+
+    const clock = new THREE.Clock();
+    function animate() {
+        requestAnimationFrame(animate);
+        const dt = clock.getDelta();
+        if (ballOmega.length() > 0.0001) {
+            const axis = ballOmega.clone().normalize();
+            ball.rotateOnWorldAxis(axis, ballOmega.length() * dt * 30);
+        }
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    animate();
+})();
+
+// =========================================================================
+// Widget 2: TSG Decomposition & Pitch Type ω Map with spinning ball
 // =========================================================================
 (function() {
     const canvas = document.getElementById('bsg-canvas');
@@ -709,22 +1492,22 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
         imanaga: {
             name: '今永昇太 (左投手)',
             pitches: {
-                ff:  {name:'FF ストレート', color:0xff4444, wx:-2066, wz:742,  wy:-654,  speed:95.1, spin:2219},
-                si:  {name:'SI シンカー',   color:0x44cc44, wx:-965,  wz:1906, wy:-709,  speed:93.3, spin:2213},
-                sl:  {name:'SL スライダー', color:0x44bbff, wx:-388,  wz:-292, wy:-2254, speed:87.7, spin:2256},
-                cu:  {name:'CU カーブ',     color:0x4444ff, wx:1618,  wz:-1249, wy:-1558, speed:68.1, spin:2626},
-                ch:  {name:'CH チェンジアップ', color:0x888888, wx:-586, wz:1289, wy:-0, speed:87.0, spin:1543},
+                ff:  {name:'FF ストレート', color:0xe94560, wx:-2066, wz:742,  wy:-654,  speed:95.1, spin:2219},
+                si:  {name:'SI シンカー',   color:0xff8844, wx:-965,  wz:1906, wy:-709,  speed:93.3, spin:2213},
+                sl:  {name:'SL スライダー', color:0x4488ff, wx:-388,  wz:-292, wy:-2254, speed:87.7, spin:2256},
+                cu:  {name:'CU カーブ',     color:0x44ccff, wx:1618,  wz:-1249, wy:-1558, speed:68.1, spin:2626},
+                ch:  {name:'CH チェンジアップ', color:0x44cc44, wx:-586, wz:1289, wy:-0, speed:87.0, spin:1543},
             }
         },
         yamamoto: {
             name: '山本由伸 (右投手)',
             pitches: {
-                ff:  {name:'FF ストレート', color:0xff4444, wx:-2055, wz:-987, wy:-0,    speed:94.8, spin:2280},
-                si:  {name:'SI シンカー',   color:0x44cc44, wx:-786,  wz:-786, wy:-1843, speed:94.4, spin:2204},
-                fc:  {name:'FC カッター',   color:0x9933cc, wx:-311,  wz:311,  wy:-2407, speed:90.8, spin:2399},
-                sl:  {name:'SL スライダー', color:0x44bbff, wx:264,   wz:279,  wy:-2834, speed:85.6, spin:2764},
-                cu:  {name:'CU カーブ',     color:0x4444ff, wx:2041,  wz:1933, wy:-0,    speed:77.8, spin:2811},
-                fs:  {name:'FS スプリット', color:0x996633, wx:50,    wz:-325, wy:-1234, speed:90.6, spin:1350},
+                ff:  {name:'FF ストレート', color:0xe94560, wx:-2055, wz:-987, wy:-0,    speed:94.8, spin:2280},
+                si:  {name:'SI シンカー',   color:0xff8844, wx:-786,  wz:-786, wy:-1843, speed:94.4, spin:2204},
+                fc:  {name:'FC カッター',   color:0xcc6600, wx:-311,  wz:311,  wy:-2407, speed:90.8, spin:2399},
+                sl:  {name:'SL スライダー', color:0x4488ff, wx:264,   wz:279,  wy:-2834, speed:85.6, spin:2764},
+                cu:  {name:'CU カーブ',     color:0x44ccff, wx:2041,  wz:1933, wy:-0,    speed:77.8, spin:2811},
+                fs:  {name:'FS スプリット', color:0x88cc88, wx:50,    wz:-325, wy:-1234, speed:90.6, spin:1350},
             }
         }
     };
@@ -743,7 +1526,7 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
         if (!d) return;
 
         const scale = 0.001;
-        const dir = new THREE.Vector3(d.wx * scale, d.wz * scale, d.wy * scale);
+        const dir = new THREE.Vector3(-d.wx * scale, -d.wz * scale, -d.wy * scale);
         const len = dir.length();
         if (len < 0.01) return;
         const dirNorm = dir.clone().normalize();
@@ -793,13 +1576,10 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
     }
 
     function addForceArrow(omegaDir, ballCenter) {
-        // Magnus: F ∝ ω × v. In Three.js, v = (0, 0, -1)
-        // For backspin (ω pointing +X in Three.js), F should be +Y (upward)
-        // ω×v = (ωx,ωy,ωz)×(0,0,-1) = (ωy×(-1)-ωz×0, ωz×0-ωx×(-1), ωx×0-ωy×0) = (-ωy, ωx, 0)
-        // Backspin: ωx>0 → Fy=ωx>0 → upward ✓
-        // So crossVectors(omega, v) is correct sign
+        // Magnus: F ∝ ω × v. omegaDir is display direction (negated from physical ω).
+        // Negate again to get correct force: F = cross(v, -omegaDir) → cross(-v, omegaDir)
         const vDir = new THREE.Vector3(0, 0, -1);
-        const fDir = new THREE.Vector3().crossVectors(vDir, omegaDir);
+        const fDir = new THREE.Vector3().crossVectors(vDir, omegaDir).negate();
         if (fDir.length() < 0.001) return;
         fDir.normalize();
 
@@ -846,7 +1626,7 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
         const omegaNorm = omegaVec.clone().normalize();
         const vDir = new THREE.Vector3(0, 0, -1);
         const fDir = new THREE.Vector3().crossVectors(vDir, omegaNorm);
-        if (fDir.length() < 0.001) return;
+        if (fDir.length() < 0.001) return null;
         fDir.normalize();
 
         const transverse = Math.sqrt(d.wx**2 + d.wz**2);
@@ -856,8 +1636,8 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
         const startZ = 2.0;
         const endZ = -3.0;
         const totalDist = startZ - endZ;
-        const releaseHeight = 1.6;    // higher release point
-        const initUpAngle = 0.06;     // slight upward initial velocity
+        const releaseHeight = 1.6;
+        const initUpAngle = 0.06;
 
         // Spin trajectory (stop at ground)
         const points = [];
@@ -866,7 +1646,7 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
             const z = startZ - t * totalDist;
             const deflect = deflectScale * t * t;
             const gravDrop = -0.8 * t * t;
-            const initUp = initUpAngle * totalDist * t;  // initial upward component
+            const initUp = initUpAngle * totalDist * t;
             const x = fDir.x * deflect;
             const y = releaseHeight + fDir.y * deflect + gravDrop + initUp;
             if (y < 0.01) break;
@@ -895,15 +1675,22 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
             trajObjs.push(nsLine);
         }
 
-        // Spin trajectory (thick tube, pitch color)
+        // Spin trajectory (tube)
         if (points.length > 2) {
             const curve = new THREE.CatmullRomCurve3(points);
-            const tubeGeo = new THREE.TubeGeometry(curve, points.length * 2, 0.018, 6, false);
+            const tubeGeo = new THREE.TubeGeometry(curve, points.length * 2, 0.012, 6, false);
             const tubeMat = new THREE.MeshBasicMaterial({color: d.color || 0xff8800});
             const tube = new THREE.Mesh(tubeGeo, tubeMat);
             scene.add(tube);
             trajObjs.push(tube);
         }
+
+        // Return ball position on spin trajectory at z=0
+        const ballT = (startZ - 0) / totalDist;
+        const bDeflect = deflectScale * ballT * ballT;
+        const bGrav = -0.8 * ballT * ballT;
+        const bUp = initUpAngle * totalDist * ballT;
+        return new THREE.Vector3(fDir.x * bDeflect, releaseHeight + fDir.y * bDeflect + bGrav + bUp, 0);
     }
 
     function updateBSG(pitchKey) {
@@ -911,35 +1698,35 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
         clearForceAndTraj();
         clearTrajectories();
         const info = document.getElementById('bsg-info');
-        const ballCenter = new THREE.Vector3(0, 0.8, 0);
 
         if (pitchKey === 'all') {
-            let text = '';
+            let firstPos = null;
             Object.keys(pitchData).forEach(k => {
                 addPitchArrow(k);
-                // Add trajectory for each
-                addTrajectory(pitchData[k]);
+                const pos = addTrajectory(pitchData[k]);
+                if (!firstPos && pos) firstPos = pos;
             });
+            ball.position.copy(firstPos || new THREE.Vector3(0, 0.8, 0));
             info.textContent = '全球種の軌跡を表示中（実線=スピンあり、破線=スピンなし）';
             ballOmega.set(0, 0, 0);
         } else {
-            const r = addPitchArrow(pitchKey);
+            // Add trajectory first to get ball position
+            const trajPos = addTrajectory(pitchData[pitchKey]);
+            const ballCenter = trajPos || new THREE.Vector3(0, 0.8, 0);
+            ball.position.copy(ballCenter);
+
+            const r = addPitchArrow(pitchKey, ballCenter);
             if (r) {
                 const d = r.data;
                 const totalRPM = Math.sqrt(d.wx**2 + d.wy**2 + d.wz**2);
                 const eff = Math.sqrt(d.wx**2 + d.wz**2) / totalRPM * 100;
                 info.textContent = `${d.name}: ${d.speed}mph, ${d.spin}rpm, スピン効率=${eff.toFixed(0)}%`;
 
-                // Set ball rotation (scaled down for visual, halved speed)
                 const rotScale = 0.00015;
-                ballOmega.set(d.wx * rotScale, d.wz * rotScale, d.wy * rotScale);
+                ballOmega.set(-d.wx * rotScale, -d.wz * rotScale, -d.wy * rotScale);
 
-                // Force vector (ω × v)
                 const omegaNorm = r.dir.clone().normalize();
                 addForceArrow(omegaNorm, ballCenter);
-
-                // Trajectory
-                addTrajectory(d);
             }
         }
     }
@@ -973,12 +1760,172 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
     rebuildPitchSelect();
     updateBSG('ff');
 
+    // =================================================================
+    // Free slider mode for Widget 2
+    // =================================================================
+    let w2Mode = 'pitcher';
+
+    function updateW2Free() {
+        const tVal = parseFloat(document.getElementById('w2-t').value);
+        const sVal = parseFloat(document.getElementById('w2-s').value);
+        const gVal = parseFloat(document.getElementById('w2-g').value);
+        document.getElementById('w2-t-val').textContent = tVal + '°';
+        document.getElementById('w2-s-val').textContent = sVal + '°';
+        document.getElementById('w2-g-val').textContent = gVal + '°';
+
+        clearArrows();
+        clearForceAndTraj();
+        clearTrajectories();
+
+        const gAbs = Math.abs(gVal);
+        const tRad = tVal * Math.PI / 180;
+        const sRad = sVal * Math.PI / 180;
+        const gRad = gAbs * Math.PI / 180;
+        const tComp = Math.sin(tRad) * Math.cos(gRad);
+        const sComp = Math.sin(sRad) * Math.cos(gRad);
+        const gComp = Math.sin(gRad);
+
+        const totalSpin = 2200;
+        // T>0 = topspin → wx>0 in Three.js convention
+        const wx = tComp * totalSpin;
+        const wz = -sComp * totalSpin;
+        const wy = gComp * totalSpin;
+
+        const synthData = {
+            name: '自由設定', color: 0xff8800,
+            wx: wx, wz: wz, wy: wy,
+            speed: 92, spin: totalSpin
+        };
+
+        // Trajectory & ball position
+        const trajPos = addTrajectory(synthData);
+        const ballCenter = trajPos || new THREE.Vector3(0, 0.8, 0);
+        ball.position.copy(ballCenter);
+
+        const scale = 0.001;
+        const dir = new THREE.Vector3(-wx * scale, -wz * scale, -wy * scale);
+        const len = dir.length();
+
+        if (len > 0.01) {
+            const dirNorm = dir.clone().normalize();
+
+            // ω arrow through ball
+            const halfDir = dirNorm.clone().multiplyScalar(len / 2);
+            const arrowStart = ballCenter.clone().sub(halfDir);
+            const shaftLen = len * 0.8;
+            const shaftGeo = new THREE.CylinderGeometry(0.025, 0.025, shaftLen, 8);
+            const shaftMat = new THREE.MeshBasicMaterial({color: 0xff8a65});
+            const shaft = new THREE.Mesh(shaftGeo, shaftMat);
+            const quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), dirNorm);
+            shaft.quaternion.copy(quat);
+            shaft.position.copy(arrowStart).add(dirNorm.clone().multiplyScalar(shaftLen / 2));
+            scene.add(shaft); currentArrows.push(shaft);
+
+            const coneLen = len * 0.2;
+            const coneGeo = new THREE.ConeGeometry(0.06, coneLen, 8);
+            const coneMat = new THREE.MeshBasicMaterial({color: 0xff8a65});
+            const cone = new THREE.Mesh(coneGeo, coneMat);
+            cone.quaternion.copy(quat);
+            cone.position.copy(arrowStart).add(dirNorm.clone().multiplyScalar(shaftLen + coneLen / 2));
+            scene.add(cone); currentArrows.push(cone);
+
+            const tipPos = arrowStart.clone().add(dirNorm.clone().multiplyScalar(len * 1.2));
+            currentArrows.push(makeTextSprite('ω', tipPos, '#ff8a65', 24));
+
+            // Force arrow
+            addForceArrow(dirNorm, ballCenter);
+
+            // Ball rotation
+            const rotScale = 0.00015;
+            ballOmega.set(-wx * rotScale, -wz * rotScale, -wy * rotScale);
+        } else {
+            ballOmega.set(0, 0, 0);
+        }
+
+        // Info with spin efficiency
+        const transverse = Math.sqrt(tComp*tComp + sComp*sComp);
+        const total = Math.sqrt(tComp*tComp + sComp*sComp + gComp*gComp);
+        const eff = total > 0 ? (transverse / total * 100) : 0;
+        const transRPM = Math.round(eff / 100 * totalSpin);
+        document.getElementById('bsg-info').innerHTML =
+            `スピン効率 = <span style="font-size:24px;font-weight:bold;color:#4fc3f7;">${eff.toFixed(0)}%</span>`;
+    }
+
+    // Slider listeners
+    ['w2-t', 'w2-s', 'w2-g'].forEach(id => {
+        document.getElementById(id).addEventListener('input', function() {
+            if (w2Mode === 'free') updateW2Free();
+        });
+    });
+    document.querySelectorAll('.w2-preset').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.getElementById('w2-t').value = this.dataset.t;
+            document.getElementById('w2-s').value = this.dataset.s;
+            document.getElementById('w2-g').value = this.dataset.g;
+            if (w2Mode === 'free') updateW2Free();
+        });
+    });
+
+    // Mode switching
+    document.getElementById('w2-mode-pitcher').addEventListener('click', function() {
+        w2Mode = 'pitcher';
+        this.style.background = '#335'; this.style.color = '#4fc3f7'; this.style.fontWeight = 'bold';
+        document.getElementById('w2-mode-free').style.background = '#222';
+        document.getElementById('w2-mode-free').style.color = '#888';
+        document.getElementById('w2-mode-free').style.fontWeight = 'normal';
+        document.getElementById('w2-ctrl-pitcher').style.display = 'flex';
+        document.getElementById('w2-ctrl-free').style.display = 'none';
+        updateBSG(document.getElementById('bsg-pitch').value);
+    });
+    document.getElementById('w2-mode-free').addEventListener('click', function() {
+        w2Mode = 'free';
+        this.style.background = '#335'; this.style.color = '#4fc3f7'; this.style.fontWeight = 'bold';
+        document.getElementById('w2-mode-pitcher').style.background = '#222';
+        document.getElementById('w2-mode-pitcher').style.color = '#888';
+        document.getElementById('w2-mode-pitcher').style.fontWeight = 'normal';
+        document.getElementById('w2-ctrl-pitcher').style.display = 'none';
+        document.getElementById('w2-ctrl-free').style.display = 'flex';
+        updateW2Free();
+    });
+
+    // Chapter 3 pitch buttons: switch pitcher & pitch, scroll to widget
+    document.querySelectorAll('.w2-show-pitch').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const pitcher = this.dataset.pitcher;
+            const pitch = this.dataset.pitch;
+
+            // Switch to pitcher mode
+            w2Mode = 'pitcher';
+            document.getElementById('w2-mode-pitcher').style.background = '#335';
+            document.getElementById('w2-mode-pitcher').style.color = '#4fc3f7';
+            document.getElementById('w2-mode-pitcher').style.fontWeight = 'bold';
+            document.getElementById('w2-mode-free').style.background = '#222';
+            document.getElementById('w2-mode-free').style.color = '#888';
+            document.getElementById('w2-mode-free').style.fontWeight = 'normal';
+            document.getElementById('w2-ctrl-pitcher').style.display = 'flex';
+            document.getElementById('w2-ctrl-free').style.display = 'none';
+
+            // Update pitcher
+            currentPitcher = pitcher;
+            pitchData = pitcherData[currentPitcher].pitches;
+            document.getElementById('bsg-pitcher').value = pitcher;
+            rebuildPitchSelect();
+
+            // Update pitch
+            document.getElementById('bsg-pitch').value = pitch;
+            updateBSG(pitch);
+
+            // Scroll to widget
+            document.getElementById('bsg-canvas').scrollIntoView({behavior: 'smooth', block: 'center'});
+        });
+    });
+
     const clock = new THREE.Clock();
     function animate() {
         requestAnimationFrame(animate);
         const dt = clock.getDelta();
 
-        // Rotate ball (halved speed)
+        // Rotate ball
         if (ballOmega.length() > 0.0001) {
             const axis = ballOmega.clone().normalize();
             const angle = ballOmega.length() * dt * 30;
