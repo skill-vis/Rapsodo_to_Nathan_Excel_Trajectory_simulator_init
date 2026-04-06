@@ -573,16 +573,16 @@ $$C_L = \frac{c_2 \cdot S}{c_0 + c_1 \cdot S}$$
 <canvas id="bsg-axes-canvas" style="width:100%;height:420px;border-radius:8px;cursor:grab;"></canvas>
 <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px;">
 <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center;">
-<label style="color:#aaa;font-size:13px;">T (トップスピン): <input type="range" id="bsg0-t" min="-90" max="90" value="-70" style="width:140px;vertical-align:middle;"> <span id="bsg0-t-val" style="color:#ff4444;font-weight:bold;">-70°</span></label>
-<label style="color:#aaa;font-size:13px;">S (サイドスピン): <input type="range" id="bsg0-s" min="-90" max="90" value="10" style="width:140px;vertical-align:middle;"> <span id="bsg0-s-val" style="color:#4488ff;font-weight:bold;">10°</span></label>
-<label style="color:#aaa;font-size:13px;">G (ジャイロ): <input type="range" id="bsg0-g" min="-90" max="0" value="-10" style="width:120px;vertical-align:middle;"> <span id="bsg0-g-val" style="color:#44ff44;font-weight:bold;">-10°</span></label>
+<label style="color:#aaa;font-size:13px;">T (トップスピン): <input type="range" id="bsg0-t" min="-90" max="90" value="66" style="width:140px;vertical-align:middle;"> <span id="bsg0-t-val" style="color:#ff4444;font-weight:bold;">66°</span></label>
+<label style="color:#aaa;font-size:13px;">S (サイドスピン): <input type="range" id="bsg0-s" min="-90" max="90" value="24" style="width:140px;vertical-align:middle;"> <span id="bsg0-s-val" style="color:#4488ff;font-weight:bold;">24°</span></label>
+<label style="color:#aaa;font-size:13px;">G (ジャイロ): <input type="range" id="bsg0-g" min="-90" max="0" value="-20" style="width:120px;vertical-align:middle;"> <span id="bsg0-g-val" style="color:#44ff44;font-weight:bold;">-20°</span></label>
 </div>
 <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
 <span style="color:#666;font-size:12px;">プリセット:</span>
-<button class="bsg0-preset" data-t="-70" data-s="10" data-g="-10" style="font-size:11px;background:#333;color:#ff4444;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">FF ストレート</button>
-<button class="bsg0-preset" data-t="55" data-s="25" data-g="-10" style="font-size:11px;background:#333;color:#4444ff;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">CU カーブ</button>
-<button class="bsg0-preset" data-t="-5" data-s="-5" data-g="-65" style="font-size:11px;background:#333;color:#44bbff;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">SL スライダー</button>
-<button class="bsg0-preset" data-t="-55" data-s="-25" data-g="-5" style="font-size:11px;background:#333;color:#44cc44;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">SI シンカー</button>
+<button class="bsg0-preset" data-t="66" data-s="24" data-g="-20" style="font-size:11px;background:#333;color:#ff4444;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">FF ストレート</button>
+<button class="bsg0-preset" data-t="-50" data-s="-40" data-g="-50" style="font-size:11px;background:#333;color:#4444ff;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">CU カーブ</button>
+<button class="bsg0-preset" data-t="65" data-s="-25" data-g="-75" style="font-size:11px;background:#333;color:#44bbff;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">SL スライダー</button>
+<button class="bsg0-preset" data-t="46" data-s="44" data-g="-35" style="font-size:11px;background:#333;color:#44cc44;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">SI シンカー</button>
 <button class="bsg0-preset" data-t="0" data-s="0" data-g="-90" style="font-size:11px;background:#333;color:#999;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">ジャイロ</button>
 </div>
 </div>
@@ -645,16 +645,16 @@ $$C_L = \frac{c_2 \cdot S}{c_0 + c_1 \cdot S}$$
 <!-- Free slider mode controls -->
 <div id="w2-ctrl-free" style="margin-top:10px;display:none;flex-direction:column;gap:8px;">
 <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center;">
-<label style="color:#aaa;font-size:13px;">T (トップスピン): <input type="range" id="w2-t" min="-90" max="90" value="-70" style="width:140px;vertical-align:middle;"> <span id="w2-t-val" style="color:#ff4444;font-weight:bold;">-70°</span></label>
-<label style="color:#aaa;font-size:13px;">S (サイドスピン): <input type="range" id="w2-s" min="-90" max="90" value="10" style="width:140px;vertical-align:middle;"> <span id="w2-s-val" style="color:#4488ff;font-weight:bold;">10°</span></label>
-<label style="color:#aaa;font-size:13px;">G (ジャイロ): <input type="range" id="w2-g" min="-90" max="0" value="-10" style="width:120px;vertical-align:middle;"> <span id="w2-g-val" style="color:#44ff44;font-weight:bold;">-10°</span></label>
+<label style="color:#aaa;font-size:13px;">T (トップスピン): <input type="range" id="w2-t" min="-90" max="90" value="66" style="width:140px;vertical-align:middle;"> <span id="w2-t-val" style="color:#ff4444;font-weight:bold;">66°</span></label>
+<label style="color:#aaa;font-size:13px;">S (サイドスピン): <input type="range" id="w2-s" min="-90" max="90" value="24" style="width:140px;vertical-align:middle;"> <span id="w2-s-val" style="color:#4488ff;font-weight:bold;">24°</span></label>
+<label style="color:#aaa;font-size:13px;">G (ジャイロ): <input type="range" id="w2-g" min="-90" max="0" value="-20" style="width:120px;vertical-align:middle;"> <span id="w2-g-val" style="color:#44ff44;font-weight:bold;">-20°</span></label>
 </div>
 <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
 <span style="color:#666;font-size:12px;">プリセット:</span>
-<button class="w2-preset" data-t="-70" data-s="10" data-g="-10" style="font-size:11px;background:#333;color:#ff4444;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">FF ストレート</button>
-<button class="w2-preset" data-t="55" data-s="25" data-g="-10" style="font-size:11px;background:#333;color:#4444ff;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">CU カーブ</button>
-<button class="w2-preset" data-t="-5" data-s="-5" data-g="-65" style="font-size:11px;background:#333;color:#44bbff;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">SL スライダー</button>
-<button class="w2-preset" data-t="-55" data-s="-25" data-g="-5" style="font-size:11px;background:#333;color:#44cc44;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">SI シンカー</button>
+<button class="w2-preset" data-t="66" data-s="24" data-g="-20" style="font-size:11px;background:#333;color:#ff4444;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">FF ストレート</button>
+<button class="w2-preset" data-t="-50" data-s="-40" data-g="-50" style="font-size:11px;background:#333;color:#4444ff;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">CU カーブ</button>
+<button class="w2-preset" data-t="65" data-s="-25" data-g="-75" style="font-size:11px;background:#333;color:#44bbff;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">SL スライダー</button>
+<button class="w2-preset" data-t="46" data-s="44" data-g="-35" style="font-size:11px;background:#333;color:#44cc44;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">SI シンカー</button>
 <button class="w2-preset" data-t="0" data-s="0" data-g="-90" style="font-size:11px;background:#333;color:#999;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">ジャイロ</button>
 </div>
 </div>
@@ -2376,7 +2376,7 @@ function sharedComputeTrajectory(scene, trajObjArray, d) {
         const totalSpin = 2200;
         const wx = tComp * totalSpin;
         const wz = -sComp * totalSpin;
-        const wy = gComp * totalSpin;
+        const wy = -gComp * totalSpin;  // G slider negative → wy negative (toward catcher)
 
         const synthData = {
             name: '自由設定', color: 0xff8a65,
