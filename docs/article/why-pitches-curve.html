@@ -491,6 +491,30 @@ MathJax = { tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] } };
 
 <p>この「回転軸と進行方向に直交する方向に曲がる」ルールが、全ての球種の変化を統一的に説明する。</p>
 
+<h3>外積（クロス積）— マグヌス力の方向を決める数学</h3>
+
+<p>マグヌス力の方向は、角速度ベクトル $\boldsymbol{\omega}$ と速度ベクトル $\mathbf{v}$ の<strong>外積</strong>（クロス積） $\boldsymbol{\omega} \times \mathbf{v}$ で決まる。外積は難しそうに見えるが、次の2つのルールだけ覚えれば十分だ:</p>
+
+<figure style="margin:16px auto;text-align:center;background:#12122a;border-radius:8px;padding:16px;">
+<img src="img/cross_vector.png" alt="外積 a × b の幾何学的意味" style="max-width:300px;width:100%;height:auto;">
+<figcaption>外積 $\mathbf{a} \times \mathbf{b}$ の幾何学的な意味</figcaption>
+</figure>
+
+<div class="highlight">
+<strong>外積の2つのルール:</strong>
+<ol>
+<li><strong>方向</strong>: $\mathbf{a} \times \mathbf{b}$ は、$\mathbf{a}$ と $\mathbf{b}$ が作る平面に<strong>垂直な方向</strong>を向く。向きは右ねじの法則で決まる（$\mathbf{a}$ から $\mathbf{b}$ へ指を巻いたとき、親指が指す方向）。</li>
+<li><strong>大きさ</strong>: $\mathbf{a}$ と $\mathbf{b}$ が張る<strong>平行四辺形の面積</strong>に等しい。2つのベクトルが直交するとき最大、平行のときゼロ。</li>
+</ol>
+</div>
+
+<p>マグヌス力に当てはめると:</p>
+<ul>
+<li>$\boldsymbol{\omega}$（回転軸）と $\mathbf{v}$（速度）が<strong>直交する</strong>とき → 平行四辺形の面積が最大 → マグヌス力が最大（ストレートのバックスピンがこの例）</li>
+<li>$\boldsymbol{\omega}$ と $\mathbf{v}$ が<strong>平行</strong>のとき → 面積ゼロ → マグヌス力もゼロ（ジャイロ回転がこの例）</li>
+<li>力の方向は常に $\boldsymbol{\omega}$ と $\mathbf{v}$ の<strong>両方に垂直</strong> → ボールは「回転軸と進行方向に直交する方向」に曲がる</li>
+</ul>
+
 <p>下の3Dウィジェットで、回転軸（<span style="color:#ff8a65">オレンジの矢印 ω</span>）をスライダーで動かすと、マグヌス力（<span style="color:#4fc3f7">青の矢印 F</span>）の方向と軌道がどう変わるか体験できる。まずはストレートの状態から、スライダーを動かしてみよう。</p>
 
 <div style="background:#111;border-radius:8px;padding:16px;margin:20px 0;">
