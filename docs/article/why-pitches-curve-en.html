@@ -1,0 +1,2580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why Pitches Curve — Interactive Physics of Pitch Movement</title>
+<meta name="description" content="Why every pitch curves, including fastballs — explained through angular velocity vectors and the Magnus effect. With interactive 3D visualizations.">
+<meta property="og:title" content="Why Pitches Curve — Interactive Physics of Pitch Movement">
+<meta property="og:description" content="Understanding pitch movement through angular velocity vectors. With interactive 3D visualizations.">
+<meta property="og:image" content="https://baseball.skill-vis.com/static/ogp.png">
+<meta property="og:url" content="https://skill-vis.github.io/MyTrajectorySimulator/article/why-pitches-curve-en.html">
+<style>
+:root {
+    --bg: #0a0a1a;
+    --text: #e0e0e0;
+    --accent: #4fc3f7;
+    --accent2: #ff8a65;
+    --section-bg: #12122a;
+    --code-bg: #1a1a3a;
+    --border: #333;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.9;
+    font-size: 16px;
+}
+.container {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 20px 24px;
+}
+h1 {
+    font-size: 2em;
+    color: #fff;
+    margin: 40px 0 10px;
+    line-height: 1.4;
+}
+.subtitle {
+    font-size: 1.4em;
+    color: var(--accent2);
+    font-weight: bold;
+    letter-spacing: 0.05em;
+    margin-bottom: 40px;
+}
+h2 {
+    font-size: 1.5em;
+    color: var(--accent);
+    margin: 50px 0 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--accent);
+}
+h3 {
+    font-size: 1.2em;
+    color: var(--accent2);
+    margin: 30px 0 10px;
+}
+p {
+    margin: 12px 0;
+    text-align: justify;
+}
+.highlight {
+    background: var(--section-bg);
+    border-left: 4px solid var(--accent);
+    padding: 16px 20px;
+    margin: 20px 0;
+    border-radius: 0 8px 8px 0;
+}
+.highlight.orange {
+    border-left-color: var(--accent2);
+}
+.math-box {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+    font-family: 'Times New Roman', serif;
+    font-size: 1.1em;
+    text-align: center;
+    color: #ccc;
+}
+details {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 20px 0;
+    padding: 0;
+}
+details summary {
+    padding: 12px 20px;
+    cursor: pointer;
+    color: #999;
+    font-size: 0.9em;
+}
+details summary:hover { color: var(--accent); }
+details > div {
+    padding: 0 20px 16px;
+    font-size: 0.95em;
+    color: #aaa;
+}
+.interactive-frame {
+    width: 100%;
+    height: 500px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 20px 0;
+    background: #000;
+}
+.sim-link {
+    display: inline-block;
+    background: var(--accent);
+    color: #000;
+    padding: 8px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    margin: 10px 4px;
+    font-size: 0.9em;
+}
+.sim-link:hover { opacity: 0.85; }
+.sim-link.orange { background: var(--accent2); }
+figure {
+    margin: 24px 0;
+    text-align: center;
+}
+figcaption {
+    color: #888;
+    font-size: 0.85em;
+    margin-top: 8px;
+}
+.toc {
+    background: var(--section-bg);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 30px 0;
+}
+.toc h3 { margin-top: 0; color: #ccc; }
+.toc ul { padding-left: 20px; }
+.toc li { margin: 6px 0; }
+.toc a { color: var(--accent); text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+.vector-arrow { color: var(--accent2); font-weight: bold; }
+.footer {
+    margin-top: 60px;
+    padding: 20px 0;
+    border-top: 1px solid var(--border);
+    color: #666;
+    font-size: 0.85em;
+    text-align: center;
+}
+.footer a { color: #888; }
+canvas { border-radius: 8px; }
+/* Zoomable figures */
+figure svg, figure img { cursor: zoom-in; }
+.modal-overlay {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85); z-index: 9999; cursor: zoom-out;
+    justify-content: center; align-items: center;
+}
+.modal-overlay.active { display: flex; }
+.modal-overlay > * { max-width: 95vw; max-height: 95vh; border-radius: 8px; }
+</style>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J1LGG2TY98"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-J1LGG2TY98');
+</script>
+<!-- MathJax for equations -->
+<script>
+MathJax = { tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.145.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.145.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+<div class="modal-overlay" id="img-modal"></div>
+<div class="container">
+
+<h1>Why Pitches Curve</h1>
+<p class="subtitle">Interactive Physics of Pitch Movement</p>
+<p style="color:#888;font-size:0.95em;margin-top:-30px;margin-bottom:40px;">— Understanding Pitch Movement Through Angular Velocity Vectors —</p>
+
+<!-- ========== Introduction ========== -->
+<div class="highlight">
+<strong>"The fastball is the ultimate breaking pitch."</strong> (Taketo Mizota, Professor Emeritus, Fukuoka Institute of Technology)<br>
+Every pitch "moves." Compared to a ball flying under gravity alone, a spinning ball dramatically alters its trajectory. The fastball is no exception.
+</div>
+
+<p>A ball thrown by a pitcher follows a parabolic arc as gravity pulls it down. Yet in actual pitching, the ball can appear to fly straight or break sharply. Why?</p>
+
+<p>The answer lies in <strong>spin</strong>. A spinning ball experiences a force called the <strong>Magnus force</strong> through its interaction with the air, bending its trajectory. Even a fastball resists gravity with over 2000 rpm of backspin, achieving a trajectory that "doesn't drop as much." In other words, the fastball is itself a "breaking pitch."</p>
+
+<p>This article represents spin as an <strong>angular velocity vector (arrow)</strong> and explains why each pitch type curves the way it does, with interactive 3D visualizations.</p>
+
+<nav class="toc">
+<h3>Table of Contents</h3>
+<ul>
+<li><a href="#ch1">Chapter 1: Forces Acting on a Ball</a></li>
+<li><a href="#ch2">Chapter 2: Understanding Spin with Vectors</a></li>
+<li><a href="#ch3">Chapter 3: The omega Vector of Each Pitch Type — Why They Curve</a></li>
+<li><a href="#ch4">Chapter 4: Pitch Type Map in omega Space</a></li>
+<li><a href="#appendix">Appendix: For Researchers</a></li>
+</ul>
+</nav>
+
+<!-- ========== Chapter 1 ========== -->
+<h2 id="ch1">Chapter 1: Forces Acting on a Ball</h2>
+
+<p>Three main forces act on a baseball in flight.</p>
+
+<figure style="margin:24px auto;text-align:center;">
+<svg viewBox="0 0 520 380" style="max-width:520px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Ball gradient for 3D look -->
+    <radialGradient id="ballGrad" cx="40%" cy="38%" r="50%">
+      <stop offset="0%" stop-color="#f5f0e5"/>
+      <stop offset="70%" stop-color="#d8d0c0"/>
+      <stop offset="100%" stop-color="#b0a890"/>
+    </radialGradient>
+    <!-- Shadow ellipse -->
+    <radialGradient id="shadowGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#000" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="520" height="380" rx="8" fill="#12122a"/>
+
+  <!-- Shadow under ball -->
+  <ellipse cx="265" cy="310" rx="50" ry="12" fill="url(#shadowGrad)"/>
+
+  <!-- Velocity arrow (blue, going right and slightly forward/down) -->
+  <line x1="295" y1="185" x2="440" y2="220" stroke="#4488ff" stroke-width="2.5" stroke-dasharray="8,5"/>
+  <polygon points="445,221 428,214 430,226" fill="#4488ff"/>
+  <text x="390" y="248" fill="#4488ff" font-size="15" font-weight="bold" font-family="sans-serif">v</text>
+  <text x="370" y="265" fill="#4488ff" font-size="12" font-family="sans-serif">(velocity)</text>
+
+  <!-- Drag arrow (opposite to velocity, going left and slightly back/up) -->
+  <line x1="225" y1="180" x2="90" y2="148" stroke="#aaaaaa" stroke-width="4"/>
+  <polygon points="85,147 102,140 100,154" fill="#aaaaaa"/>
+  <text x="42" y="132" fill="#aaaaaa" font-size="14" font-weight="bold" font-family="sans-serif">Drag</text>
+  <text x="50" y="150" fill="#aaaaaa" font-size="14" font-weight="bold" font-family="sans-serif">F<tspan font-size="10" dy="3">D</tspan></text>
+
+  <!-- Magnus force arrow (up and slightly left, perpendicular-ish to v) -->
+  <line x1="255" y1="140" x2="220" y2="30" stroke="#4fc3f7" stroke-width="4"/>
+  <polygon points="218,25 212,43 226,40" fill="#4fc3f7"/>
+  <text x="143" y="48" fill="#4fc3f7" font-size="14" font-weight="bold" font-family="sans-serif">Magnus force</text>
+  <text x="178" y="66" fill="#4fc3f7" font-size="14" font-weight="bold" font-family="sans-serif">F<tspan font-size="10" dy="3">M</tspan></text>
+
+  <!-- Gravity arrow (straight down) -->
+  <line x1="260" y1="215" x2="260" y2="330" stroke="#ffcc44" stroke-width="4"/>
+  <polygon points="260,336 253,320 267,320" fill="#ffcc44"/>
+  <text x="272" y="320" fill="#ffcc44" font-size="14" font-weight="bold" font-family="sans-serif">Gravity mg</text>
+
+  <!-- Ball (3D shaded sphere) -->
+  <circle cx="260" cy="180" r="45" fill="url(#ballGrad)" stroke="#999" stroke-width="1"/>
+
+  <!-- Backspin rotation arrows (curved arrows on the ball surface) -->
+  <!-- Front face rotation: clockwise when viewed from right = backspin -->
+  <path d="M240,148 A30,30 0 0,1 280,170" fill="none" stroke="#cc4444" stroke-width="1.8"/>
+  <polygon points="281,170 274,162 278,175" fill="#cc4444"/>
+  <path d="M280,195 A30,30 0 0,1 240,213" fill="none" stroke="#cc4444" stroke-width="1.8"/>
+  <polygon points="239,213 247,207 243,218" fill="#cc4444"/>
+
+  <!-- ω arrow (dashed, pointing out of screen = toward viewer, slightly left-down) -->
+  <line x1="260" y1="180" x2="175" y2="245" stroke="#ff8a65" stroke-width="2" stroke-dasharray="6,4"/>
+  <polygon points="170,249 182,240 178,252" fill="#ff8a65"/>
+  <text x="130" y="268" fill="#ff8a65" font-size="13" font-weight="bold" font-family="sans-serif">ω</text>
+  <text x="95" y="285" fill="#ff8a65" font-size="11" font-family="sans-serif">(spin axis)</text>
+
+  <!-- Caption -->
+  <text x="260" y="368" fill="#888" font-size="12" font-family="sans-serif" text-anchor="middle">Backspin (fastball): relationship of 3 forces and spin axis</text>
+</svg>
+<figcaption>Three forces acting on a ball in flight: gravity (yellow, downward), drag (gray, opposite to direction of travel), and Magnus force (blue, deflection due to spin). The spin axis omega (orange dashed) follows the right-hand rule.</figcaption>
+</figure>
+
+<h3>1-1. Gravity — The Force That Pulls the Ball Down</h3>
+
+<p>A downward force that acts on all objects. Even a 95 mph fastball drops approximately <strong>80 cm</strong> due to gravity alone during the roughly 0.4 seconds from the pitcher's release to home plate.</p>
+
+<figure style="margin:24px auto;text-align:center;">
+<svg viewBox="0 0 520 240" style="max-width:520px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg">
+  <rect width="520" height="240" rx="8" fill="#12122a"/>
+
+  <!-- Axis labels -->
+  <text x="30" y="30" fill="#888" font-size="11" font-family="sans-serif">Release</text>
+  <text x="450" y="30" fill="#888" font-size="11" font-family="sans-serif">Home</text>
+
+  <!-- Release point marker -->
+  <circle cx="60" cy="60" r="4" fill="#ff8a65"/>
+  <text x="68" y="56" fill="#ff8a65" font-size="10" font-family="sans-serif">Release (1.8m)</text>
+
+  <!-- Straight line: no gravity, no drag, no spin (dashed) -->
+  <line x1="60" y1="60" x2="470" y2="60" stroke="#00cccc" stroke-width="2" stroke-dasharray="8,5"/>
+  <text x="310" y="52" fill="#00cccc" font-size="11" font-family="sans-serif">No gravity, no spin (straight line)</text>
+
+  <!-- Parabolic arc: gravity only, no drag, no spin (solid) -->
+  <!-- y = y0 + vy0*t - 0.5*g*t^2, with slight upward release angle -->
+  <!-- At t=0.4s, drop ≈ 0.5*9.8*0.16 = 0.78m ≈ 80cm -->
+  <!-- Scale: 410px = 18.44m horizontal, so 80cm ≈ 80/180*160 ≈ 71px vertical -->
+  <path d="M60,60 Q180,55 300,72 Q390,95 470,132" fill="none" stroke="#ffcc44" stroke-width="2.5"/>
+  <circle cx="470" cy="132" r="4" fill="#ffcc44"/>
+  <text x="310" y="148" fill="#ffcc44" font-size="11" font-family="sans-serif">With gravity, no spin (parabola)</text>
+
+  <!-- Dimension arrow showing ~80cm drop -->
+  <line x1="482" y1="60" x2="482" y2="132" stroke="#ff6666" stroke-width="1.5"/>
+  <line x1="476" y1="60" x2="488" y2="60" stroke="#ff6666" stroke-width="1.5"/>
+  <line x1="476" y1="132" x2="488" y2="132" stroke="#ff6666" stroke-width="1.5"/>
+  <polygon points="482,63 479,70 485,70" fill="#ff6666"/>
+  <polygon points="482,129 479,122 485,122" fill="#ff6666"/>
+  <text x="492" y="100" fill="#ff6666" font-size="13" font-weight="bold" font-family="sans-serif">≈80cm</text>
+
+  <!-- Ground reference line -->
+  <line x1="40" y1="200" x2="500" y2="200" stroke="#333355" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="42" y="215" fill="#555" font-size="10" font-family="sans-serif">Ground</text>
+
+  <!-- Distance label -->
+  <line x1="60" y1="190" x2="470" y2="190" stroke="#555" stroke-width="0.8"/>
+  <line x1="60" y1="186" x2="60" y2="194" stroke="#555" stroke-width="0.8"/>
+  <line x1="470" y1="186" x2="470" y2="194" stroke="#555" stroke-width="0.8"/>
+  <text x="240" y="186" fill="#555" font-size="10" font-family="sans-serif" text-anchor="middle">18.44 m (pitcher to home)</text>
+</svg>
+<figcaption>Side view trajectory comparison (no drag, no spin). Gravity alone causes approximately 80 cm of drop.</figcaption>
+</figure>
+
+<p>Without any spin, the ball would simply follow a parabolic arc downward.</p>
+
+<h3>1-2. Air Resistance (Drag) — The Force That Slows the Ball</h3>
+
+<p>A ball moving through air decelerates due to friction with the air. A ball released at 95 mph slows by approximately <strong>10%</strong> by the time it reaches home plate, arriving at around 86 mph.</p>
+
+<p>Drag acts opposite to the ball's direction of travel and is proportional to the square of the velocity. In other words, the faster the ball, the greater the air resistance it encounters.</p>
+
+<figure style="margin:24px auto;text-align:center;">
+<svg viewBox="0 0 520 220" style="max-width:520px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI','Helvetica Neue',sans-serif">
+  <rect width="520" height="220" rx="8" fill="#12122a"/>
+
+  <!-- Labels -->
+  <text x="30" y="22" fill="#888" font-size="11">Release</text>
+  <text x="450" y="22" fill="#888" font-size="11">Home</text>
+  <text x="260" y="22" fill="#666" font-size="10" text-anchor="middle">18.44 m</text>
+
+  <!-- Distance markers -->
+  <line x1="60" y1="28" x2="470" y2="28" stroke="#444" stroke-width="0.5"/>
+  <line x1="60" y1="26" x2="60" y2="30" stroke="#444" stroke-width="0.5"/>
+  <line x1="470" y1="26" x2="470" y2="30" stroke="#444" stroke-width="0.5"/>
+
+  <!-- Track 1: No drag (top) -->
+  <text x="12" y="62" fill="#44ccdd" font-size="10">No drag</text>
+  <!-- Trajectory line (no drag: straight + gravity, arrives faster) -->
+  <path d="M60,70 Q265,65 470,115" fill="none" stroke="#44ccdd" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+  <!-- Ball: no drag (moves fast, arrives at ~0.39s) -->
+  <circle r="8" fill="#44ccdd">
+    <animateMotion dur="2.5s" repeatCount="indefinite" keyPoints="0;1;1" keyTimes="0;0.39;1" calcMode="linear">
+      <mpath href="#pathNoDrag"/>
+    </animateMotion>
+  </circle>
+  <path id="pathNoDrag" d="M60,70 Q265,65 470,115" fill="none" stroke="none"/>
+
+  <!-- Speed label for no-drag ball -->
+  <text fill="#44ccdd" font-size="9" font-weight="bold">
+    <animateMotion dur="2.5s" repeatCount="indefinite" keyPoints="0;1;1" keyTimes="0;0.39;1" calcMode="linear">
+      <mpath href="#pathNoDragLabel"/>
+    </animateMotion>
+    95mph→95mph
+  </text>
+  <path id="pathNoDragLabel" d="M60,56 Q265,51 470,101" fill="none" stroke="none"/>
+
+  <!-- Track 2: With drag (bottom) -->
+  <text x="12" y="122" fill="#ff8844" font-size="10">With drag</text>
+  <!-- Trajectory line (with drag: same gravity, arrives slower, drops more) -->
+  <path d="M60,130 Q250,128 470,185" fill="none" stroke="#ff8844" stroke-width="1.5"/>
+
+  <!-- Ball: with drag (decelerates, arrives at ~0.43s → 43% of 2.5s cycle) -->
+  <circle r="8" fill="#ff8844">
+    <animateMotion dur="2.5s" repeatCount="indefinite" keyPoints="0;0.3;0.6;0.85;1;1" keyTimes="0;0.12;0.24;0.36;0.43;1" calcMode="linear">
+      <mpath href="#pathDrag"/>
+    </animateMotion>
+  </circle>
+  <path id="pathDrag" d="M60,130 Q250,128 470,185" fill="none" stroke="none"/>
+
+  <!-- Speed label for drag ball -->
+  <text fill="#ff8844" font-size="9" font-weight="bold">
+    <animateMotion dur="2.5s" repeatCount="indefinite" keyPoints="0;0.3;0.6;0.85;1;1" keyTimes="0;0.12;0.24;0.36;0.43;1" calcMode="linear">
+      <mpath href="#pathDragLabel"/>
+    </animateMotion>
+    95mph→86mph
+  </text>
+  <path id="pathDragLabel" d="M60,116 Q250,114 470,171" fill="none" stroke="none"/>
+
+  <!-- Arrival time comparison -->
+  <line x1="470" y1="35" x2="470" y2="195" stroke="#555" stroke-width="0.5" stroke-dasharray="3,2"/>
+
+  <!-- Caption -->
+  <text x="260" y="210" fill="#888" font-size="11" text-anchor="middle">Released simultaneously: ball with drag (orange) arrives later</text>
+</svg>
+<figcaption>Comparing drag vs. no drag (with gravity, no spin). The ball with drag decelerates from 95 to 86 mph, arrives later, and drops more.</figcaption>
+</figure>
+
+<h3>1-3. Magnus Force — The Force That "Curves" the Ball</h3>
+
+<p>This is the essence of pitch movement. Around a spinning ball, the airflow becomes asymmetric.</p>
+
+<p>On the side where the air flows in the same direction as the spin, the air velocity becomes <strong>faster</strong> and the pressure becomes <strong>lower</strong>. On the opposite side, the air becomes <strong>slower</strong> and the pressure becomes <strong>higher</strong>. This pressure difference creates a force that pushes the ball toward the low-pressure side — the <strong>Magnus force</strong>.</p>
+
+<figure style="margin:24px auto;text-align:center;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 400" style="max-width:480px;width:100%;height:auto;" font-family="'Segoe UI', 'Helvetica Neue', sans-serif">
+  <defs>
+    <marker id="arrowB" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#9999bb"/>
+    </marker>
+    <radialGradient id="magBallGrad2" cx="60%" cy="38%" r="50%">
+      <stop offset="0%" stop-color="#f5f0e5"/>
+      <stop offset="70%" stop-color="#d8d0c0"/>
+      <stop offset="100%" stop-color="#a09880"/>
+    </radialGradient>
+    <filter id="magShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="2" dy="3" stdDeviation="4" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- Background (dark theme) -->
+  <rect width="480" height="400" fill="#12122a" rx="8"/>
+
+  <!-- Airflow lines -->
+  <g stroke="#8888aa" stroke-width="1.5" fill="none">
+    <!-- Top: fast flow, wider spacing (low pressure) -->
+    <path d="M 420,90 Q 330,88 255,78 Q 180,68 140,85" marker-end="url(#arrowB)"/>
+    <path d="M 420,110 Q 340,106 270,92 Q 190,76 140,102" marker-end="url(#arrowB)"/>
+    <path d="M 420,130 Q 350,128 285,110 Q 210,90 140,122" marker-end="url(#arrowB)"/>
+
+    <!-- Bottom: slow flow, tighter spacing (high pressure) -->
+    <path d="M 420,270 Q 340,272 280,290 Q 205,312 140,278" marker-end="url(#arrowB)"/>
+    <path d="M 420,300 Q 340,304 280,324 Q 200,348 140,308" marker-end="url(#arrowB)"/>
+    <path d="M 420,330 Q 330,334 270,348 Q 195,366 140,338" marker-end="url(#arrowB)"/>
+  </g>
+
+  <!-- Baseball -->
+  <circle cx="255" cy="200" r="62" fill="url(#magBallGrad2)" stroke="#888" stroke-width="2" filter="url(#magShadow)"/>
+
+  <!-- Backspin rotation arrows on ball -->
+  <path d="M232,162 A45,45 0 0,1 280,170" fill="none" stroke="#cc4444" stroke-width="2.2"/>
+  <polygon points="281,170 273,163 276,176" fill="#cc4444"/>
+  <path d="M280,232 A45,45 0 0,1 232,224" fill="none" stroke="#cc4444" stroke-width="2.2"/>
+  <polygon points="231,224 240,231 237,218" fill="#cc4444"/>
+
+  <!-- Velocity arrow (dashed, left) -->
+  <line x1="62" y1="200" x2="130" y2="200" stroke="#4488ff" stroke-width="2" stroke-dasharray="6,4"/>
+  <polygon points="58,200 70,195 70,205" fill="#4488ff"/>
+  <text x="62" y="190" fill="#4488ff" font-size="12" font-weight="bold">← v (pitch direction)</text>
+
+  <!-- Magnus force arrow (upward, centered on ball) -->
+  <line x1="255" y1="275" x2="255" y2="125" stroke="#4fc3f7" stroke-width="10" opacity="0.85"/>
+  <polygon points="255,115 244,133 266,133" fill="#4fc3f7"/>
+  <text x="268" y="125" fill="#4fc3f7" font-size="14" font-weight="bold">Magnus F<tspan font-size="10" dy="3">M</tspan></text>
+
+  <!-- Rotation axis ω (pointing into screen) overlaid on Magnus arrow -->
+  <circle cx="255" cy="200" r="12" fill="#12122a" stroke="#ff8a65" stroke-width="2.5"/>
+  <line x1="247" y1="192" x2="263" y2="208" stroke="#ff8a65" stroke-width="2.5"/>
+  <line x1="263" y1="192" x2="247" y2="208" stroke="#ff8a65" stroke-width="2.5"/>
+  <text x="275" y="210" fill="#ff8a65" font-size="13" font-weight="bold">ω</text>
+  <text x="272" y="224" fill="#ff8a65" font-size="10">(spin axis: into page)</text>
+
+  <!-- Pressure labels -->
+  <text x="390" y="82" fill="#4fc3f7" font-size="13" font-weight="bold">Low pressure</text>
+  <text x="390" y="98" fill="#4fc3f7" font-size="10">Faster flow</text>
+  <text x="390" y="290" fill="#ff8a65" font-size="13" font-weight="bold">High pressure</text>
+  <text x="390" y="306" fill="#ff8a65" font-size="10">Slower flow</text>
+
+  <!-- Caption -->
+  <text x="240" y="386" fill="#888" font-size="11" text-anchor="middle">Backspin (fastball): pressure difference pushes ball toward low-pressure side (upward)</text>
+</svg>
+<figcaption>Backspin (fastball): the upper side has faster flow and lower pressure, while the lower side has slower flow and higher pressure. This pressure difference generates the Magnus force.</figcaption>
+</figure>
+
+<div class="highlight orange">
+<strong>Direction of the Magnus force:</strong> The Magnus force acts <strong>perpendicular to both the direction of travel and the spin axis</strong>. In other words, spin around the velocity direction (= gyrospin) does not contribute to vertical or horizontal movement of the ball.
+</div>
+
+<p>This rule — "the ball curves in the direction perpendicular to both the spin axis and the direction of travel" — provides a unified explanation for the movement of all pitch types.</p>
+
+<p>In the 3D widget below, use the sliders to change the spin axis (<span style="color:#ff8a65">orange arrow omega</span>) and see how the Magnus force (<span style="color:#4fc3f7">blue arrow F</span>) direction and trajectory change. Start from the fastball setting and try moving the sliders.</p>
+
+<div style="background:#111;border-radius:8px;padding:16px;margin:20px 0;">
+<canvas id="magnus-canvas" style="width:100%;height:420px;border-radius:8px;cursor:grab;"></canvas>
+<div style="margin-top:10px;display:flex;flex-direction:column;gap:8px;">
+<div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center;">
+<label style="color:#aaa;font-size:13px;">T (topspin angle): <input type="range" id="m1-tilt" min="-90" max="90" value="-70" style="width:160px;vertical-align:middle;"> <span id="m1-tilt-val" style="color:#ff8a65;font-weight:bold;">-70°</span></label>
+<label style="color:#aaa;font-size:13px;">Sidespin angle: <input type="range" id="m1-yaw" min="-90" max="90" value="-10" style="width:160px;vertical-align:middle;"> <span id="m1-yaw-val" style="color:#ff8a65;font-weight:bold;">-10°</span></label>
+</div>
+<div style="display:flex;gap:8px;align-items:center;">
+<button id="m1-reset-ff" style="font-size:12px;background:#333;color:#ff4444;border:1px solid #555;border-radius:4px;padding:3px 12px;cursor:pointer;">↩ Reset to Fastball</button>
+</div>
+</div>
+<div id="m1-info" style="color:#888;font-size:12px;margin-top:6px;"></div>
+</div>
+
+<details>
+<summary>📐 For researchers: Magnus force equation</summary>
+<div>
+<p>The Magnus force is described as follows:</p>
+$$\mathbf{F}_M = \frac{1}{2} C_L \rho A v^2 \, (\hat{\boldsymbol{\omega}} \times \hat{\mathbf{v}})$$
+<p>where $C_L$ is the lift coefficient, $\rho$ is air density, $A$ is the cross-sectional area of the ball, $v$ is velocity, $\hat{\boldsymbol{\omega}}$ is the unit vector of the spin axis, and $\hat{\mathbf{v}}$ is the unit vector of velocity.</p>
+<p>$C_L$ is a function of the spin parameter $S = R\omega/v$ (the ratio of the ball surface speed to the translational speed). The simulator at <a href="https://baseball.skill-vis.com" target="_blank" style="color:#4fc3f7;">baseball.skill-vis.com</a> uses Nathan's rational function model:</p>
+$$C_L = \frac{c_2 \cdot S}{c_0 + c_1 \cdot S}$$
+<p>Nathan's original coefficients are $c_0 = 0.583$, $c_1 = 2.333$, $c_2 = 1.12$, but this simulator uses a modified value of $c_2 = 1.045$ based on fitting to Statcast data.</p>
+</div>
+</details>
+
+<p>In the following simulation, you can compare the trajectory without spin (cyan dashed line) to the actual pitch (orange).</p>
+
+<a href="https://baseball.skill-vis.com/?mlbam_id=660271&year=2025&date=2025-06-28&pitch=0" target="_blank" class="sim-link">🔵 See Ohtani's fastball in 3D</a>
+
+<div class="highlight">
+<strong>Key point:</strong> The difference between the cyan dashed line (no spin) and the orange solid line (with spin) represents the "movement" created by spin. Even a fastball has over 40 cm of movement.
+</div>
+
+<!-- ========== Chapter 2 ========== -->
+<h2 id="ch2">Chapter 2: Understanding Spin with Vectors</h2>
+
+<h3>2-1. What Is an Angular Velocity Vector?</h3>
+
+<p>Spin can be represented as an <strong>angular velocity vector</strong> ($\boldsymbol{\omega}$). This arrow carries two pieces of information:</p>
+
+<ul>
+<li><strong>Direction</strong>: the orientation of the spin axis (right-hand rule)</li>
+<li><strong>Length</strong>: the speed of rotation (spin rate, rpm)</li>
+</ul>
+
+<p>The right-hand rule means: curl the fingers of your right hand in the direction of rotation, and your thumb points in the direction of the arrow.</p>
+
+<figure style="margin:24px auto;text-align:center;background:#12122a;border-radius:8px;padding:16px;">
+<img src="img/screw_with_string.png" alt="Angular velocity vector: the arrow direction is the spin axis (right-hand screw direction), and the length is the spin rate" style="max-width:360px;width:100%;height:auto;">
+<figcaption>Angular velocity vector omega: the arrow direction is the spin axis (right-hand screw direction), and the length represents spin rate.</figcaption>
+</figure>
+
+<h3>2-2. Why Vectors Instead of Angles?</h3>
+
+<p>In baseball, spin is often expressed as a "Spin Axis" angle (like a clock face direction). However, this representation has limitations:</p>
+
+<div class="highlight">
+<ul>
+<li>An angle is a <strong>2D projection</strong> and cannot fully represent the 3D tilt of the spin axis</li>
+<li>The gyrospin component (spin around the velocity direction) is lost</li>
+<li>It is difficult to quantitatively compare how "similar" the spins of two pitches are</li>
+</ul>
+</div>
+
+<p>With a vector representation, <strong>direction and magnitude can be expressed simultaneously</strong>, and the "similarity" of two pitches can be calculated as the distance between vectors.</p>
+
+<h3>2-3. Three Components: Topspin, Sidespin, and Gyrospin</h3>
+
+<p>The angular velocity vector can be decomposed into three physically meaningful components relative to the pitch:</p>
+
+<ul>
+<li><span class="vector-arrow">Topspin (T)</span>: Rotation about an axis perpendicular to the velocity and horizontal. T &gt; 0 produces a drop-direction force, T &lt; 0 produces a "hop" force (backspin)</li>
+<li><span class="vector-arrow">Sidespin (S)</span>: Rotation about an axis perpendicular to both the velocity and T. Produces horizontal movement</li>
+<li><span class="vector-arrow">Gyrospin (G)</span>: Rotation around the velocity direction (like a bullet). Does <strong>not</strong> generate Magnus force</li>
+</ul>
+
+<p>These three T, S, G axes are mutually <strong>orthogonal</strong> and form the <strong>TSG coordinate system</strong> (right-handed: $\hat{\mathbf{e}}_T \times \hat{\mathbf{e}}_S = \hat{\mathbf{e}}_G$). The order of the names directly corresponds to the cyclic order of the mathematical right-hand system, and any angular velocity vector $\boldsymbol{\omega}$ can be uniquely decomposed as projections onto these three axes. In the 3D widget below, you can see the relationship between the three TSG axes and the velocity vector. Drag with the mouse to rotate the viewpoint.</p>
+
+<div style="background:#111;border-radius:8px;padding:16px;margin:20px 0;">
+<canvas id="bsg-axes-canvas" style="width:100%;height:420px;border-radius:8px;cursor:grab;"></canvas>
+<div style="margin-top:10px;display:flex;flex-direction:column;gap:8px;">
+<div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center;">
+<label style="color:#aaa;font-size:13px;">T (Topspin): <input type="range" id="bsg0-t" min="-90" max="90" value="66" style="width:140px;vertical-align:middle;"> <span id="bsg0-t-val" style="color:#ff4444;font-weight:bold;">66°</span></label>
+<label style="color:#aaa;font-size:13px;">S (Sidespin): <input type="range" id="bsg0-s" min="-90" max="90" value="24" style="width:140px;vertical-align:middle;"> <span id="bsg0-s-val" style="color:#4488ff;font-weight:bold;">24°</span></label>
+<label style="color:#aaa;font-size:13px;">G (Gyro): <input type="range" id="bsg0-g" min="-90" max="0" value="-20" style="width:120px;vertical-align:middle;"> <span id="bsg0-g-val" style="color:#44ff44;font-weight:bold;">-20°</span></label>
+</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+<span style="color:#666;font-size:12px;">Preset:</span>
+<button class="bsg0-preset" data-t="66" data-s="24" data-g="-20" style="font-size:11px;background:#333;color:#ff4444;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">FF Fastball</button>
+<button class="bsg0-preset" data-t="-50" data-s="-40" data-g="-50" style="font-size:11px;background:#333;color:#4444ff;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">CU Curveball</button>
+<button class="bsg0-preset" data-t="65" data-s="-25" data-g="-75" style="font-size:11px;background:#333;color:#44bbff;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">SL Slider</button>
+<button class="bsg0-preset" data-t="46" data-s="44" data-g="-35" style="font-size:11px;background:#333;color:#44cc44;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">SI Sinker</button>
+<button class="bsg0-preset" data-t="0" data-s="0" data-g="-90" style="font-size:11px;background:#333;color:#999;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">Gyro</button>
+</div>
+</div>
+<div id="bsg-axes-info" style="color:#888;font-size:12px;margin-top:6px;"></div>
+</div>
+
+<details>
+<summary>📐 For researchers: TSG coordinate system and the conventional BSG notation</summary>
+<div>
+<p>The TSG coordinate system is a right-handed system satisfying $\hat{\mathbf{e}}_T \times \hat{\mathbf{e}}_S = \hat{\mathbf{e}}_G$, where the order of the names directly matches the cyclic order of the coordinate system.</p>
+<p>In earlier literature, the "BSG" (Backspin, Sidespin, Gyro) notation is sometimes used. Since $\hat{\mathbf{e}}_B = -\hat{\mathbf{e}}_T$, B &gt; 0 corresponds to the hop direction (backspin), but the right-handed cyclic order becomes <strong>B → G → S</strong> (BGS), causing a mismatch between the naming order and the mathematical axis order. The TSG notation resolves this inconsistency.</p>
+</div>
+</details>
+
+<h3>2-4. Spin Efficiency</h3>
+
+<p>Since the gyrospin component (G) does not generate Magnus force, the <strong>fraction of total spin that actually contributes to movement</strong> becomes important. This is called <strong>spin efficiency</strong> (Active Spin %).</p>
+
+<p>In the TSG coordinate system, spin efficiency is defined as:</p>
+
+<div class="math-box">
+Spin Efficiency = $\frac{\sqrt{T^2 + S^2}}{\sqrt{T^2 + S^2 + G^2}} \times 100$ (%)
+</div>
+
+<p>The numerator $\sqrt{T^2 + S^2}$ is the <strong>transverse spin</strong> (the spin component perpendicular to the velocity) — the amount of "effective spin" that generates Magnus force. The denominator is the total spin rate.</p>
+
+<ul>
+<li><strong>Spin efficiency 100%</strong>: Zero gyrospin component. All spin contributes to movement (pure backspin, topspin, sidespin, etc.)</li>
+<li><strong>Spin efficiency 0%</strong>: All spin is gyrospin. The spin axis points in the velocity direction like a bullet, and the ball does not curve regardless of spin rate</li>
+</ul>
+
+<p>For example, Shohei Ohtani's fastball has a total spin rate of 2500 rpm with a spin efficiency of about 72%. This means the effective transverse spin is about 1800 rpm, with the remaining 700 rpm as gyrospin that does not contribute to movement.</p>
+
+<div class="highlight">
+<strong>Why the same spin rate produces different movement:</strong> A fastball at 2500 rpm with 100% efficiency versus one at 2500 rpm with 50% efficiency — the latter has only 1250 rpm of effective spin, resulting in significantly less movement. By looking at spin efficiency, not just spin rate, you can see the "true movement potential" of a pitch.
+</div>
+
+<p>In the widget below, you can examine the omega vectors of each pitch type for Yoshinobu Yamamoto (RHP) and Shota Imanaga (LHP) in 3D. Switch between pitchers to observe the differences in spin direction between right-handed and left-handed pitchers. Select a pitch type to see the <span style="color:#ff8a65">omega arrow</span> direction, the <span style="color:#4fc3f7">Magnus force direction</span>, and the trajectory from pitcher to home. Drag with the mouse to change the viewpoint.</p>
+
+<div style="background:#111;border-radius:8px;padding:16px;margin:20px 0;">
+<canvas id="bsg-canvas" style="width:100%;height:420px;border-radius:8px;cursor:grab;"></canvas>
+<!-- Mode tabs -->
+<div style="margin-top:12px;display:flex;gap:0;">
+<button id="w2-mode-pitcher" style="flex:1;padding:8px;font-size:13px;background:#335;color:#4fc3f7;border:1px solid #555;border-radius:6px 0 0 6px;cursor:pointer;font-weight:bold;">📊 Pitcher Data</button>
+<button id="w2-mode-free" style="flex:1;padding:8px;font-size:13px;background:#222;color:#888;border:1px solid #555;border-radius:0 6px 6px 0;cursor:pointer;">🎛️ Free Slider</button>
+</div>
+<!-- Pitcher mode controls -->
+<div id="w2-ctrl-pitcher" style="margin-top:10px;display:flex;gap:16px;flex-wrap:wrap;">
+<label style="color:#aaa;font-size:13px;">Pitcher:
+<select id="bsg-pitcher" style="font-size:13px;background:#222;color:#ddd;border:1px solid #555;padding:2px 6px;">
+<option value="yamamoto">Yoshinobu Yamamoto (RHP)</option>
+<option value="imanaga">Shota Imanaga (LHP)</option>
+</select>
+</label>
+<label style="color:#aaa;font-size:13px;">Pitch type:
+<select id="bsg-pitch" style="font-size:13px;background:#222;color:#ddd;border:1px solid #555;padding:2px 6px;">
+</select>
+</label>
+</div>
+<!-- Free slider mode controls -->
+<div id="w2-ctrl-free" style="margin-top:10px;display:none;flex-direction:column;gap:8px;">
+<div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center;">
+<label style="color:#aaa;font-size:13px;">T (Topspin): <input type="range" id="w2-t" min="-90" max="90" value="66" style="width:140px;vertical-align:middle;"> <span id="w2-t-val" style="color:#ff4444;font-weight:bold;">66°</span></label>
+<label style="color:#aaa;font-size:13px;">S (Sidespin): <input type="range" id="w2-s" min="-90" max="90" value="24" style="width:140px;vertical-align:middle;"> <span id="w2-s-val" style="color:#4488ff;font-weight:bold;">24°</span></label>
+<label style="color:#aaa;font-size:13px;">G (Gyro): <input type="range" id="w2-g" min="-90" max="0" value="-20" style="width:120px;vertical-align:middle;"> <span id="w2-g-val" style="color:#44ff44;font-weight:bold;">-20°</span></label>
+</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+<span style="color:#666;font-size:12px;">Preset:</span>
+<button class="w2-preset" data-t="66" data-s="24" data-g="-20" style="font-size:11px;background:#333;color:#ff4444;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">FF Fastball</button>
+<button class="w2-preset" data-t="-50" data-s="-40" data-g="-50" style="font-size:11px;background:#333;color:#4444ff;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">CU Curveball</button>
+<button class="w2-preset" data-t="65" data-s="-25" data-g="-75" style="font-size:11px;background:#333;color:#44bbff;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">SL Slider</button>
+<button class="w2-preset" data-t="46" data-s="44" data-g="-35" style="font-size:11px;background:#333;color:#44cc44;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">SI Sinker</button>
+<button class="w2-preset" data-t="0" data-s="0" data-g="-90" style="font-size:11px;background:#333;color:#999;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">Gyro</button>
+</div>
+</div>
+<div id="bsg-info" style="color:#888;font-size:12px;margin-top:6px;"></div>
+</div>
+
+<details>
+<summary>📐 For researchers: orthonormal TSG basis</summary>
+<div>
+<p>This simulator uses the following orthonormal basis:</p>
+$$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
+\hat{\mathbf{e}}_T = -\frac{\hat{\mathbf{e}}_G \times \hat{\mathbf{e}}_Z}{|\hat{\mathbf{e}}_G \times \hat{\mathbf{e}}_Z|}, \quad
+\hat{\mathbf{e}}_S = \hat{\mathbf{e}}_T \times \hat{\mathbf{e}}_G$$
+<p>where $\hat{\mathbf{e}}_Z$ is the vertical upward unit vector. $(\hat{\mathbf{e}}_T, \hat{\mathbf{e}}_S, \hat{\mathbf{e}}_G)$ forms a right-handed system ($\hat{\mathbf{e}}_T \times \hat{\mathbf{e}}_S = \hat{\mathbf{e}}_G$). T &gt; 0 produces a drop-direction force, T &lt; 0 produces a hop-direction force.</p>
+</div>
+</details>
+
+<!-- ========== Chapter 3 ========== -->
+<h2 id="ch3">Chapter 3: The omega Vector of Each Pitch Type — Why They Curve</h2>
+
+<p>Let's examine the typical omega vector and trajectory for each pitch type in 3D. Select a pitch type to see the spin axis, Magnus force, and trajectory.</p>
+
+<div style="background:#111;border-radius:8px;padding:16px;margin:20px 0;">
+<canvas id="w3-canvas" style="width:100%;height:420px;border-radius:8px;cursor:grab;"></canvas>
+<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+<button class="w3-select" data-pitch="ff" style="font-size:12px;background:#333;color:#e94560;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;font-weight:bold;">FF Fastball</button>
+<button class="w3-select" data-pitch="cu" style="font-size:12px;background:#333;color:#44ccff;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">CU Curveball</button>
+<button class="w3-select" data-pitch="st" style="font-size:12px;background:#333;color:#aa44ff;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">ST Sweeper</button>
+<button class="w3-select" data-pitch="sl" style="font-size:12px;background:#333;color:#4488ff;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">SL Slider</button>
+<button class="w3-select" data-pitch="si" style="font-size:12px;background:#333;color:#ff8844;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">SI Sinker</button>
+<button class="w3-select" data-pitch="fs" style="font-size:12px;background:#333;color:#88cc88;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">FS Splitter</button>
+<button class="w3-select" data-pitch="fc" style="font-size:12px;background:#333;color:#cc6600;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">FC Cutter</button>
+<button class="w3-select" data-pitch="all" style="font-size:12px;background:#333;color:#ddd;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">All pitches</button>
+</div>
+<div id="w3-info" style="color:#888;font-size:12px;margin-top:6px;"></div>
+</div>
+
+<h3>3-1. Four-Seam Fastball (FF)</h3>
+
+<figure style="margin:16px auto;text-align:center;">
+<svg viewBox="0 0 240 380" style="max-width:240px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI','Helvetica Neue',sans-serif">
+<rect width="240" height="380" rx="8" fill="#12122a"/>
+<!-- === Top: Top view === -->
+<text x="120" y="18" fill="#888" font-size="11" text-anchor="middle">Top view</text>
+<polygon points="120,28 113,42 127,42" fill="#4488ff"/>
+<line x1="120" y1="42" x2="120" y2="62" stroke="#4488ff" stroke-width="4"/>
+<text x="140" y="40" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
+<circle cx="120" cy="115" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
+<circle cx="120" cy="115" r="3" fill="#888"/>
+<!-- Yamamoto FF top: wx=1900(→1B=right), wy=-761(→catcher=up in top view) → ω right + slightly forward -->
+<line x1="54" y1="130" x2="186" y2="100" stroke="#ff8a65" stroke-width="3"/>
+<polygon points="192,98 180,94 180,106" fill="#ff8a65"/>
+<text x="194" y="96" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
+<text x="120" y="172" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
+
+<!-- === Bottom: Pitcher's view === -->
+<text x="120" y="196" fill="#888" font-size="11" text-anchor="middle">Pitcher's view</text>
+<polygon points="120,204 113,218 127,218" fill="#4488ff"/>
+<line x1="120" y1="218" x2="120" y2="230" stroke="#4488ff" stroke-width="4"/>
+<polygon points="112,230 108,236 132,236 128,230" fill="#3366cc"/>
+<polygon points="108,236 104,240 136,240 132,236" fill="#2244aa"/>
+<text x="148" y="226" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
+<circle cx="120" cy="290" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
+<circle cx="120" cy="290" r="3" fill="#888"/>
+<!-- Yamamoto FF rear: wx=1900(→1B=right), wz=-852(→down) → ω right-down -->
+<line x1="48" y1="265" x2="192" y2="315" stroke="#ff8a65" stroke-width="3"/>
+<polygon points="198,317 186,311 186,323" fill="#ff8a65"/>
+<text x="198" y="322" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
+<text x="120" y="348" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
+<!-- Info -->
+<text x="120" y="365" fill="#888" font-size="9" text-anchor="middle">Y. Yamamoto FF: 96.3mph</text>
+<text x="120" y="377" fill="#888" font-size="9" text-anchor="middle">2240rpm, eff.94%</text>
+</svg>
+</figure>
+
+<p>The omega of a four-seam fastball points nearly horizontally and perpendicular to the direction of travel. This means backspin (T &lt; 0 in the TSG coordinate system) is dominant. As a result of $\boldsymbol{\omega} \times \mathbf{v}$, the Magnus force acts <strong>upward</strong>, counteracting gravity and making the ball "ride" (more precisely, "drop less").</p>
+
+<p>For a right-handed pitcher, omega points toward <strong>the first base side (right)</strong> from the pitcher's view (see figure). From the top view, omega may include a small gyrospin component (velocity-direction component). Since gyrospin does not contribute to the Magnus force, the closer the spin efficiency is to 100%, the greater the hop for the same spin rate.</p>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w3-jump" data-pitch="ff" style="font-size:12px;background:#333;color:#e94560;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ View FF omega in 3D</button>
+<a href="https://baseball.skill-vis.com/?mlbam_id=660271&year=2025&date=2025-06-28&pitch=0" target="_blank" class="sim-link" style="margin:0;">🔵 Simulate Ohtani's FF</a>
+</div>
+
+<h3>3-2. Curveball (CU)</h3>
+
+<figure style="margin:16px auto;text-align:center;">
+<svg viewBox="0 0 240 380" style="max-width:240px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI','Helvetica Neue',sans-serif">
+<rect width="240" height="380" rx="8" fill="#12122a"/>
+<text x="120" y="18" fill="#888" font-size="11" text-anchor="middle">Top view</text>
+<polygon points="120,28 113,42 127,42" fill="#4488ff"/>
+<line x1="120" y1="42" x2="120" y2="62" stroke="#4488ff" stroke-width="4"/>
+<text x="140" y="40" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
+<circle cx="120" cy="115" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
+<circle cx="120" cy="115" r="3" fill="#888"/>
+<!-- CU top ω: wx=-1376(left), wy=-1971(forward=up in top view) → left-up -->
+<line x1="168" y1="152" x2="72" y2="78" stroke="#ff8a65" stroke-width="3"/>
+<polygon points="66,74 78,72 76,84" fill="#ff8a65"/>
+<text x="50" y="72" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
+<text x="120" y="172" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
+<text x="120" y="196" fill="#888" font-size="11" text-anchor="middle">Pitcher's view</text>
+<!-- Perspective arrow: narrow top, wide bottom (into screen) -->
+<polygon points="120,204 112,230 128,230" fill="#4488ff"/>
+<polygon points="112,230 108,236 132,236 128,230" fill="#3366cc"/>
+<polygon points="108,236 104,240 136,240 132,236" fill="#2244aa"/>
+<text x="148" y="226" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
+<circle cx="120" cy="280" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
+<circle cx="120" cy="280" r="3" fill="#888"/>
+<!-- CU rear ω: wx=-1376(left), wz=1127(up) → left-up -->
+<line x1="172" y1="320" x2="68" y2="240" stroke="#ff8a65" stroke-width="3"/>
+<polygon points="62,236 74,234 72,246" fill="#ff8a65"/>
+<text x="46" y="234" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
+<text x="120" y="340" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
+<text x="120" y="365" fill="#888" font-size="9" text-anchor="middle">S. Ohtani CU: 77.6mph</text>
+<text x="120" y="377" fill="#888" font-size="9" text-anchor="middle">2622rpm, eff.65%</text>
+</svg>
+</figure>
+
+<p>The omega of a curveball points in nearly the <strong>opposite direction</strong> from the FF (topspin direction, T &gt; 0 in the TSG coordinate system). This causes $\boldsymbol{\omega} \times \mathbf{v}$ to produce a <strong>downward + horizontal</strong> force, making the ball drop sharply while curving.</p>
+
+<p>The pitch speed is significantly lower than a fastball (70-80 mph), but the spin rate is high (2500-2800 rpm). For a right-handed pitcher, the sidespin component in omega produces horizontal movement toward the glove side (third base direction) in addition to the drop. From the top view, omega may include a gyrospin component, and spin efficiency varies by pitcher.</p>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w3-jump" data-pitch="cu" style="font-size:12px;background:#333;color:#44ccff;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ View CU omega in 3D</button>
+<a href="https://baseball.skill-vis.com/?mlbam_id=660271&year=2025&date=2025-08-27&pitch=5" target="_blank" class="sim-link orange" style="margin:0;">🟠 Simulate Ohtani's CU</a>
+</div>
+
+<h3>3-3. Sweeper (ST)</h3>
+
+<figure style="margin:16px auto;text-align:center;">
+<svg viewBox="0 0 240 380" style="max-width:240px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI','Helvetica Neue',sans-serif">
+<rect width="240" height="380" rx="8" fill="#12122a"/>
+<text x="120" y="18" fill="#888" font-size="11" text-anchor="middle">Top view</text>
+<polygon points="120,28 113,42 127,42" fill="#4488ff"/>
+<line x1="120" y1="42" x2="120" y2="62" stroke="#4488ff" stroke-width="4"/>
+<text x="140" y="40" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
+<circle cx="120" cy="115" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
+<circle cx="120" cy="115" r="3" fill="#888"/>
+<!-- ST top ω: wx=643(right), wy=0(G=0) → short right -->
+<line x1="100" y1="115" x2="150" y2="115" stroke="#ff8a65" stroke-width="3"/>
+<polygon points="156,115 144,109 144,121" fill="#ff8a65"/>
+<text x="160" y="112" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
+<text x="120" y="172" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
+<text x="120" y="196" fill="#888" font-size="11" text-anchor="middle">Pitcher's view</text>
+<polygon points="120,204 112,230 128,230" fill="#4488ff"/>
+<polygon points="112,230 108,236 132,236 128,230" fill="#3366cc"/>
+<polygon points="108,236 104,240 136,240 132,236" fill="#2244aa"/>
+<text x="148" y="226" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
+<circle cx="120" cy="280" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
+<circle cx="120" cy="280" r="3" fill="#888"/>
+<!-- ST rear ω: wx=643(right,small), wz=2545(up,large) → mostly up, slightly right -->
+<line x1="108" y1="340" x2="132" y2="220" stroke="#ff8a65" stroke-width="3"/>
+<polygon points="134,214 127,226 139,226" fill="#ff8a65"/>
+<text x="140" y="222" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
+<text x="120" y="348" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
+<text x="120" y="365" fill="#888" font-size="9" text-anchor="middle">S. Ohtani ST: 85.2mph</text>
+<text x="120" y="377" fill="#888" font-size="9" text-anchor="middle">2625rpm, eff.100%</text>
+</svg>
+</figure>
+
+<p>The omega of a sweeper points nearly <strong>straight up</strong> from the pitcher's view. This means sidespin is dominant. From the top view, omega is <strong>perpendicular</strong> (horizontal) to the direction of travel, with virtually zero gyrospin (spin efficiency ≈ 100%).</p>
+
+<p>$\boldsymbol{\omega} \times \mathbf{v}$ produces a large force in the <strong>horizontal direction</strong>, resulting in sharp lateral movement. Ohtani's 2023 sweeper reached ≈ 61.6 cm of horizontal break, recording one of the largest in MLB. This example is an <strong>extreme sweeper</strong> — an ideal sidespin pitch with spin efficiency ≈ 100%.</p>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w3-jump" data-pitch="st" style="font-size:12px;background:#333;color:#aa44ff;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ View ST omega in 3D</button>
+<a href="https://baseball.skill-vis.com/?mlbam_id=660271&year=2023&date=2023-03-30&pitch=25" target="_blank" class="sim-link orange" style="margin:0;">🟠 Simulate Ohtani's ST</a>
+</div>
+
+<h3>3-4. Slider (SL)</h3>
+
+<figure style="margin:16px auto;text-align:center;">
+<svg viewBox="0 0 240 380" style="max-width:240px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI','Helvetica Neue',sans-serif">
+<rect width="240" height="380" rx="8" fill="#12122a"/>
+<text x="120" y="18" fill="#888" font-size="11" text-anchor="middle">Top view</text>
+<polygon points="120,28 113,42 127,42" fill="#4488ff"/>
+<line x1="120" y1="42" x2="120" y2="62" stroke="#4488ff" stroke-width="4"/>
+<text x="140" y="40" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
+<circle cx="120" cy="115" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
+<circle cx="120" cy="115" r="3" fill="#888"/>
+<!-- SL top ω: wx=209(right,small), wy=-2595(forward=up,very large) → mostly upward, slightly right -->
+<line x1="114" y1="150" x2="128" y2="75" stroke="#ff8a65" stroke-width="3"/>
+<polygon points="130,69 123,80 135,80" fill="#ff8a65"/>
+<text x="136" y="76" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
+<text x="56" y="100" fill="#555" font-size="8" opacity="0.6">High G comp.</text>
+<text x="120" y="172" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
+<text x="120" y="196" fill="#888" font-size="11" text-anchor="middle">Pitcher's view</text>
+<polygon points="120,204 112,230 128,230" fill="#4488ff"/>
+<polygon points="112,230 108,236 132,236 128,230" fill="#3366cc"/>
+<polygon points="108,236 104,240 136,240 132,236" fill="#2244aa"/>
+<text x="148" y="226" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
+<circle cx="120" cy="290" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
+<circle cx="120" cy="290" r="3" fill="#888"/>
+<!-- SL rear ω: wx=209(right,small), wz=279(up,small) → slightly right-up, short -->
+<line x1="112" y1="300" x2="134" y2="274" stroke="#ff8a65" stroke-width="3"/>
+<polygon points="137,269 128,270 130,282" fill="#ff8a65"/>
+<text x="140" y="272" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
+<text x="120" y="348" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
+<text x="120" y="365" fill="#888" font-size="9" text-anchor="middle">Y. Yamamoto SL: 87.1mph</text>
+<text x="120" y="377" fill="#888" font-size="9" text-anchor="middle">2626rpm, eff.13%</text>
+</svg>
+</figure>
+
+<p>The omega of a slider points in a direction <strong>close to the velocity direction (gyro axis)</strong>, in contrast to the sweeper. From the top view, omega is nearly parallel to the pitch direction, meaning transverse spin is small. The average MLB RHP slider has a spin efficiency of about 30%, and Yamamoto's example (13%) is even more gyro-heavy.</p>
+
+<p>From the pitcher's view, omega points only slightly upper-right from the center of the ball, with a much smaller tilt compared to FF or CU. The small transverse spin component is biased toward sidespin, so $\boldsymbol{\omega} \times \mathbf{v}$ produces a <strong>horizontal</strong> force, but not as much movement as a sweeper. Instead, vertical drop is added, creating a "sharp, dropping slider."</p>
+
+<p>From sweeper (ST) to slider (SL), the gyrospin component of omega <strong>varies continuously</strong>. Pitch type classification is a matter of convenience — in reality, it is a continuous spectrum.</p>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w3-jump" data-pitch="sl" style="font-size:12px;background:#333;color:#4488ff;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ View SL omega in 3D</button>
+<a href="https://baseball.skill-vis.com/?mlbam_id=808967&year=2026&date=2026-04-01&pitch=57" target="_blank" class="sim-link orange" style="margin:0;">🟠 Simulate Yamamoto's SL</a>
+</div>
+
+<h3>3-5. Sinker (SI)</h3>
+
+<figure style="margin:16px auto;text-align:center;">
+<svg viewBox="0 0 240 380" style="max-width:240px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI','Helvetica Neue',sans-serif">
+<rect width="240" height="380" rx="8" fill="#12122a"/>
+<text x="120" y="18" fill="#888" font-size="11" text-anchor="middle">Top view</text>
+<polygon points="120,28 113,42 127,42" fill="#4488ff"/>
+<line x1="120" y1="42" x2="120" y2="62" stroke="#4488ff" stroke-width="4"/>
+<text x="140" y="40" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
+<circle cx="120" cy="115" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
+<circle cx="120" cy="115" r="3" fill="#888"/>
+<!-- SI top ω: wx=320(right,small), wy=-1126(forward=up,medium) → slightly right + forward -->
+<line x1="110" y1="145" x2="140" y2="80" stroke="#ff8a65" stroke-width="3"/>
+<polygon points="142,74 135,84 147,84" fill="#ff8a65"/>
+<text x="148" y="78" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
+<!-- FF reference ghost: wx=1900(right,large), wy=-761(forward,small) → mostly right -->
+<line x1="54" y1="130" x2="186" y2="100" stroke="#e94560" stroke-width="1" stroke-dasharray="4,3" opacity="0.3"/>
+<text x="188" y="98" fill="#e94560" font-size="8" opacity="0.4">FF</text>
+<text x="120" y="172" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
+<text x="120" y="196" fill="#888" font-size="11" text-anchor="middle">Pitcher's view</text>
+<polygon points="120,204 112,230 128,230" fill="#4488ff"/>
+<polygon points="112,230 108,236 132,236 128,230" fill="#3366cc"/>
+<polygon points="108,236 104,240 136,240 132,236" fill="#2244aa"/>
+<text x="148" y="226" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
+<circle cx="120" cy="290" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
+<circle cx="120" cy="290" r="3" fill="#888"/>
+<!-- SI rear ω: wx=320(right,small), wz=-1891(down,large) → mostly downward, slightly right -->
+<line x1="114" y1="230" x2="130" y2="340" stroke="#ff8a65" stroke-width="3"/>
+<polygon points="131,346 124,336 138,336" fill="#ff8a65"/>
+<text x="138" y="346" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
+<!-- FF reference ghost: wx=1900(right,large), wz=-852(down,medium) → right-down -->
+<line x1="48" y1="275" x2="192" y2="305" stroke="#e94560" stroke-width="1" stroke-dasharray="4,3" opacity="0.3"/>
+<text x="194" y="312" fill="#e94560" font-size="8" opacity="0.4">FF</text>
+<text x="120" y="356" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
+<text x="120" y="370" fill="#888" font-size="9" text-anchor="middle">Yu Darvish SI: 93.8mph</text>
+<text x="120" y="380" fill="#888" font-size="9" text-anchor="middle">2228rpm, eff.86%</text>
+</svg>
+</figure>
+
+<p>The omega of a sinker belongs to the same backspin family as the FF, but from the pitcher's view, it <strong>tilts significantly downward</strong>. This means the sidespin component has increased. For a right-handed pitcher, $\boldsymbol{\omega} \times \mathbf{v}$ shifts the Magnus force from the FF's "upward" to "arm-side (first base direction) + slightly upward."</p>
+
+<p>Due to this tilt, the backspin component (|T|) becomes smaller than the FF, resulting in <strong>less hop</strong>, while the sidespin component (S) increases, producing <strong>horizontal movement toward the arm side</strong>. Compared to the dashed line (FF) in the figure, you can see that omega tilts downward from the pitcher's view and toward the pitch direction from the top view.</p>
+
+<p>A typical sinker has relatively high spin efficiency (small gyrospin component), with most of the spin contributing to movement. The pitch speed is similar to an FF (93-96 mph), but the different movement direction combined with the FF creates deception against batters.</p>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w3-jump" data-pitch="si" style="font-size:12px;background:#333;color:#ff8844;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ View SI omega in 3D</button>
+<a href="https://baseball.skill-vis.com/?mlbam_id=506433&year=2025&date=2025-08-17&pitch=0" target="_blank" class="sim-link orange" style="margin:0;">🟠 Simulate Darvish's SI</a>
+</div>
+
+<h3>3-6. Forkball / Splitter (FS)</h3>
+
+<figure style="margin:16px auto;text-align:center;">
+<svg viewBox="0 0 240 380" style="max-width:240px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI','Helvetica Neue',sans-serif">
+<rect width="240" height="380" rx="8" fill="#12122a"/>
+<text x="120" y="18" fill="#888" font-size="11" text-anchor="middle">Top view</text>
+<polygon points="120,28 113,42 127,42" fill="#4488ff"/>
+<line x1="120" y1="42" x2="120" y2="62" stroke="#4488ff" stroke-width="4"/>
+<text x="140" y="40" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
+<circle cx="120" cy="115" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
+<circle cx="120" cy="115" r="3" fill="#888"/>
+<!-- FS top ω: wx=67(right,~0), wy=0(G=0) → tiny right. Much shorter than FF -->
+<line x1="116" y1="115" x2="130" y2="115" stroke="#ff8a65" stroke-width="3"/>
+<polygon points="136,115 126,110 126,120" fill="#ff8a65"/>
+<text x="137" y="112" fill="#ff8a65" font-size="9">ω (small)</text>
+<!-- FF reference ghost: mostly right, long -->
+<line x1="54" y1="130" x2="186" y2="100" stroke="#e94560" stroke-width="1" stroke-dasharray="4,3" opacity="0.3"/>
+<text x="188" y="98" fill="#e94560" font-size="8" opacity="0.4">FF</text>
+<text x="120" y="172" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
+<text x="120" y="196" fill="#888" font-size="11" text-anchor="middle">Pitcher's view</text>
+<polygon points="120,204 112,230 128,230" fill="#4488ff"/>
+<polygon points="112,230 108,236 132,236 128,230" fill="#3366cc"/>
+<polygon points="108,236 104,240 136,240 132,236" fill="#2244aa"/>
+<text x="148" y="226" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
+<circle cx="120" cy="290" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
+<circle cx="120" cy="290" r="3" fill="#888"/>
+<!-- FS rear ω: wx=67(right,~0), wz=-1481(down,large) → mostly downward -->
+<line x1="118" y1="250" x2="122" y2="330" stroke="#ff8a65" stroke-width="3"/>
+<polygon points="123,336 116,326 130,326" fill="#ff8a65"/>
+<text x="134" y="334" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
+<!-- FF reference ghost: right-down -->
+<line x1="48" y1="275" x2="192" y2="305" stroke="#e94560" stroke-width="1" stroke-dasharray="4,3" opacity="0.3"/>
+<text x="194" y="312" fill="#e94560" font-size="8" opacity="0.4">FF</text>
+<text x="120" y="356" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
+<text x="120" y="370" fill="#888" font-size="9" text-anchor="middle">Y. Yamamoto FS: 92.9mph</text>
+<text x="120" y="380" fill="#888" font-size="9" text-anchor="middle">1483rpm, eff.100%</text>
+</svg>
+</figure>
+
+<p>The essence of a forkball/splitter is its <strong>lower spin rate</strong> compared to the FF. Yamamoto's FS is 1483 rpm — about 2/3 of his FF (2240 rpm). From the pitcher's view, omega points downward similarly to the SI (arm-side sidespin), but the Magnus force is small because the spin rate itself is low.</p>
+
+<p>Even at the same speed as the FF (92 mph), the weak hop force means gravity pulls the ball into a trajectory that <strong>"doesn't ride like a fastball" = sinks</strong>. Physically, the accurate description is not "it drops" but "it doesn't rise." From the top view, omega is very short (compare to the FF reference line), showing that the absolute amount of spin is low.</p>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w3-jump" data-pitch="fs" style="font-size:12px;background:#333;color:#88cc88;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ View FS omega in 3D</button>
+<a href="https://baseball.skill-vis.com/?mlbam_id=808967&year=2026&date=2026-03-26&pitch=6" target="_blank" class="sim-link orange" style="margin:0;">🟠 Simulate Yamamoto's FS</a>
+</div>
+
+<h3>3-7. Cutter (FC)</h3>
+
+<figure style="margin:16px auto;text-align:center;">
+<svg viewBox="0 0 240 380" style="max-width:240px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI','Helvetica Neue',sans-serif">
+<rect width="240" height="380" rx="8" fill="#12122a"/>
+<text x="120" y="18" fill="#888" font-size="11" text-anchor="middle">Top view</text>
+<polygon points="120,28 113,42 127,42" fill="#4488ff"/>
+<line x1="120" y1="42" x2="120" y2="62" stroke="#4488ff" stroke-width="4"/>
+<text x="140" y="40" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
+<circle cx="120" cy="115" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
+<circle cx="120" cy="115" r="3" fill="#888"/>
+<!-- FC top ω: wx=534(right,small), wy=-2334(forward=up,very large) → mostly upward(=pitch dir), slightly right -->
+<line x1="112" y1="150" x2="132" y2="75" stroke="#ff8a65" stroke-width="3"/>
+<polygon points="134,69 127,80 139,80" fill="#ff8a65"/>
+<text x="140" y="76" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
+<text x="56" y="100" fill="#555" font-size="8" opacity="0.6">High G comp.</text>
+<!-- FF reference ghost: mostly right -->
+<line x1="54" y1="130" x2="186" y2="100" stroke="#e94560" stroke-width="1" stroke-dasharray="4,3" opacity="0.3"/>
+<text x="188" y="98" fill="#e94560" font-size="8" opacity="0.4">FF</text>
+<text x="120" y="172" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
+<text x="120" y="196" fill="#888" font-size="11" text-anchor="middle">Pitcher's view</text>
+<polygon points="120,204 112,230 128,230" fill="#4488ff"/>
+<polygon points="112,230 108,236 132,236 128,230" fill="#3366cc"/>
+<polygon points="108,236 104,240 136,240 132,236" fill="#2244aa"/>
+<text x="148" y="226" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
+<circle cx="120" cy="290" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
+<circle cx="120" cy="290" r="3" fill="#888"/>
+<!-- FC rear ω: wx=534(right,small), wz=-73(down,~0) → almost purely right, very short (only transverse component) -->
+<line x1="100" y1="292" x2="155" y2="288" stroke="#ff8a65" stroke-width="3"/>
+<polygon points="161,287 149,282 149,294" fill="#ff8a65"/>
+<text x="165" y="286" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
+<!-- FF reference ghost: right-down -->
+<line x1="48" y1="275" x2="192" y2="305" stroke="#e94560" stroke-width="1" stroke-dasharray="4,3" opacity="0.3"/>
+<text x="194" y="312" fill="#e94560" font-size="8" opacity="0.4">FF</text>
+<text x="120" y="356" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
+<text x="120" y="370" fill="#888" font-size="9" text-anchor="middle">Yu Darvish FC: 92.1mph</text>
+<text x="120" y="380" fill="#888" font-size="9" text-anchor="middle">2440rpm, eff.29%</text>
+</svg>
+</figure>
+
+<p>The omega of a cutter looks nearly identical to the FF (rightward) from the pitcher's view. However, from the top view, omega is <strong>tilted heavily toward the velocity direction</strong> (very large gyrospin component). Despite the high spin rate (2440 rpm), the transverse spin that actually contributes to movement is small (spin efficiency 29%).</p>
+
+<p>This characteristic — "looks like an FF from the pitcher's view, but is actually different inside" — is the cutter's weapon. The batter times it expecting an FF, but slight glove-side horizontal movement (toward third base for an RHP) misses the sweet spot of the bat. The speed is also similar to an FF (90-93 mph), making it difficult for the batter to identify the pitch type.</p>
+
+<p>This can be understood as a continuous progression from fastball to cutter to slider, with increasing gyrospin component in omega. Pitch types are not discrete categories but rather a <strong>continuous distribution in omega space</strong>.</p>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w3-jump" data-pitch="fc" style="font-size:12px;background:#333;color:#cc6600;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ View FC omega in 3D</button>
+<a href="https://baseball.skill-vis.com/?mlbam_id=506433&year=2025&date=2025-08-27&pitch=5" target="_blank" class="sim-link orange" style="margin:0;">🟠 Simulate Darvish's FC</a>
+</div>
+
+<h3>Comparing Pitch Types</h3>
+
+<p>By overlaying the trajectories of multiple pitch types, you can intuitively see how differences in angular velocity manifest as differences in trajectory:</p>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w3-jump" data-pitch="all" style="font-size:12px;background:#333;color:#ddd;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ View all pitch omega in 3D</button>
+<a href="https://baseball.skill-vis.com/?compare=660271,2025,2025-06-28,0|660271,2025,2025-08-27,5|660271,2025,2025-06-28,10" target="_blank" class="sim-link" style="margin:0;">🔵 Compare Ohtani's FF vs CU vs ST in 3D</a>
+</div>
+
+<!-- ========== Chapter 4 ========== -->
+<h2 id="ch4">Chapter 4: Pitch Type Map in omega Space</h2>
+
+<p>By plotting the omega vectors of each pitch type from Chapter 3 on the TSG coordinate system, a "map" of pitch types emerges.</p>
+
+<!-- T-S plane (transverse spin plane) -->
+<figure style="margin:24px auto;text-align:center;">
+<svg viewBox="0 0 480 400" style="max-width:480px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI','Helvetica Neue',sans-serif">
+<rect width="480" height="400" rx="8" fill="#12122a"/>
+<text x="240" y="22" fill="#aaa" font-size="13" font-weight="bold" text-anchor="middle">T-S Plane (components that generate Magnus force)</text>
+<!-- Axes -->
+<line x1="40" y1="200" x2="360" y2="200" stroke="#444" stroke-width="1"/>
+<line x1="200" y1="360" x2="200" y2="40" stroke="#444" stroke-width="1"/>
+<!-- Axis labels -->
+<text x="370" y="198" fill="#ff4444" font-size="11">T</text>
+<text x="370" y="212" fill="#ff4444" font-size="9">(Topspin)</text>
+<text x="30" y="204" fill="#ff4444" font-size="9">Backspin</text>
+<text x="204" y="38" fill="#4488ff" font-size="11">S</text>
+<text x="215" y="52" fill="#4488ff" font-size="9">(Sidespin)</text>
+<!-- Scale: 3000rpm = 150px → 1rpm = 0.05px. Center=(200,200) -->
+<!-- T axis: right=topspin(+), left=backspin(-) -->
+<!-- S axis: up=positive, down=negative -->
+<!-- FF: T=-1900, S=-852 → x=200+(-1900*0.05)=105, y=200-(-852*0.05)=243 -->
+<circle cx="105" cy="243" r="8" fill="#e94560" opacity="0.8"/>
+<text x="108" y="260" fill="#e94560" font-size="11" font-weight="bold">FF</text>
+<!-- CU: T=+1376, S=+1127 → x=200+(1376*0.05)=269, y=200-(1127*0.05)=144 -->
+<circle cx="269" cy="144" r="8" fill="#44ccff" opacity="0.8"/>
+<text x="278" y="140" fill="#44ccff" font-size="11" font-weight="bold">CU</text>
+<!-- ST: T=-643, S=+2545 → x=200+(-643*0.05)=168, y=200-(2545*0.05)=73 -->
+<circle cx="168" cy="73" r="8" fill="#4488ff" opacity="0.8"/>
+<text x="148" y="66" fill="#4488ff" font-size="11" font-weight="bold">ST</text>
+<!-- SI: T=-320, S=-1891 → x=200+(-320*0.05)=184, y=200-(-1891*0.05)=295 -->
+<circle cx="184" cy="295" r="8" fill="#ff8844" opacity="0.8"/>
+<text x="160" y="310" fill="#ff8844" font-size="11" font-weight="bold">SI</text>
+<!-- FS: T=-67, S=-1481 → x=200+(-67*0.05)=197, y=200-(-1481*0.05)=274 -->
+<circle cx="197" cy="274" r="6" fill="#88cc88" opacity="0.8"/>
+<text x="206" y="280" fill="#88cc88" font-size="10" font-weight="bold">FS</text>
+<!-- FC: T=-534, S=-73 → x=200+(-534*0.05)=173, y=200-(-73*0.05)=204 -->
+<circle cx="173" cy="204" r="6" fill="#cc6600" opacity="0.8"/>
+<text x="150" y="198" fill="#cc6600" font-size="10" font-weight="bold">FC</text>
+<!-- Annotations -->
+<line x1="105" y1="243" x2="269" y2="144" stroke="#666" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
+<text x="188" y="180" fill="#666" font-size="8" text-anchor="middle" opacity="0.6">FF↔CU opposite</text>
+<!-- Origin circle (spin eff = distance from origin) -->
+<circle cx="200" cy="200" r="75" fill="none" stroke="#333" stroke-width="1" stroke-dasharray="3,3"/>
+<text x="280" y="138" fill="#333" font-size="8">1500rpm</text>
+<circle cx="200" cy="200" r="150" fill="none" stroke="#333" stroke-width="1" stroke-dasharray="3,3"/>
+<text x="355" y="72" fill="#333" font-size="8">3000rpm</text>
+<!-- Caption -->
+<text x="200" y="390" fill="#888" font-size="10" text-anchor="middle">Distance from origin = transverse spin (effective spin producing movement)</text>
+</svg>
+<figcaption>Projection onto the T-S plane. FF and CU are at opposite poles, ST lies in the sidespin direction, and SI tilts downward from FF.<br>
+<span style="font-size:0.85em;color:#aaa;">
+<span style="color:#e94560;">●</span> FF: Fastball
+<span style="color:#44ccff;">●</span> CU: Curveball
+<span style="color:#4488ff;">●</span> ST: Sweeper
+<span style="color:#ff8844;">●</span> SI: Sinker
+<span style="color:#88cc88;">●</span> FS: Splitter
+<span style="color:#cc6600;">●</span> FC: Cutter
+</span></figcaption>
+</figure>
+
+<p>The <strong>T-S plane</strong> above displays only the components that contribute to the Magnus force (transverse spin). The greater the distance from the origin, the greater the movement.</p>
+
+<ul>
+<li><strong>FF and CU are at opposite poles</strong>: They are on opposite sides of the T axis. Their spin directions are nearly reversed</li>
+<li><strong>ST lies along the S axis</strong>: Sidespin is dominant, producing movement in a direction orthogonal to FF and CU</li>
+<li><strong>SI is below FF</strong>: Tilted from FF toward the negative S direction (arm side). Less backspin, more horizontal movement</li>
+<li><strong>FS is near SI but closer to the origin</strong>: Similar direction, but closer to the origin due to lower spin rate = less movement</li>
+<li><strong>FC is near the origin</strong>: Very small transverse spin. The large gyrospin component barely appears on the T-S plane</li>
+</ul>
+
+<!-- T-G plane (spin efficiency view) -->
+<figure style="margin:24px auto;text-align:center;">
+<svg viewBox="0 0 400 340" style="max-width:400px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI','Helvetica Neue',sans-serif">
+<rect width="400" height="340" rx="8" fill="#12122a"/>
+<text x="200" y="22" fill="#aaa" font-size="13" font-weight="bold" text-anchor="middle">Transverse Spin vs G (spin efficiency view)</text>
+<!-- Axes -->
+<line x1="60" y1="280" x2="380" y2="280" stroke="#444" stroke-width="1"/>
+<line x1="60" y1="280" x2="60" y2="40" stroke="#444" stroke-width="1"/>
+<text x="220" y="310" fill="#888" font-size="10" text-anchor="middle">G gyrospin component (rpm) →</text>
+<text x="20" y="160" fill="#888" font-size="10" transform="rotate(-90,20,160)">Transverse (rpm) →</text>
+<!-- Scale: 0-3000 on both axes. 300px range → 0.1px/rpm -->
+<!-- G axis: right=more gyro. Trans axis: up=more transverse -->
+<!-- FF: trans=sqrt(1900²+852²)=2082, G=761 → x=60+761*0.1=136, y=280-2082*0.1=72 -->
+<circle cx="136" cy="72" r="8" fill="#e94560" opacity="0.8"/>
+<text x="145" y="68" fill="#e94560" font-size="11" font-weight="bold">FF</text>
+<!-- CU: trans=sqrt(1376²+1127²)=1778, G=1971 → x=60+1971*0.1=257, y=280-1778*0.1=102 -->
+<circle cx="257" cy="102" r="8" fill="#44ccff" opacity="0.8"/>
+<text x="266" y="98" fill="#44ccff" font-size="11" font-weight="bold">CU</text>
+<!-- ST: trans=sqrt(643²+2545²)=2625, G=0 → x=60, y=280-2625*0.1=17 → clamp to 40 -->
+<circle cx="60" cy="40" r="8" fill="#4488ff" opacity="0.8"/>
+<text x="72" y="36" fill="#4488ff" font-size="11" font-weight="bold">ST</text>
+<!-- SI: trans=sqrt(320²+1891²)=1918, G=1126 → x=60+1126*0.1=173, y=280-1918*0.1=88 -->
+<circle cx="173" cy="88" r="8" fill="#ff8844" opacity="0.8"/>
+<text x="182" y="84" fill="#ff8844" font-size="11" font-weight="bold">SI</text>
+<!-- FS: trans=sqrt(67²+1481²)=1483, G=0 → x=60, y=280-1483*0.1=132 -->
+<circle cx="60" cy="132" r="6" fill="#88cc88" opacity="0.8"/>
+<text x="72" y="128" fill="#88cc88" font-size="10" font-weight="bold">FS</text>
+<!-- FC: trans=sqrt(534²+73²)=539, G=2334 → x=60+2334*0.1=293, y=280-539*0.1=226 -->
+<circle cx="293" cy="226" r="6" fill="#cc6600" opacity="0.8"/>
+<text x="302" y="222" fill="#cc6600" font-size="10" font-weight="bold">FC</text>
+<!-- Spin efficiency lines -->
+<line x1="60" y1="280" x2="340" y2="40" stroke="#555" stroke-width="1" stroke-dasharray="3,3" opacity="0.3"/>
+<text x="310" y="56" fill="#555" font-size="8" opacity="0.5">eff=50%</text>
+<line x1="60" y1="280" x2="60" y2="40" stroke="#555" stroke-width="0" opacity="0"/>
+<!-- eff=100% line (left edge) and eff=0% line (bottom edge) are the axes themselves -->
+<text x="46" y="38" fill="#4fc3f7" font-size="8">eff=100%</text>
+<text x="350" y="276" fill="#888" font-size="8">eff=0%</text>
+<!-- Caption -->
+<text x="200" y="332" fill="#888" font-size="10" text-anchor="middle">Upper-left = higher spin efficiency (more spin contributing to movement)</text>
+</svg>
+<figcaption>Transverse Spin vs gyrospin component. Upper-left is 100% spin efficiency, lower-right is 0%.<br>
+<span style="font-size:0.85em;color:#aaa;">
+<span style="color:#e94560;">●</span> FF: Fastball
+<span style="color:#44ccff;">●</span> CU: Curveball
+<span style="color:#4488ff;">●</span> ST: Sweeper
+<span style="color:#ff8844;">●</span> SI: Sinker
+<span style="color:#88cc88;">●</span> FS: Splitter
+<span style="color:#cc6600;">●</span> FC: Cutter
+</span></figcaption>
+</figure>
+
+<p>The figure above shows the <strong>relationship between gyrospin and transverse spin</strong>. The closer to the left axis (G=0), the higher the spin efficiency, meaning most of the spin contributes to movement.</p>
+
+<ul>
+<li><strong>ST and FS</strong> sit at the far left where G=0, with the highest spin efficiency (100%). However, FS has a lower total spin rate, so its absolute transverse spin is smaller than ST</li>
+<li><strong>FF and SI</strong> have small to moderate gyrospin components while maintaining high transverse spin</li>
+<li><strong>CU</strong> surprisingly has a large gyrospin component. Curveballs have high spin rates, but some of that spin is allocated to the gyro direction</li>
+<li><strong>FC</strong> has a very large gyrospin component and small transverse spin. Despite the high spin rate (2440 rpm), the component contributing to movement is small</li>
+</ul>
+
+<p>The distances on these "maps" quantitatively represent how similar the spin characteristics of two pitches are. While pitch type classification is discrete, in omega space the distribution is <strong>continuous</strong>, and even pitches with the same type name occupy different positions depending on the pitcher. This perspective is useful for pitch type classification and pitch tunneling analysis.</p>
+
+<!-- ========== Appendix ========== -->
+<h2 id="appendix">Appendix: For Researchers</h2>
+
+<details>
+<summary>📐 Equations of Motion</summary>
+<div>
+<p>The equation of motion for the ball:</p>
+$$m\ddot{\mathbf{x}} = -mg\hat{\mathbf{e}}_Z - \frac{1}{2}C_D \rho A v \mathbf{v} + \frac{1}{2}C_L \rho A v^2 (\hat{\boldsymbol{\omega}} \times \hat{\mathbf{v}})$$
+<p>where the first term is gravity, the second is drag, and the third is Magnus force. Numerical integration is performed using the 4th-order Runge-Kutta method with a 0.001-second time step.</p>
+</div>
+</details>
+
+<details>
+<summary>📐 Drag Coefficient Model</summary>
+<div>
+<p>Drag coefficient in the Nathan model:</p>
+$$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
+<p>($c_{d0} = 0.297$, $c_{d,\text{spin}} = 0.0292$)</p>
+<p>As spin increases, drag also increases. This is thought to be due to the turbulence-promoting effect of the seams.</p>
+</div>
+</details>
+
+<details>
+<summary>📐 Conservation of Spin Axis</summary>
+<div>
+<p>The spin axis is essentially conserved during flight. Since both the Magnus force and drag act on the center of mass, they do not produce torque that changes the spin axis (conservation of angular momentum). Measurements confirm that changes in the spin axis are negligible during a flight time of about 0.4 seconds.</p>
+</div>
+</details>
+
+<details>
+<summary>📐 Seam Effect (Seam-Shifted Wake)</summary>
+<div>
+<p>In addition to the Magnus force, the position of the seams can alter the air separation point, generating an additional force unrelated to spin. This is called the Seam-Shifted Wake (SSW). It has a significant effect on low-spin two-seam type pitches, while at high spin rates the seam effect averages out and becomes small.</p>
+</div>
+</details>
+
+<details>
+<summary>📐 Ball Parameters</summary>
+<div>
+<p>Ball parameters used in this simulator (based on Nathan Excel Trajectory Calculator):</p>
+<ul>
+<li>Mass: 5.125 oz = 0.14529 kg</li>
+<li>Circumference: 9.125 in → Radius: 0.03689 m</li>
+<li>Gravitational acceleration: 9.80 m/s² (MLB ballpark average)</li>
+</ul>
+</div>
+</details>
+
+<!-- ========== Footer ========== -->
+<div class="footer">
+<p>Pitch Trajectory Simulator: <a href="https://baseball.skill-vis.com" target="_blank">baseball.skill-vis.com</a></p>
+<p>Physics Model: <a href="https://baseball.physics.illinois.edu/" target="_blank">Alan Nathan's Trajectory Calculator</a></p>
+<p>© 2026 <a href="https://skill-vis.com" target="_blank">Skill-Vis</a></p>
+</div>
+
+</div>
+
+<script>
+// =========================================================================
+// Widget 0: TSG Coordinate System with pitcher/home, ω slider
+// =========================================================================
+(function() {
+    const canvas = document.getElementById('bsg-axes-canvas');
+    if (!canvas) return;
+    const W = Math.max(canvas.clientWidth, 600);
+    const H = 420;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0a0a1a);
+    const camera = new THREE.PerspectiveCamera(45, W/H, 0.1, 100);
+    camera.position.set(2, 2.5, 4);
+    const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
+    renderer.setSize(W, H);
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    const controls = new THREE.OrbitControls(camera, canvas);
+    controls.enableDamping = true;
+    controls.target.set(0, 0.8, -0.5);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    dirLight.position.set(3, 5, 3);
+    scene.add(dirLight);
+
+    // Ground grid
+    const grid = new THREE.GridHelper(8, 16, 0x333355, 0x1a1a33);
+    scene.add(grid);
+
+    // Pitcher plate
+    const ppGeo = new THREE.BoxGeometry(0.5, 0.02, 0.12);
+    const ppMat = new THREE.MeshBasicMaterial({color: 0xcccccc, transparent: true, opacity: 0.6});
+    const pp = new THREE.Mesh(ppGeo, ppMat);
+    pp.position.set(0, 0.01, 2);
+    scene.add(pp);
+
+    // Home plate
+    const hpShape = new THREE.Shape();
+    const hs = 0.2;
+    hpShape.moveTo(0, hs*1.2);
+    hpShape.lineTo(-hs, hs*0.4);
+    hpShape.lineTo(-hs, -hs*0.4);
+    hpShape.lineTo(hs, -hs*0.4);
+    hpShape.lineTo(hs, hs*0.4);
+    hpShape.lineTo(0, hs*1.2);
+    const hpGeo = new THREE.ShapeGeometry(hpShape);
+    const hpMat = new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.5, side: THREE.DoubleSide});
+    const homePlate = new THREE.Mesh(hpGeo, hpMat);
+    homePlate.rotation.x = -Math.PI / 2;
+    homePlate.position.set(0, 0.01, -3);
+    scene.add(homePlate);
+
+    // Text label helper
+    function makeLabel(text, pos, color, size) {
+        const c = document.createElement('canvas');
+        c.width = 256; c.height = 64;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = color;
+        ctx.font = `bold ${size || 28}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText(text, 128, 44);
+        const tex = new THREE.CanvasTexture(c);
+        const sp = new THREE.Sprite(new THREE.SpriteMaterial({map: tex, transparent: true}));
+        sp.position.copy(pos);
+        sp.scale.set(1.2, 0.3, 1);
+        scene.add(sp);
+        return sp;
+    }
+    makeLabel('Pitcher', new THREE.Vector3(0, 0.3, 2.3), '#888888');
+    makeLabel('Home', new THREE.Vector3(0, 0.3, -3.5), '#888888');
+
+    // Baseball with seam texture
+    const ballRadius = 0.18;
+    const ballGeo = new THREE.SphereGeometry(ballRadius, 32, 32);
+    const seamCanvas = document.createElement('canvas');
+    seamCanvas.width = 256; seamCanvas.height = 256;
+    const sctx = seamCanvas.getContext('2d');
+    sctx.fillStyle = '#e8e0d0';
+    sctx.fillRect(0, 0, 256, 256);
+    sctx.strokeStyle = '#cc2222'; sctx.lineWidth = 3;
+    sctx.beginPath();
+    for (let i = 0; i < 256; i += 2) {
+        const y = 128 + 40 * Math.sin(i * Math.PI * 4 / 256);
+        if (i === 0) sctx.moveTo(i, y); else sctx.lineTo(i, y);
+    }
+    sctx.stroke();
+    sctx.beginPath();
+    for (let i = 0; i < 256; i += 2) {
+        const y = 128 - 40 * Math.sin(i * Math.PI * 4 / 256 + Math.PI);
+        if (i === 0) sctx.moveTo(i, y); else sctx.lineTo(i, y);
+    }
+    sctx.stroke();
+    const seamTex = new THREE.CanvasTexture(seamCanvas);
+    const ballMat = new THREE.MeshPhongMaterial({map: seamTex});
+    const ball = new THREE.Mesh(ballGeo, ballMat);
+    const ballCenter = new THREE.Vector3(0, 0.8, 0);
+    ball.position.copy(ballCenter);
+    scene.add(ball);
+
+    let ballOmega = new THREE.Vector3(0, 0, 0);
+
+    // --- Static TSG axis arrows (always visible) ---
+    // TSG right-hand system: e_T × e_S = e_G
+    // G = velocity direction: slightly down and left (from pitcher's view)
+    // In Three.js: +X = 1B side (pitcher's left), -Y = down, -Z = toward catcher
+    const axLen = 1.4;
+    const headLen = 0.12;
+    const headW = 0.07;
+
+    // G axis = velocity direction (slightly down + left)
+    const gDir = new THREE.Vector3(-0.12, -0.08, -1).normalize();
+    // Velocity arrow from ball center (green dashed, same style as Widget 2/3)
+    const gArrowLen = 1.2;
+    const gEnd = ballCenter.clone().add(gDir.clone().multiplyScalar(gArrowLen));
+    const gLineGeo = new THREE.BufferGeometry().setFromPoints([ballCenter.clone(), gEnd]);
+    const gLineMat = new THREE.LineDashedMaterial({color: 0x44ff44, dashSize: 0.12, gapSize: 0.06});
+    const gLine = new THREE.Line(gLineGeo, gLineMat);
+    gLine.computeLineDistances();
+    scene.add(gLine);
+    const gConeGeo = new THREE.ConeGeometry(0.05, 0.15, 8);
+    const gConeMat = new THREE.MeshBasicMaterial({color: 0x44ff44});
+    const gCone = new THREE.Mesh(gConeGeo, gConeMat);
+    gCone.position.copy(gEnd);
+    gCone.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), gDir);
+    scene.add(gCone);
+    makeLabel('G = v', gEnd.clone().add(gDir.clone().multiplyScalar(0.25)), '#44ff44', 24);
+
+    // T axis: -(G × Z_up) / |G × Z_up|  (topspin direction)
+    const zUp = new THREE.Vector3(0, 1, 0);
+    const tDir = new THREE.Vector3().crossVectors(gDir, zUp).normalize().negate();
+    const tArrow = new THREE.ArrowHelper(tDir, ballCenter, axLen, 0xff4444, headLen, headW);
+    scene.add(tArrow);
+    makeLabel('T', ballCenter.clone().add(tDir.clone().multiplyScalar(axLen + 0.2)).add(new THREE.Vector3(0, 0.15, 0)), '#ff4444', 26);
+
+    // S axis: G × T (right-hand TSG: e_T × e_S = e_G → e_S = e_G × e_T)
+    const sDir = new THREE.Vector3().crossVectors(gDir, tDir).normalize();
+    const sArrow = new THREE.ArrowHelper(sDir, ballCenter, axLen, 0x4488ff, headLen, headW);
+    scene.add(sArrow);
+    makeLabel('S', ballCenter.clone().add(sDir.clone().multiplyScalar(axLen + 0.2)).add(new THREE.Vector3(0.1, 0, 0)), '#4488ff', 26);
+
+    // Right angle markers
+    function addRightAngle(d1, d2, color) {
+        const s = 0.2;
+        const pts = [
+            ballCenter.clone().add(d1.clone().multiplyScalar(s)),
+            ballCenter.clone().add(d1.clone().multiplyScalar(s)).add(d2.clone().multiplyScalar(s)),
+            ballCenter.clone().add(d2.clone().multiplyScalar(s))
+        ];
+        const geo = new THREE.BufferGeometry().setFromPoints(pts);
+        scene.add(new THREE.Line(geo, new THREE.LineBasicMaterial({color, transparent: true, opacity: 0.5})));
+    }
+    addRightAngle(tDir, sDir, 0x666688);
+    addRightAngle(tDir, gDir, 0x666688);
+    addRightAngle(sDir, gDir, 0x666688);
+
+    // --- Dynamic ω arrow + component projections ---
+    let dynamicObjs = [];
+    function clearDynamic() {
+        dynamicObjs.forEach(o => scene.remove(o));
+        dynamicObjs = [];
+    }
+
+    function update() {
+        const tVal = parseFloat(document.getElementById('bsg0-t').value);
+        const sVal = parseFloat(document.getElementById('bsg0-s').value);
+        const gVal = parseFloat(document.getElementById('bsg0-g').value);
+        document.getElementById('bsg0-t-val').textContent = tVal + '°';
+        document.getElementById('bsg0-s-val').textContent = sVal + '°';
+        document.getElementById('bsg0-g-val').textContent = gVal + '°';
+
+        clearDynamic();
+
+        // Convert angles to TSG components (unit sphere)
+        const tRad = tVal * Math.PI / 180;
+        const sRad = sVal * Math.PI / 180;
+        const gAbs = Math.abs(gVal);
+        const gRad = gAbs * Math.PI / 180;
+        const tComp = Math.sin(tRad) * Math.cos(gRad);
+        const sComp = Math.sin(sRad) * Math.cos(gRad);
+        const gComp = Math.sin(gRad);
+
+        // Map to Three.js using tilted TSG basis vectors
+        const omegaVec = new THREE.Vector3(
+            tComp * tDir.x + sComp * sDir.x + gComp * gDir.x,
+            tComp * tDir.y + sComp * sDir.y + gComp * gDir.y,
+            tComp * tDir.z + sComp * sDir.z + gComp * gDir.z
+        );
+        const omLen = omegaVec.length();
+
+        if (omLen > 0.01) {
+            const omDir = omegaVec.clone().normalize();
+            const arrowScale = 1.8;
+
+            // ω arrow (orange, through ball)
+            const halfOm = omDir.clone().multiplyScalar(arrowScale * omLen / 2);
+            const omStart = ballCenter.clone().sub(halfOm);
+            const shaftLen = arrowScale * omLen * 0.8;
+            const shaftGeo = new THREE.CylinderGeometry(0.03, 0.03, shaftLen, 8);
+            const shaftMat = new THREE.MeshBasicMaterial({color: 0xff8a65});
+            const shaft = new THREE.Mesh(shaftGeo, shaftMat);
+            const quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), omDir);
+            shaft.quaternion.copy(quat);
+            shaft.position.copy(omStart).add(omDir.clone().multiplyScalar(shaftLen / 2));
+            scene.add(shaft); dynamicObjs.push(shaft);
+
+            const coneLen = arrowScale * omLen * 0.2;
+            const coneGeo = new THREE.ConeGeometry(0.07, coneLen, 8);
+            const coneMat = new THREE.MeshBasicMaterial({color: 0xff8a65});
+            const cone = new THREE.Mesh(coneGeo, coneMat);
+            cone.quaternion.copy(quat);
+            cone.position.copy(omStart).add(omDir.clone().multiplyScalar(shaftLen + coneLen / 2));
+            scene.add(cone); dynamicObjs.push(cone);
+
+            const tipPos = omStart.clone().add(omDir.clone().multiplyScalar(arrowScale * omLen * 1.15));
+            dynamicObjs.push(makeLabel('ω', tipPos, '#ff8a65', 28));
+
+            // Projection: show ω decomposition as box edges
+            // Component vectors along tilted TSG basis
+            const hs = arrowScale / 2;
+            const tVec3 = tDir.clone().multiplyScalar(tComp * hs);
+            const sVec3 = sDir.clone().multiplyScalar(sComp * hs);
+            const gVec3 = gDir.clone().multiplyScalar(gComp * hs);
+
+            function addDashed(from, to, color) {
+                // Use thin cylinder segments for visible thickness
+                const dir = to.clone().sub(from);
+                const len = dir.length();
+                if (len < 0.01) return;
+                const mid = from.clone().add(to).multiplyScalar(0.5);
+                const tubeGeo = new THREE.CylinderGeometry(0.012, 0.012, len, 4);
+                const tubeMat = new THREE.MeshBasicMaterial({color, transparent: true, opacity: 0.45});
+                const tube = new THREE.Mesh(tubeGeo, tubeMat);
+                const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), dir.normalize());
+                tube.quaternion.copy(q);
+                tube.position.copy(mid);
+                scene.add(tube); dynamicObjs.push(tube);
+            }
+
+            // On-axis projection segments (bold dashed, from origin along each axis)
+            if (Math.abs(tComp) > 0.03) addDashed(ballCenter, ballCenter.clone().add(tVec3), 0xff4444);
+            if (Math.abs(sComp) > 0.03) addDashed(ballCenter, ballCenter.clone().add(sVec3), 0x4488ff);
+            if (Math.abs(gComp) > 0.03) addDashed(ballCenter, ballCenter.clone().add(gVec3), 0x44ff44);
+
+            // Box edges from ω tip back to each axis-plane
+            const omTip = ballCenter.clone().add(tVec3).add(sVec3).add(gVec3);
+            // Edges parallel to T axis (from ω tip, remove T component)
+            if (Math.abs(tComp) > 0.03) {
+                addDashed(ballCenter.clone().add(sVec3).add(gVec3), omTip, 0xff4444);
+            }
+            // Edges parallel to S axis
+            if (Math.abs(sComp) > 0.03) {
+                addDashed(ballCenter.clone().add(tVec3).add(gVec3), omTip, 0x4488ff);
+            }
+            // Edges parallel to G axis
+            if (Math.abs(gComp) > 0.03) {
+                addDashed(ballCenter.clone().add(tVec3).add(sVec3), omTip, 0x44ff44);
+            }
+
+            // Intermediate edges (gray, connecting axis projections)
+            const gray = 0x555566;
+            if (Math.abs(tComp) > 0.03 && Math.abs(sComp) > 0.03) {
+                addDashed(ballCenter.clone().add(tVec3), ballCenter.clone().add(tVec3).add(sVec3), gray);
+                addDashed(ballCenter.clone().add(sVec3), ballCenter.clone().add(tVec3).add(sVec3), gray);
+            }
+            if (Math.abs(tComp) > 0.03 && Math.abs(gComp) > 0.03) {
+                addDashed(ballCenter.clone().add(tVec3), ballCenter.clone().add(tVec3).add(gVec3), gray);
+                addDashed(ballCenter.clone().add(gVec3), ballCenter.clone().add(tVec3).add(gVec3), gray);
+            }
+            if (Math.abs(sComp) > 0.03 && Math.abs(gComp) > 0.03) {
+                addDashed(ballCenter.clone().add(sVec3), ballCenter.clone().add(sVec3).add(gVec3), gray);
+                addDashed(ballCenter.clone().add(gVec3), ballCenter.clone().add(sVec3).add(gVec3), gray);
+            }
+
+            // Ball rotation
+            const rotScale = 0.0003;
+            ballOmega.copy(omegaVec).multiplyScalar(rotScale);
+        } else {
+            ballOmega.set(0, 0, 0);
+        }
+
+        // Info
+        const eff = omLen > 0.01 ? (Math.sqrt(tComp*tComp + sComp*sComp) / omLen * 100) : 0;
+        let desc = '';
+        if (tVal < -30 && Math.abs(sVal) < 30 && gAbs < 30) desc = '→ T<0 Backspin dominant (fastball type)';
+        else if (tVal > 30 && Math.abs(sVal) < 45) desc = '→ T>0 Topspin dominant (curveball type)';
+        else if (Math.abs(sVal) > 30 && Math.abs(tVal) < 30) desc = '→ Sidespin dominant';
+        else if (gAbs > 50) desc = '→ Gyrospin dominant (low Magnus force)';
+        else desc = '→ Mixed spin';
+        document.getElementById('bsg-axes-info').textContent =
+            `T=${tVal}°, S=${sVal}°, G=${gVal}°  Spin eff.=${eff.toFixed(0)}%  ${desc}`;
+    }
+
+    // Event listeners
+    ['bsg0-t', 'bsg0-s', 'bsg0-g'].forEach(id => {
+        document.getElementById(id).addEventListener('input', update);
+    });
+    document.querySelectorAll('.bsg0-preset').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.getElementById('bsg0-t').value = this.dataset.t;
+            document.getElementById('bsg0-s').value = this.dataset.s;
+            document.getElementById('bsg0-g').value = this.dataset.g;
+            update();
+        });
+    });
+
+    update();
+
+    const clock = new THREE.Clock();
+    function animate() {
+        requestAnimationFrame(animate);
+        const dt = clock.getDelta();
+        if (ballOmega.length() > 0.0001) {
+            const axis = ballOmega.clone().normalize();
+            ball.rotateOnWorldAxis(axis, ballOmega.length() * dt * 30);
+        }
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    animate();
+})();
+
+// =========================================================================
+// Widget 1: Magnus Force Explorer (Simplified — Free slider + FF preset)
+// =========================================================================
+(function() {
+    const canvas = document.getElementById('magnus-canvas');
+    if (!canvas) return;
+    const W = Math.max(canvas.clientWidth, 600);
+    const H = 420;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0a0a1a);
+    const camera = new THREE.PerspectiveCamera(45, W/H, 0.1, 100);
+    camera.position.set(2, 2.5, 4);
+    const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
+    renderer.setSize(W, H);
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    const controls = new THREE.OrbitControls(camera, canvas);
+    controls.enableDamping = true;
+    controls.target.set(0, 0.8, -1.5);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+    dirLight.position.set(3, 5, 3);
+    scene.add(dirLight);
+
+    // Ground grid
+    const grid = new THREE.GridHelper(8, 16, 0x333355, 0x1a1a33);
+    scene.add(grid);
+
+    // Pitcher plate
+    const ppGeo = new THREE.BoxGeometry(0.5, 0.02, 0.12);
+    const ppMat = new THREE.MeshBasicMaterial({color: 0xcccccc, transparent: true, opacity: 0.6});
+    const pp = new THREE.Mesh(ppGeo, ppMat);
+    pp.position.set(0, 0.01, 2);
+    scene.add(pp);
+
+    // Labels
+    function makeTextSprite(text, pos, color, size) {
+        const c = document.createElement('canvas');
+        c.width = 256; c.height = 64;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = color;
+        ctx.font = `bold ${size || 28}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText(text, 128, 40);
+        const tex = new THREE.CanvasTexture(c);
+        const sp = new THREE.Sprite(new THREE.SpriteMaterial({map: tex, transparent: true}));
+        sp.position.copy(pos);
+        sp.scale.set(1.2, 0.3, 1);
+        scene.add(sp);
+        return sp;
+    }
+    makeTextSprite('Pitcher', new THREE.Vector3(0, 0.3, 2.3), '#888888');
+
+    // Home plate
+    const hpShape = new THREE.Shape();
+    const hs = 0.2;
+    hpShape.moveTo(0, hs*1.2);
+    hpShape.lineTo(-hs, hs*0.4);
+    hpShape.lineTo(-hs, -hs*0.4);
+    hpShape.lineTo(hs, -hs*0.4);
+    hpShape.lineTo(hs, hs*0.4);
+    hpShape.lineTo(0, hs*1.2);
+    const hpGeo = new THREE.ShapeGeometry(hpShape);
+    const hpMat = new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.5, side: THREE.DoubleSide});
+    const homePlate = new THREE.Mesh(hpGeo, hpMat);
+    homePlate.rotation.x = -Math.PI / 2;
+    homePlate.position.set(0, 0.01, -3);
+    scene.add(homePlate);
+    makeTextSprite('Home', new THREE.Vector3(0, 0.3, -3.5), '#888888');
+
+    // Velocity arrow: drawn dynamically via sharedDrawVelArrow in update()
+
+    // Baseball
+    const ballRadius = 0.18;
+    const ballGeo = new THREE.SphereGeometry(ballRadius, 32, 32);
+    const seamCanvas = document.createElement('canvas');
+    seamCanvas.width = 256; seamCanvas.height = 256;
+    const sctx = seamCanvas.getContext('2d');
+    sctx.fillStyle = '#e8e0d0';
+    sctx.fillRect(0, 0, 256, 256);
+    sctx.strokeStyle = '#cc2222';
+    sctx.lineWidth = 3;
+    sctx.beginPath();
+    for (let i = 0; i < 256; i += 2) {
+        const y = 128 + 40 * Math.sin(i * Math.PI * 4 / 256);
+        if (i === 0) sctx.moveTo(i, y); else sctx.lineTo(i, y);
+    }
+    sctx.stroke();
+    sctx.beginPath();
+    for (let i = 0; i < 256; i += 2) {
+        const y = 128 - 40 * Math.sin(i * Math.PI * 4 / 256 + Math.PI);
+        if (i === 0) sctx.moveTo(i, y); else sctx.lineTo(i, y);
+    }
+    sctx.stroke();
+    const seamTex = new THREE.CanvasTexture(seamCanvas);
+    const ballMat = new THREE.MeshPhongMaterial({map: seamTex});
+    const ball = new THREE.Mesh(ballGeo, ballMat);
+    ball.position.set(0, 0.8, 0);
+    scene.add(ball);
+
+    let ballOmega = new THREE.Vector3(0, 0, 0);
+    let currentObjs = [];
+    let w1VelObjs = [];
+
+    function clearAll() {
+        currentObjs.forEach(o => scene.remove(o));
+        currentObjs = [];
+        w1VelObjs.forEach(o => scene.remove(o));
+        w1VelObjs = [];
+    }
+
+    function update() {
+        const tilt = parseFloat(document.getElementById('m1-tilt').value);
+        const yaw  = parseFloat(document.getElementById('m1-yaw').value);
+        document.getElementById('m1-tilt-val').textContent = tilt + '°';
+        document.getElementById('m1-yaw-val').textContent = yaw + '°';
+
+        clearAll();
+
+        const tiltRad = tilt * Math.PI / 180;
+        const yawRad  = yaw  * Math.PI / 180;
+
+        const totalSpin = 2200;
+        // tilt is T (topspin angle): T>0 = topspin, T<0 = backspin
+        // Internal backspin component = -T
+        const tComp = Math.sin(tiltRad);
+        const sComp = Math.sin(yawRad);
+        const wx = tComp * totalSpin;  // T>0 → wx>0 → topspin (drop)
+        const wz = -sComp * totalSpin;
+        const wy = 0;
+
+        const scale = 0.001;
+        const dir = new THREE.Vector3(wx * scale, wz * scale, wy * scale);
+        const len = dir.length();
+
+        // --- Compute trajectory & ball position first ---
+        const transverse = Math.sqrt(wx*wx + wz*wz);
+        const nSteps = 80, startZ = 2.0, endZ = -3.0;
+        const totalDist = startZ - endZ;
+        const releaseH = 1.6, initUp = 0.06;
+        const ballT = (startZ - 0) / totalDist;  // t at z=0
+
+        let ballPos = new THREE.Vector3(0, releaseH + (-0.8*ballT*ballT) + (initUp*totalDist*ballT), 0);
+
+        if (transverse > 10 && len > 0.01) {
+            const dirNorm = dir.clone().normalize();
+            const vDir2 = new THREE.Vector3(0, 0, -1);
+            const fDir2 = new THREE.Vector3().crossVectors(vDir2, dirNorm).normalize();
+            const deflectScale = transverse / 2500 * 1.2;
+
+            // Ball position on spin trajectory at z=0
+            const bDeflect = deflectScale * ballT * ballT;
+            const bGrav = -0.8 * ballT * ballT;
+            const bUp = initUp * totalDist * ballT;
+            ballPos.set(fDir2.x * bDeflect, releaseH + fDir2.y * bDeflect + bGrav + bUp, 0);
+
+            // Trajectories
+            const pts = [], nsPts = [];
+            for (let i = 0; i <= nSteps; i++) {
+                const t = i / nSteps;
+                const z = startZ - t * totalDist;
+                const gDrop = -0.8 * t * t;
+                const up = initUp * totalDist * t;
+                const deflect = deflectScale * t * t;
+                const yS = releaseH + fDir2.y * deflect + gDrop + up;
+                const yNS = releaseH + gDrop + up;
+                if (yS > 0.01) pts.push(new THREE.Vector3(fDir2.x * deflect, yS, z));
+                if (yNS > 0.01) nsPts.push(new THREE.Vector3(0, yNS, z));
+            }
+
+            if (nsPts.length > 1) {
+                const nsGeo = new THREE.BufferGeometry().setFromPoints(nsPts);
+                const nsMat = new THREE.LineDashedMaterial({color: 0x00cccc, dashSize: 0.15, gapSize: 0.1});
+                const nsLine = new THREE.Line(nsGeo, nsMat);
+                nsLine.computeLineDistances();
+                scene.add(nsLine); currentObjs.push(nsLine);
+            }
+            if (pts.length > 2) {
+                const curve = new THREE.CatmullRomCurve3(pts);
+                const tubeGeo = new THREE.TubeGeometry(curve, pts.length * 2, 0.012, 6, false);
+                const tubeMat = new THREE.MeshBasicMaterial({color: 0xff4444});
+                const tube = new THREE.Mesh(tubeGeo, tubeMat);
+                scene.add(tube); currentObjs.push(tube);
+            }
+        }
+
+        // --- Place ball on trajectory ---
+        ball.position.copy(ballPos);
+
+        // --- Velocity arrow along trajectory tangent ---
+        if (transverse > 10 && len > 0.01) {
+            const dirNorm = dir.clone().normalize();
+            const vDir2 = new THREE.Vector3(0, 0, -1);
+            const fDir2 = new THREE.Vector3().crossVectors(vDir2, dirNorm).normalize();
+            const deflectScale = transverse / 2500 * 1.2;
+            const dt = 0.01;
+            const t2 = ballT + dt;
+            const z2 = startZ - t2 * totalDist;
+            const ballPos2 = new THREE.Vector3(
+                fDir2.x * deflectScale * t2 * t2,
+                releaseH + fDir2.y * deflectScale * t2 * t2 + (-0.8 * t2 * t2) + initUp * totalDist * t2,
+                z2
+            );
+            const tangent = ballPos2.clone().sub(ballPos).normalize();
+            sharedDrawVelArrow(scene, w1VelObjs, ballPos, tangent, makeTextSprite);
+        } else {
+            // No spin: straight toward catcher
+            sharedDrawVelArrow(scene, w1VelObjs, ballPos, new THREE.Vector3(0, 0, -1), makeTextSprite);
+        }
+
+        // --- Draw arrows at ball position ---
+        if (len > 0.01) {
+            const dirNorm = dir.clone().normalize();
+
+            // ω arrow through ball
+            const halfDir = dirNorm.clone().multiplyScalar(len / 2);
+            const arrowStart = ballPos.clone().sub(halfDir);
+            const shaftLen = len * 0.8;
+            const shaftGeo = new THREE.CylinderGeometry(0.025, 0.025, shaftLen, 8);
+            const shaftMat = new THREE.MeshBasicMaterial({color: 0xff8a65});
+            const shaft = new THREE.Mesh(shaftGeo, shaftMat);
+            const quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), dirNorm);
+            shaft.quaternion.copy(quat);
+            shaft.position.copy(arrowStart).add(dirNorm.clone().multiplyScalar(shaftLen / 2));
+            scene.add(shaft); currentObjs.push(shaft);
+
+            const coneLen = len * 0.2;
+            const coneGeo = new THREE.ConeGeometry(0.06, coneLen, 8);
+            const coneMat = new THREE.MeshBasicMaterial({color: 0xff8a65});
+            const cone = new THREE.Mesh(coneGeo, coneMat);
+            cone.quaternion.copy(quat);
+            cone.position.copy(arrowStart).add(dirNorm.clone().multiplyScalar(shaftLen + coneLen / 2));
+            scene.add(cone); currentObjs.push(cone);
+
+            const tipPos = arrowStart.clone().add(dirNorm.clone().multiplyScalar(len * 1.2));
+            currentObjs.push(makeTextSprite('ω', tipPos, '#ff8a65', 24));
+
+            // Magnus force arrow
+            const vDir = new THREE.Vector3(0, 0, -1);
+            const fDir = new THREE.Vector3().crossVectors(vDir, dirNorm);
+            if (fDir.length() > 0.001) {
+                fDir.normalize();
+                const fLen = 0.8;
+                const fShaftLen = fLen * 0.75;
+                const fShaftGeo = new THREE.CylinderGeometry(0.02, 0.02, fShaftLen, 8);
+                const fShaftMat = new THREE.MeshBasicMaterial({color: 0x4fc3f7});
+                const fShaft = new THREE.Mesh(fShaftGeo, fShaftMat);
+                const fQuat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), fDir);
+                fShaft.quaternion.copy(fQuat);
+                fShaft.position.copy(ballPos).add(fDir.clone().multiplyScalar(fShaftLen/2 + ballRadius + 0.05));
+                scene.add(fShaft); currentObjs.push(fShaft);
+
+                const fConeLen = fLen * 0.25;
+                const fConeGeo = new THREE.ConeGeometry(0.05, fConeLen, 8);
+                const fConeMat = new THREE.MeshBasicMaterial({color: 0x4fc3f7});
+                const fCone = new THREE.Mesh(fConeGeo, fConeMat);
+                fCone.quaternion.copy(fQuat);
+                fCone.position.copy(ballPos).add(fDir.clone().multiplyScalar(fShaftLen + fConeLen/2 + ballRadius + 0.05));
+                scene.add(fCone); currentObjs.push(fCone);
+
+                const fLabelPos = ballPos.clone().add(fDir.clone().multiplyScalar(fLen + ballRadius + 0.2));
+                currentObjs.push(makeTextSprite('Magnus F', fLabelPos, '#4fc3f7', 20));
+            }
+
+            // Ball rotation
+            const rotScale = 0.00015;
+            ballOmega.set(wx * rotScale, wz * rotScale, wy * rotScale);
+        } else {
+            ballOmega.set(0, 0, 0);
+        }
+
+        // Info text
+        let desc = '';
+        if (tilt < -30 && Math.abs(yaw) < 30) desc = '→ T<0 Backspin dominant: upward force makes ball "ride"';
+        else if (tilt > 30 && Math.abs(yaw) < 30) desc = '→ T>0 Topspin dominant: downward force makes ball drop';
+        else if (Math.abs(yaw) > 30 && Math.abs(tilt) < 30) desc = '→ Sidespin dominant: curves horizontally';
+        else if (Math.abs(tilt) < 15 && Math.abs(yaw) < 15) desc = '→ Spin axis near velocity direction: weak Magnus force';
+        else desc = '→ Mix of topspin and sidespin';
+        document.getElementById('m1-info').textContent =
+            `T=${tilt}°, S=${yaw}°  ${desc}`;
+    }
+
+    document.getElementById('m1-tilt').addEventListener('input', update);
+    document.getElementById('m1-yaw').addEventListener('input', update);
+    document.getElementById('m1-reset-ff').addEventListener('click', function() {
+        document.getElementById('m1-tilt').value = -70;
+        document.getElementById('m1-yaw').value = -10;
+        update();
+    });
+
+    // Initial: Fastball
+    update();
+
+    const clock = new THREE.Clock();
+    function animate() {
+        requestAnimationFrame(animate);
+        const dt = clock.getDelta();
+        if (ballOmega.length() > 0.0001) {
+            const axis = ballOmega.clone().normalize();
+            ball.rotateOnWorldAxis(axis, ballOmega.length() * dt * 30);
+        }
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    animate();
+})();
+
+// =========================================================================
+// =========================================================================
+// Shared drawing functions for Widget 2 & 3
+// All use physical ω direction (no negation). F = ω × v.
+// =========================================================================
+
+function sharedDrawOmegaArrow(scene, objArray, d, key, ballCenter, makeLabel) {
+    const scale = 0.001;
+    const dir = new THREE.Vector3(d.wx * scale, d.wz * scale, d.wy * scale);
+    const len = dir.length();
+    if (len < 0.01) return null;
+    const dirNorm = dir.clone().normalize();
+    const halfDir = dirNorm.clone().multiplyScalar(len / 2);
+    const arrowStart = ballCenter.clone().sub(halfDir);
+    const shaftLen = len * 0.8;
+    const shaftGeo = new THREE.CylinderGeometry(0.025, 0.025, shaftLen, 8);
+    const shaftMat = new THREE.MeshBasicMaterial({color: d.color});
+    const shaft = new THREE.Mesh(shaftGeo, shaftMat);
+    const quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), dirNorm);
+    shaft.quaternion.copy(quat);
+    shaft.position.copy(arrowStart).add(dirNorm.clone().multiplyScalar(shaftLen / 2));
+    scene.add(shaft); objArray.push(shaft);
+    const coneLen = len * 0.2;
+    const coneGeo = new THREE.ConeGeometry(0.06, coneLen, 8);
+    const coneMat = new THREE.MeshBasicMaterial({color: d.color});
+    const cone = new THREE.Mesh(coneGeo, coneMat);
+    cone.quaternion.copy(quat);
+    cone.position.copy(arrowStart).add(dirNorm.clone().multiplyScalar(shaftLen + coneLen / 2));
+    scene.add(cone); objArray.push(cone);
+    const tipPos = arrowStart.clone().add(dirNorm.clone().multiplyScalar(len * 1.2));
+    const label = makeLabel(key.toUpperCase(), tipPos, '#' + d.color.toString(16).padStart(6, '0'), 24);
+    objArray.push(label);
+    return {dir, len, data: d};
+}
+
+function sharedDrawForceArrow(scene, objArray, d, ballCenter, ballRadius, makeLabel) {
+    // F ∝ ω × v, length ∝ |ω × v| × speed
+    const scale = 0.001;
+    const omegaVec = new THREE.Vector3(d.wx * scale, d.wz * scale, d.wy * scale);
+    const vDir = new THREE.Vector3(0, 0, -1);
+    const crossVec = new THREE.Vector3().crossVectors(omegaVec, vDir);
+    const crossMag = crossVec.length();
+    if (crossMag < 0.0001) return;
+    const fDir = crossVec.normalize();
+    const vScale = (d.speed || 90) / 95;
+    const fLen = Math.min(crossMag * vScale * 0.55, 1.2);
+    const shaftLen = fLen * 0.75;
+    const shaftGeo = new THREE.CylinderGeometry(0.02, 0.02, shaftLen, 8);
+    const shaftMat = new THREE.MeshBasicMaterial({color: 0x4fc3f7});
+    const shaft = new THREE.Mesh(shaftGeo, shaftMat);
+    const quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), fDir);
+    shaft.quaternion.copy(quat);
+    shaft.position.copy(ballCenter).add(fDir.clone().multiplyScalar(shaftLen/2 + ballRadius + 0.05));
+    scene.add(shaft); objArray.push(shaft);
+    const coneLen = fLen * 0.25;
+    const coneGeo = new THREE.ConeGeometry(0.05, coneLen, 8);
+    const coneMat = new THREE.MeshBasicMaterial({color: 0x4fc3f7});
+    const cone = new THREE.Mesh(coneGeo, coneMat);
+    cone.quaternion.copy(quat);
+    cone.position.copy(ballCenter).add(fDir.clone().multiplyScalar(shaftLen + coneLen/2 + ballRadius + 0.05));
+    scene.add(cone); objArray.push(cone);
+    const labelPos = ballCenter.clone().add(fDir.clone().multiplyScalar(fLen + ballRadius + 0.2));
+    objArray.push(makeLabel('F', labelPos, '#4fc3f7', 20));
+}
+
+function sharedDrawVelArrow(scene, objArray, ballCenter, tangent, makeLabel) {
+    const arrowLen = 1.0;
+    const start = ballCenter.clone();
+    const end = start.clone().add(tangent.clone().multiplyScalar(arrowLen));
+    const lineGeo = new THREE.BufferGeometry().setFromPoints([start, end]);
+    const lineMat = new THREE.LineDashedMaterial({color: 0x44ff44, dashSize: 0.12, gapSize: 0.06});
+    const line = new THREE.Line(lineGeo, lineMat);
+    line.computeLineDistances();
+    scene.add(line); objArray.push(line);
+    const coneGeo = new THREE.ConeGeometry(0.05, 0.15, 8);
+    const coneMat = new THREE.MeshBasicMaterial({color: 0x44ff44});
+    const cone = new THREE.Mesh(coneGeo, coneMat);
+    cone.position.copy(end);
+    cone.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), tangent);
+    scene.add(cone); objArray.push(cone);
+    const labelPos = end.clone().add(tangent.clone().multiplyScalar(0.2));
+    objArray.push(makeLabel('v', labelPos, '#44ff44', 22));
+}
+
+function sharedComputeTrajectory(scene, trajObjArray, d) {
+    // F = ω × v for trajectory deflection
+    const scale = 0.001;
+    const omegaVec = new THREE.Vector3(d.wx * scale, d.wz * scale, d.wy * scale);
+    const omegaNorm = omegaVec.clone().normalize();
+    const vDir = new THREE.Vector3(0, 0, -1);
+    const fDir = new THREE.Vector3().crossVectors(omegaNorm, vDir);
+    if (fDir.length() < 0.001) return null;
+    fDir.normalize();
+    const transverse = Math.sqrt(d.wx**2 + d.wz**2);
+    const deflectScale = transverse / 2500 * 1.2;
+    const nSteps = 80, startZ = 2.0, endZ = -3.0;
+    const totalDist = startZ - endZ;
+    const releaseHeight = 1.6, initUpAngle = 0.06;
+    const points = [], noSpinPoints = [];
+    for (let i = 0; i <= nSteps; i++) {
+        const t = i / nSteps;
+        const z = startZ - t * totalDist;
+        const deflect = deflectScale * t * t;
+        const gravDrop = -0.8 * t * t;
+        const initUp = initUpAngle * totalDist * t;
+        const x = fDir.x * deflect;
+        const y = releaseHeight + fDir.y * deflect + gravDrop + initUp;
+        if (y < 0.01) break;
+        points.push(new THREE.Vector3(x, y, z));
+        const yNS = releaseHeight + gravDrop + initUp;
+        if (yNS > 0.01) noSpinPoints.push(new THREE.Vector3(0, yNS, z));
+    }
+    if (noSpinPoints.length > 1) {
+        const nsGeo = new THREE.BufferGeometry().setFromPoints(noSpinPoints);
+        const nsMat = new THREE.LineDashedMaterial({color: 0x00cccc, dashSize: 0.15, gapSize: 0.1});
+        const nsLine = new THREE.Line(nsGeo, nsMat);
+        nsLine.computeLineDistances();
+        scene.add(nsLine); trajObjArray.push(nsLine);
+    }
+    if (points.length > 2) {
+        const curve = new THREE.CatmullRomCurve3(points);
+        const tubeGeo = new THREE.TubeGeometry(curve, points.length * 2, 0.012, 6, false);
+        const tubeMat = new THREE.MeshBasicMaterial({color: d.color || 0xff8800});
+        const tube = new THREE.Mesh(tubeGeo, tubeMat);
+        scene.add(tube); trajObjArray.push(tube);
+    }
+    // Ball position and tangent at z=0
+    const ballT = (startZ - 0) / totalDist;
+    const bDeflect = deflectScale * ballT * ballT;
+    const bGrav = -0.8 * ballT * ballT;
+    const bUp = initUpAngle * totalDist * ballT;
+    const ballPos = new THREE.Vector3(fDir.x * bDeflect, releaseHeight + fDir.y * bDeflect + bGrav + bUp, 0);
+    // Tangent by finite difference
+    const dt = 0.01;
+    const t2 = ballT + dt;
+    const z2 = startZ - t2 * totalDist;
+    const ballPos2 = new THREE.Vector3(
+        fDir.x * deflectScale * t2 * t2,
+        releaseHeight + fDir.y * deflectScale * t2 * t2 + (-0.8 * t2 * t2) + initUpAngle * totalDist * t2,
+        z2
+    );
+    const tangent = ballPos2.clone().sub(ballPos).normalize();
+    return {pos: ballPos, tangent: tangent};
+}
+
+// =========================================================================
+// Widget 3: Typical pitch examples (Chapter 3)
+// =========================================================================
+(function() {
+    const canvas = document.getElementById('w3-canvas');
+    if (!canvas) return;
+    const W = Math.max(canvas.clientWidth, 600);
+    const H = 420;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0a0a1a);
+    const camera = new THREE.PerspectiveCamera(45, W/H, 0.1, 100);
+    camera.position.set(2, 2.5, 4);
+    const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
+    renderer.setSize(W, H);
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    const controls = new THREE.OrbitControls(camera, canvas);
+    controls.enableDamping = true;
+    controls.target.set(0, 0.8, -1.5);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+    dirLight.position.set(3, 5, 3);
+    scene.add(dirLight);
+
+    const grid = new THREE.GridHelper(8, 16, 0x333355, 0x1a1a33);
+    scene.add(grid);
+
+    // Pitcher plate
+    const ppGeo = new THREE.BoxGeometry(0.5, 0.02, 0.12);
+    const ppMat = new THREE.MeshBasicMaterial({color: 0xcccccc, transparent: true, opacity: 0.6});
+    const pp = new THREE.Mesh(ppGeo, ppMat);
+    pp.position.set(0, 0.01, 2);
+    scene.add(pp);
+
+    function makeTextSprite(text, pos, color, size) {
+        const c = document.createElement('canvas');
+        c.width = 256; c.height = 64;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = color;
+        ctx.font = `bold ${size || 28}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText(text, 128, 40);
+        const tex = new THREE.CanvasTexture(c);
+        const sp = new THREE.Sprite(new THREE.SpriteMaterial({map: tex, transparent: true}));
+        sp.position.copy(pos);
+        sp.scale.set(1.2, 0.3, 1);
+        scene.add(sp);
+        return sp;
+    }
+    makeTextSprite('Pitcher', new THREE.Vector3(0, 0.3, 2.3), '#888888');
+
+    // Home plate
+    const hpShape = new THREE.Shape();
+    const hs = 0.2;
+    hpShape.moveTo(0, hs*1.2); hpShape.lineTo(-hs, hs*0.4); hpShape.lineTo(-hs, -hs*0.4);
+    hpShape.lineTo(hs, -hs*0.4); hpShape.lineTo(hs, hs*0.4); hpShape.lineTo(0, hs*1.2);
+    const hpGeo = new THREE.ShapeGeometry(hpShape);
+    const hpMat = new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.5, side: THREE.DoubleSide});
+    const homePlate = new THREE.Mesh(hpGeo, hpMat);
+    homePlate.rotation.x = -Math.PI / 2;
+    homePlate.position.set(0, 0.01, -3);
+    scene.add(homePlate);
+    makeTextSprite('Home', new THREE.Vector3(0, 0.3, -3.5), '#888888');
+
+    // Velocity arrow: drawn dynamically along trajectory tangent in updateW3
+
+    // Baseball
+    const ballRadius = 0.18;
+    const ballGeo = new THREE.SphereGeometry(ballRadius, 32, 32);
+    const seamCanvas = document.createElement('canvas');
+    seamCanvas.width = 256; seamCanvas.height = 256;
+    const sctx = seamCanvas.getContext('2d');
+    sctx.fillStyle = '#e8e0d0'; sctx.fillRect(0, 0, 256, 256);
+    sctx.strokeStyle = '#cc2222'; sctx.lineWidth = 3;
+    sctx.beginPath();
+    for (let i = 0; i < 256; i += 2) {
+        const y = 128 + 40 * Math.sin(i * Math.PI * 4 / 256);
+        if (i === 0) sctx.moveTo(i, y); else sctx.lineTo(i, y);
+    }
+    sctx.stroke();
+    sctx.beginPath();
+    for (let i = 0; i < 256; i += 2) {
+        const y = 128 - 40 * Math.sin(i * Math.PI * 4 / 256 + Math.PI);
+        if (i === 0) sctx.moveTo(i, y); else sctx.lineTo(i, y);
+    }
+    sctx.stroke();
+    const seamTex = new THREE.CanvasTexture(seamCanvas);
+    const ballMat = new THREE.MeshPhongMaterial({map: seamTex});
+    const ball = new THREE.Mesh(ballGeo, ballMat);
+    ball.position.set(0, 0.8, 0);
+    scene.add(ball);
+
+    let ballOmega = new THREE.Vector3(0, 0, 0);
+
+    // Typical pitch data (from Statcast via BSG conversion)
+    const pitchData = {
+        ff: {name:'FF Yamamoto', color:0xe94560, wx:1900, wz:-852, wy:-761, speed:96.3, spin:2240},
+        cu: {name:'CU Ohtani', color:0x44ccff, wx:-1376, wz:1127, wy:-1971, speed:77.6, spin:2622},
+        st: {name:'ST Ohtani', color:0xaa44ff, wx:643, wz:2545, wy:0, speed:85.2, spin:2625},
+        sl: {name:'SL Yamamoto', color:0x4488ff, wx:209, wz:279, wy:-2595, speed:87.1, spin:2626},
+        si: {name:'SI Darvish', color:0xff8844, wx:320, wz:-1891, wy:-1126, speed:93.8, spin:2228},
+        fs: {name:'FS Yamamoto', color:0x88cc88, wx:67, wz:-1481, wy:0, speed:92.9, spin:1483},
+        fc: {name:'FC Darvish', color:0xcc6600, wx:534, wz:-73, wy:-2334, speed:92.1, spin:2440},
+    };
+
+    let currentArrows = [];
+    let forceObjs = [];
+    let trajObjs = [];
+    let trajLine = null;
+
+    function clearArrows() { currentArrows.forEach(a => scene.remove(a)); currentArrows = []; }
+    function clearForceAndTraj() { forceObjs.forEach(o => scene.remove(o)); forceObjs = []; }
+    function clearTrajectories() { trajObjs.forEach(o => scene.remove(o)); trajObjs = []; if (trajLine) { scene.remove(trajLine); trajLine = null; } }
+    let velObjs = [];
+    function clearVelArrow() { velObjs.forEach(o => scene.remove(o)); velObjs = []; }
+
+    function updateW3(pitchKey) {
+        clearArrows(); clearForceAndTraj(); clearTrajectories(); clearVelArrow();
+        const info = document.getElementById('w3-info');
+
+        if (pitchKey === 'all') {
+            let firstResult = null;
+            Object.keys(pitchData).forEach(k => {
+                sharedDrawOmegaArrow(scene, currentArrows, pitchData[k], k, new THREE.Vector3(0, 0.8, 0), makeTextSprite);
+                const result = sharedComputeTrajectory(scene, trajObjs, pitchData[k]);
+                if (!firstResult && result) firstResult = result;
+            });
+            const bp = firstResult ? firstResult.pos : new THREE.Vector3(0, 0.8, 0);
+            ball.position.copy(bp);
+            if (firstResult) sharedDrawVelArrow(scene, velObjs, bp, firstResult.tangent, makeTextSprite);
+            info.textContent = 'Showing all pitch trajectories (solid = with spin, dashed = no spin)';
+            ballOmega.set(0, 0, 0);
+        } else {
+            const d = pitchData[pitchKey];
+            const result = sharedComputeTrajectory(scene, trajObjs, d);
+            const ballCenter = result ? result.pos : new THREE.Vector3(0, 0.8, 0);
+            ball.position.copy(ballCenter);
+            if (result) sharedDrawVelArrow(scene, velObjs, ballCenter, result.tangent, makeTextSprite);
+            sharedDrawOmegaArrow(scene, currentArrows, d, pitchKey, ballCenter, makeTextSprite);
+            sharedDrawForceArrow(scene, forceObjs, d, ballCenter, ballRadius, makeTextSprite);
+            const totalRPM = Math.sqrt(d.wx**2 + d.wy**2 + d.wz**2);
+            const eff = Math.sqrt(d.wx**2 + d.wz**2) / totalRPM * 100;
+            info.textContent = `${d.name}: ${d.speed}mph, ${d.spin}rpm, Spin eff.=${eff.toFixed(0)}%`;
+            const rotScale = 0.00015;
+            ballOmega.set(d.wx * rotScale, d.wz * rotScale, d.wy * rotScale);
+        }
+
+        // Update button styles
+        document.querySelectorAll('.w3-select').forEach(btn => {
+            btn.style.fontWeight = btn.dataset.pitch === pitchKey ? 'bold' : 'normal';
+            btn.style.borderColor = btn.dataset.pitch === pitchKey ? '#aaa' : '#555';
+        });
+    }
+
+    // Button listeners (widget header buttons)
+    document.querySelectorAll('.w3-select').forEach(btn => {
+        btn.addEventListener('click', function() { updateW3(this.dataset.pitch); });
+    });
+
+    // Jump buttons from chapter 3 sections
+    document.querySelectorAll('.w3-jump').forEach(btn => {
+        btn.addEventListener('click', function() {
+            updateW3(this.dataset.pitch);
+            document.getElementById('w3-canvas').scrollIntoView({behavior: 'smooth', block: 'center'});
+        });
+    });
+
+    updateW3('ff');
+
+    const clock = new THREE.Clock();
+    function animate() {
+        requestAnimationFrame(animate);
+        const dt = clock.getDelta();
+        if (ballOmega.length() > 0.0001) {
+            const axis = ballOmega.clone().normalize();
+            ball.rotateOnWorldAxis(axis, ballOmega.length() * dt * 30);
+        }
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    animate();
+})();
+
+// =========================================================================
+// Widget 2: TSG Decomposition & Pitch Type ω Map with spinning ball
+// =========================================================================
+(function() {
+    const canvas = document.getElementById('bsg-canvas');
+    if (!canvas) return;
+    const W = Math.max(canvas.clientWidth, 600);
+    const H = 420;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0a0a1a);
+    const camera = new THREE.PerspectiveCamera(45, W/H, 0.1, 100);
+    camera.position.set(2, 2.5, 4);
+    const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
+    renderer.setSize(W, H);
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    const controls = new THREE.OrbitControls(camera, canvas);
+    controls.enableDamping = true;
+    controls.target.set(0, 0.8, -1.5);
+
+    // Lighting
+    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+    dirLight.position.set(3, 5, 3);
+    scene.add(dirLight);
+
+    // Ground grid
+    const grid = new THREE.GridHelper(8, 16, 0x333355, 0x1a1a33);
+    scene.add(grid);
+
+    // --- Pitcher plate (simplified, at z=+2) ---
+    const pitcherPlateGeo = new THREE.BoxGeometry(0.5, 0.02, 0.12);
+    const pitcherPlateMat = new THREE.MeshBasicMaterial({color: 0xcccccc, transparent: true, opacity: 0.6});
+    const pitcherPlate = new THREE.Mesh(pitcherPlateGeo, pitcherPlateMat);
+    pitcherPlate.position.set(0, 0.01, 2);
+    scene.add(pitcherPlate);
+
+    // Pitcher label
+    function makeTextSprite(text, pos, color, size) {
+        const c = document.createElement('canvas');
+        c.width = 256; c.height = 64;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = color;
+        ctx.font = `bold ${size || 28}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText(text, 128, 40);
+        const tex = new THREE.CanvasTexture(c);
+        const sp = new THREE.Sprite(new THREE.SpriteMaterial({map: tex, transparent: true}));
+        sp.position.copy(pos);
+        sp.scale.set(1.2, 0.3, 1);
+        scene.add(sp);
+        return sp;
+    }
+    makeTextSprite('Pitcher', new THREE.Vector3(0, 0.3, 2.3), '#888888');
+
+    // --- Home plate (pentagon, at z=-3, point toward pitcher = +Z) ---
+    const hpShape = new THREE.Shape();
+    const hs = 0.2;
+    // Pentagon: point faces pitcher (+Z direction in top-down XZ plane)
+    hpShape.moveTo(0, hs*1.2);       // point toward pitcher
+    hpShape.lineTo(-hs, hs*0.4);
+    hpShape.lineTo(-hs, -hs*0.4);
+    hpShape.lineTo(hs, -hs*0.4);
+    hpShape.lineTo(hs, hs*0.4);
+    hpShape.lineTo(0, hs*1.2);
+    const hpGeo = new THREE.ShapeGeometry(hpShape);
+    const hpMat = new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.5, side: THREE.DoubleSide});
+    const homePlate = new THREE.Mesh(hpGeo, hpMat);
+    homePlate.rotation.x = -Math.PI / 2;
+    homePlate.position.set(0, 0.01, -3);
+    scene.add(homePlate);
+    makeTextSprite('Home', new THREE.Vector3(0, 0.3, -3.5), '#888888');
+
+    // Velocity arrow: drawn dynamically via sharedDrawVelArrow
+
+    // --- Baseball with seam-like texture ---
+    const ballRadius = 0.18;
+    const ballGeo = new THREE.SphereGeometry(ballRadius, 32, 32);
+    // Create procedural seam texture
+    const seamCanvas = document.createElement('canvas');
+    seamCanvas.width = 256; seamCanvas.height = 256;
+    const sctx = seamCanvas.getContext('2d');
+    sctx.fillStyle = '#e8e0d0';
+    sctx.fillRect(0, 0, 256, 256);
+    // Draw seam lines
+    sctx.strokeStyle = '#cc2222';
+    sctx.lineWidth = 3;
+    sctx.beginPath();
+    for (let i = 0; i < 256; i += 2) {
+        const y = 128 + 40 * Math.sin(i * Math.PI * 4 / 256);
+        if (i === 0) sctx.moveTo(i, y);
+        else sctx.lineTo(i, y);
+    }
+    sctx.stroke();
+    sctx.beginPath();
+    for (let i = 0; i < 256; i += 2) {
+        const y = 128 - 40 * Math.sin(i * Math.PI * 4 / 256 + Math.PI);
+        if (i === 0) sctx.moveTo(i, y);
+        else sctx.lineTo(i, y);
+    }
+    sctx.stroke();
+    const seamTex = new THREE.CanvasTexture(seamCanvas);
+    const ballMat = new THREE.MeshPhongMaterial({map: seamTex});
+    const ball = new THREE.Mesh(ballGeo, ballMat);
+    ball.position.set(0, 0.8, 0);
+    scene.add(ball);
+
+    // Ball rotation state
+    let ballOmega = new THREE.Vector3(0, 0, 0);  // Three.js coords
+
+    // --- Pitch data for two pitchers ---
+    const RPM = Math.PI / 30;
+    const pitcherData = {
+        imanaga: {
+            name: 'Shota Imanaga (LHP)',
+            pitches: {
+                ff:  {name:'FF Fastball',     color:0xe94560, wx:2314,  wz:887,   wy:0,     speed:89.9, spin:2478},
+                cu:  {name:'CU Curveball',    color:0x44ccff, wx:-1669, wz:-1165, wy:-1332, speed:73.2, spin:2505},
+                sl:  {name:'SL Slider',       color:0x4488ff, wx:317,   wz:-231,  wy:-2536, speed:79.8, spin:2556},
+                si:  {name:'SI Sinker',       color:0xff8844, wx:855,   wz:1552,  wy:-165,  speed:88.6, spin:1779},
+                ch:  {name:'CH Changeup',     color:0x44cc44, wx:1089,  wz:1062,  wy:-715,  speed:79.2, spin:1664},
+            }
+        },
+        yamamoto: {
+            name: 'Yoshinobu Yamamoto (RHP)',
+            pitches: {
+                ff:  {name:'FF Fastball',  color:0xe94560, wx:1900,  wz:-852,  wy:-761,  speed:96.3, spin:2240},
+                cu:  {name:'CU Curveball', color:0x44ccff, wx:-1392, wz:1163,  wy:-2158, speed:76.8, spin:2773},
+                sl:  {name:'SL Slider',    color:0x4488ff, wx:557,   wz:256,   wy:-2284, speed:89.3, spin:2388},
+                si:  {name:'SI Sinker',    color:0xff8844, wx:1361,  wz:-1303, wy:-1318, speed:95.8, spin:2313},
+                fs:  {name:'FS Splitter',  color:0x88cc88, wx:94,    wz:-1350, wy:-374,  speed:91.2, spin:1396},
+                fc:  {name:'FC Cutter',    color:0xcc6600, wx:314,   wz:-15,   wy:-2347, speed:91.3, spin:2391},
+            }
+        }
+    };
+    let currentPitcher = 'yamamoto';
+    let pitchData = pitcherData[currentPitcher].pitches;
+
+    let currentArrows = [];
+    let forceObjs = [];
+    let trajObjs = [];
+    let trajLine = null;
+    let velObjs = [];
+
+    function clearArrows() { currentArrows.forEach(a => scene.remove(a)); currentArrows = []; }
+    function clearForceAndTraj() { forceObjs.forEach(o => scene.remove(o)); forceObjs = []; if (trajLine) { scene.remove(trajLine); trajLine = null; } }
+    function clearTrajectories() { trajObjs.forEach(o => scene.remove(o)); trajObjs = []; if (trajLine) { scene.remove(trajLine); trajLine = null; } }
+    function clearVelArrow() { velObjs.forEach(o => scene.remove(o)); velObjs = []; }
+
+    // Widget 2 uses shared functions. No local addPitchArrow/addForceArrow/addTrajectory.
+    // Data convention: d.wx/d.wz/d.wy = physical ω in Three.js coords (RPM).
+
+    function updateBSG(pitchKey) {
+        clearArrows(); clearForceAndTraj(); clearTrajectories(); clearVelArrow();
+        const info = document.getElementById('bsg-info');
+
+        if (pitchKey === 'all') {
+            let firstResult = null;
+            Object.keys(pitchData).forEach(k => {
+                sharedDrawOmegaArrow(scene, currentArrows, pitchData[k], k, new THREE.Vector3(0, 0.8, 0), makeTextSprite);
+                const result = sharedComputeTrajectory(scene, trajObjs, pitchData[k]);
+                if (!firstResult && result) firstResult = result;
+            });
+            const bp = firstResult ? firstResult.pos : new THREE.Vector3(0, 0.8, 0);
+            ball.position.copy(bp);
+            if (firstResult) sharedDrawVelArrow(scene, velObjs, bp, firstResult.tangent, makeTextSprite);
+            info.textContent = 'Showing all pitch trajectories (solid = with spin, dashed = no spin)';
+            ballOmega.set(0, 0, 0);
+        } else {
+            const d = pitchData[pitchKey];
+            const result = sharedComputeTrajectory(scene, trajObjs, d);
+            const ballCenter = result ? result.pos : new THREE.Vector3(0, 0.8, 0);
+            ball.position.copy(ballCenter);
+            if (result) sharedDrawVelArrow(scene, velObjs, ballCenter, result.tangent, makeTextSprite);
+            sharedDrawOmegaArrow(scene, currentArrows, d, pitchKey, ballCenter, makeTextSprite);
+            sharedDrawForceArrow(scene, forceObjs, d, ballCenter, ballRadius, makeTextSprite);
+            const totalRPM = Math.sqrt(d.wx**2 + d.wy**2 + d.wz**2);
+            const eff = Math.sqrt(d.wx**2 + d.wz**2) / totalRPM * 100;
+            info.textContent = `${d.name}: ${d.speed}mph, ${d.spin}rpm, Spin eff.=${eff.toFixed(0)}%`;
+            const rotScale = 0.00015;
+            ballOmega.set(d.wx * rotScale, d.wz * rotScale, d.wy * rotScale);
+        }
+    }
+
+    function rebuildPitchSelect() {
+        const sel = document.getElementById('bsg-pitch');
+        sel.innerHTML = '';
+        Object.keys(pitchData).forEach(k => {
+            const opt = document.createElement('option');
+            opt.value = k;
+            opt.textContent = pitchData[k].name;
+            sel.appendChild(opt);
+        });
+        const allOpt = document.createElement('option');
+        allOpt.value = 'all';
+        allOpt.textContent = 'All pitches';
+        sel.appendChild(allOpt);
+    }
+
+    document.getElementById('bsg-pitcher').addEventListener('change', function() {
+        currentPitcher = this.value;
+        pitchData = pitcherData[currentPitcher].pitches;
+        rebuildPitchSelect();
+        updateBSG('ff');
+    });
+
+    document.getElementById('bsg-pitch').addEventListener('change', function() {
+        updateBSG(this.value);
+    });
+
+    rebuildPitchSelect();
+    updateBSG('ff');
+
+    // =================================================================
+    // Free slider mode for Widget 2
+    // =================================================================
+    let w2Mode = 'pitcher';
+
+    function updateW2Free() {
+        const tVal = parseFloat(document.getElementById('w2-t').value);
+        const sVal = parseFloat(document.getElementById('w2-s').value);
+        const gVal = parseFloat(document.getElementById('w2-g').value);
+        document.getElementById('w2-t-val').textContent = tVal + '°';
+        document.getElementById('w2-s-val').textContent = sVal + '°';
+        document.getElementById('w2-g-val').textContent = gVal + '°';
+
+        clearArrows(); clearForceAndTraj(); clearTrajectories(); clearVelArrow();
+
+        const gAbs = Math.abs(gVal);
+        const tRad = tVal * Math.PI / 180;
+        const sRad = sVal * Math.PI / 180;
+        const gRad = gAbs * Math.PI / 180;
+        const tComp = Math.sin(tRad) * Math.cos(gRad);
+        const sComp = Math.sin(sRad) * Math.cos(gRad);
+        const gComp = Math.sin(gRad);
+
+        const totalSpin = 2200;
+        const wx = tComp * totalSpin;
+        const wz = -sComp * totalSpin;
+        const wy = -gComp * totalSpin;  // G slider negative → wy negative (toward catcher)
+
+        const synthData = {
+            name: 'Custom', color: 0xff8a65,
+            wx: wx, wz: wz, wy: wy,
+            speed: 92, spin: totalSpin
+        };
+
+        // All use shared functions with physical ω
+        const result = sharedComputeTrajectory(scene, trajObjs, synthData);
+        const ballCenter = result ? result.pos : new THREE.Vector3(0, 0.8, 0);
+        ball.position.copy(ballCenter);
+        if (result) sharedDrawVelArrow(scene, velObjs, ballCenter, result.tangent, makeTextSprite);
+        sharedDrawOmegaArrow(scene, currentArrows, synthData, 'ω', ballCenter, makeTextSprite);
+        sharedDrawForceArrow(scene, forceObjs, synthData, ballCenter, ballRadius, makeTextSprite);
+
+        const rotScale = 0.00015;
+        ballOmega.set(wx * rotScale, wz * rotScale, wy * rotScale);
+
+        // Spin efficiency
+        const transverse = Math.sqrt(tComp*tComp + sComp*sComp);
+        const total = Math.sqrt(tComp*tComp + sComp*sComp + gComp*gComp);
+        const eff = total > 0 ? (transverse / total * 100) : 0;
+        document.getElementById('bsg-info').innerHTML =
+            `Spin eff. = <span style="font-size:24px;font-weight:bold;color:#4fc3f7;">${eff.toFixed(0)}%</span>`;
+    }
+
+    // Slider listeners
+    ['w2-t', 'w2-s', 'w2-g'].forEach(id => {
+        document.getElementById(id).addEventListener('input', function() {
+            if (w2Mode === 'free') updateW2Free();
+        });
+    });
+    document.querySelectorAll('.w2-preset').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.getElementById('w2-t').value = this.dataset.t;
+            document.getElementById('w2-s').value = this.dataset.s;
+            document.getElementById('w2-g').value = this.dataset.g;
+            if (w2Mode === 'free') updateW2Free();
+        });
+    });
+
+    // Mode switching
+    document.getElementById('w2-mode-pitcher').addEventListener('click', function() {
+        w2Mode = 'pitcher';
+        this.style.background = '#335'; this.style.color = '#4fc3f7'; this.style.fontWeight = 'bold';
+        document.getElementById('w2-mode-free').style.background = '#222';
+        document.getElementById('w2-mode-free').style.color = '#888';
+        document.getElementById('w2-mode-free').style.fontWeight = 'normal';
+        document.getElementById('w2-ctrl-pitcher').style.display = 'flex';
+        document.getElementById('w2-ctrl-free').style.display = 'none';
+        updateBSG(document.getElementById('bsg-pitch').value);
+    });
+    document.getElementById('w2-mode-free').addEventListener('click', function() {
+        w2Mode = 'free';
+        this.style.background = '#335'; this.style.color = '#4fc3f7'; this.style.fontWeight = 'bold';
+        document.getElementById('w2-mode-pitcher').style.background = '#222';
+        document.getElementById('w2-mode-pitcher').style.color = '#888';
+        document.getElementById('w2-mode-pitcher').style.fontWeight = 'normal';
+        document.getElementById('w2-ctrl-pitcher').style.display = 'none';
+        document.getElementById('w2-ctrl-free').style.display = 'flex';
+        updateW2Free();
+    });
+
+    // Chapter 3 pitch buttons: switch pitcher & pitch, scroll to widget
+    document.querySelectorAll('.w2-show-pitch').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const pitcher = this.dataset.pitcher;
+            const pitch = this.dataset.pitch;
+
+            // Switch to pitcher mode
+            w2Mode = 'pitcher';
+            document.getElementById('w2-mode-pitcher').style.background = '#335';
+            document.getElementById('w2-mode-pitcher').style.color = '#4fc3f7';
+            document.getElementById('w2-mode-pitcher').style.fontWeight = 'bold';
+            document.getElementById('w2-mode-free').style.background = '#222';
+            document.getElementById('w2-mode-free').style.color = '#888';
+            document.getElementById('w2-mode-free').style.fontWeight = 'normal';
+            document.getElementById('w2-ctrl-pitcher').style.display = 'flex';
+            document.getElementById('w2-ctrl-free').style.display = 'none';
+
+            // Update pitcher
+            currentPitcher = pitcher;
+            pitchData = pitcherData[currentPitcher].pitches;
+            document.getElementById('bsg-pitcher').value = pitcher;
+            rebuildPitchSelect();
+
+            // Update pitch
+            document.getElementById('bsg-pitch').value = pitch;
+            updateBSG(pitch);
+
+            // Scroll to widget
+            document.getElementById('bsg-canvas').scrollIntoView({behavior: 'smooth', block: 'center'});
+        });
+    });
+
+    const clock = new THREE.Clock();
+    function animate() {
+        requestAnimationFrame(animate);
+        const dt = clock.getDelta();
+
+        // Rotate ball
+        if (ballOmega.length() > 0.0001) {
+            const axis = ballOmega.clone().normalize();
+            const angle = ballOmega.length() * dt * 30;
+            ball.rotateOnWorldAxis(axis, angle);
+        }
+
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    animate();
+})();
+
+// =========================================================================
+// Image/SVG zoom modal
+// =========================================================================
+(function() {
+    const modal = document.getElementById('img-modal');
+    // Click on any figure's svg or img to zoom
+    document.querySelectorAll('figure svg, figure img').forEach(el => {
+        el.addEventListener('click', function(e) {
+            e.stopPropagation();
+            modal.innerHTML = '';
+            const clone = this.cloneNode(true);
+            clone.style.cursor = 'zoom-out';
+            clone.removeAttribute('style');
+            if (clone.tagName === 'svg') {
+                clone.style.maxWidth = '95vw';
+                clone.style.maxHeight = '95vh';
+                clone.style.width = 'auto';
+                clone.style.height = 'auto';
+                clone.style.background = '#12122a';
+                clone.style.borderRadius = '8px';
+            } else {
+                clone.style.maxWidth = '95vw';
+                clone.style.maxHeight = '95vh';
+            }
+            modal.appendChild(clone);
+            modal.classList.add('active');
+        });
+    });
+    // Click overlay to close
+    modal.addEventListener('click', function() {
+        modal.classList.remove('active');
+        modal.innerHTML = '';
+    });
+    // Escape key to close
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            modal.classList.remove('active');
+            modal.innerHTML = '';
+        }
+    });
+})();
+</script>
+</body>
+</html>
