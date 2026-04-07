@@ -434,7 +434,7 @@ $$\color{#ffcc44}{\mathbf{F}_g = -mg\hat{\mathbf{e}}_Z}$$
 $$\color{#aaaaaa}{\mathbf{F}_D = -\frac{1}{2}C_D \rho A {\color{#44ff44}v} {\color{#44ff44}\mathbf{v}}}$$
 <p>$C_D$ is the drag coefficient, $\rho$ is air density (approx. 1.2 kg/m³), $A$ is the cross-sectional area of the ball ($\pi r^2$, $r$ ≈ 0.037 m), $\color{#44ff44}v$ is the speed, and $\color{#44ff44}\mathbf{v}$ is the velocity vector. The force always opposes the direction of motion and is proportional to the square of the speed.</p>
 <p>This simulator uses the Nathan model for the drag coefficient:</p>
-$$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
+$$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\color{#ff8a65}{\omega_{\text{total}}}}{1000}$$
 <p>($c_{d0} = 0.297$, $c_{d,\text{spin}} = 0.0292$). Drag increases with spin rate.</p>
 </div>
 </details>
@@ -1234,7 +1234,7 @@ $$m\ddot{\mathbf{x}} = -mg\hat{\mathbf{e}}_Z - \frac{1}{2}C_D \rho A v \mathbf{v
 <summary>📐 Drag Coefficient Model</summary>
 <div>
 <p>Drag coefficient in the Nathan model:</p>
-$$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
+$$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\color{#ff8a65}{\omega_{\text{total}}}}{1000}$$
 <p>($c_{d0} = 0.297$, $c_{d,\text{spin}} = 0.0292$)</p>
 <p>As spin increases, drag also increases. This is thought to be due to the turbulence-promoting effect of the seams.</p>
 </div>

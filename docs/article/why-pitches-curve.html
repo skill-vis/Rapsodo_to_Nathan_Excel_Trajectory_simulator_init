@@ -434,7 +434,7 @@ $$\color{#ffcc44}{\mathbf{F}_g = -mg\hat{\mathbf{e}}_Z}$$
 $$\color{#aaaaaa}{\mathbf{F}_D = -\frac{1}{2}C_D \rho A {\color{#44ff44}v} {\color{#44ff44}\mathbf{v}}}$$
 <p>$C_D$ は抗力係数、$\rho$ は空気密度（約 1.2 kg/m³）、$A$ はボールの断面積（$\pi r^2$, $r$ ≈ 0.037 m）、$\color{#44ff44}v$ は速度の大きさ、$\color{#44ff44}\mathbf{v}$ は速度ベクトル。力は常に進行方向と逆向きで、速度の2乗に比例する。</p>
 <p>本シミュレータでは Nathan モデルの抗力係数を用いる:</p>
-$$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
+$$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\color{#ff8a65}{\omega_{\text{total}}}}{1000}$$
 <p>($c_{d0} = 0.297$, $c_{d,\text{spin}} = 0.0292$). スピンが増えると抗力も増加する。</p>
 </div>
 </details>
@@ -1234,7 +1234,7 @@ $$m\ddot{\mathbf{x}} = -mg\hat{\mathbf{e}}_Z - \frac{1}{2}C_D \rho A v \mathbf{v
 <summary>📐 抗力係数モデル</summary>
 <div>
 <p>Nathan モデルでの抗力係数:</p>
-$$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
+$$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\color{#ff8a65}{\omega_{\text{total}}}}{1000}$$
 <p>($c_{d0} = 0.297$, $c_{d,\text{spin}} = 0.0292$)</p>
 <p>スピンが増えると抗力も増加する。これは縫い目による乱流促進効果と考えられる。</p>
 </div>
