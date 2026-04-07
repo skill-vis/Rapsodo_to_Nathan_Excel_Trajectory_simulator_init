@@ -427,6 +427,18 @@ $$\color{#ffcc44}{\mathbf{F}_g = -mg\hat{\mathbf{e}}_Z}$$
 <figcaption>Fig. 3. Comparing drag vs. no drag (with gravity, no spin). The ball with drag decelerates from 95 to 86 mph, arrives later, and drops more.</figcaption>
 </figure>
 
+<details>
+<summary>📐 For researchers: Drag term</summary>
+<div>
+<p>The second term of the equation of motion:</p>
+$$\color{#aaaaaa}{\mathbf{F}_D = -\frac{1}{2}C_D \rho A {\color{#44ff44}v} {\color{#44ff44}\mathbf{v}}}$$
+<p>$C_D$ is the drag coefficient, $\rho$ is air density (approx. 1.2 kg/m³), $A$ is the cross-sectional area of the ball ($\pi r^2$, $r$ ≈ 0.037 m), $\color{#44ff44}v$ is the speed, and $\color{#44ff44}\mathbf{v}$ is the velocity vector. The force always opposes the direction of motion and is proportional to the square of the speed.</p>
+<p>This simulator uses the Nathan model for the drag coefficient:</p>
+$$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
+<p>($c_{d0} = 0.297$, $c_{d,\text{spin}} = 0.0292$). Drag increases with spin rate.</p>
+</div>
+</details>
+
 <h3>1-3. Magnus Force — The Force That "Curves" the Ball</h3>
 
 <p>This is the essence of pitch movement. Around a spinning ball, the airflow becomes asymmetric.</p>

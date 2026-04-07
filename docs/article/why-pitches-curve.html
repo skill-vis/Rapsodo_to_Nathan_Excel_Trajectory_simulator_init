@@ -427,6 +427,18 @@ $$\color{#ffcc44}{\mathbf{F}_g = -mg\hat{\mathbf{e}}_Z}$$
 <figcaption>図3. 重力あり・スピンなしの条件で、抗力の有無を比較。抗力ありのボールは95→86mphに減速し、到達が遅れ、落下量も大きくなる。</figcaption>
 </figure>
 
+<details>
+<summary>📐 研究者向け: 抗力項</summary>
+<div>
+<p>運動方程式の第2項:</p>
+$$\color{#aaaaaa}{\mathbf{F}_D = -\frac{1}{2}C_D \rho A {\color{#44ff44}v} {\color{#44ff44}\mathbf{v}}}$$
+<p>$C_D$ は抗力係数、$\rho$ は空気密度（約 1.2 kg/m³）、$A$ はボールの断面積（$\pi r^2$, $r$ ≈ 0.037 m）、$\color{#44ff44}v$ は速度の大きさ、$\color{#44ff44}\mathbf{v}$ は速度ベクトル。力は常に進行方向と逆向きで、速度の2乗に比例する。</p>
+<p>本シミュレータでは Nathan モデルの抗力係数を用いる:</p>
+$$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
+<p>($c_{d0} = 0.297$, $c_{d,\text{spin}} = 0.0292$). スピンが増えると抗力も増加する。</p>
+</div>
+</details>
+
 <h3>1-3. マグヌス力 — ボールを「曲げる」力</h3>
 
 <p>これが変化球の本質だ。回転するボールの周りでは、空気の流れが非対称になる。</p>
