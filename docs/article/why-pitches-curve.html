@@ -1882,6 +1882,7 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\color{#ff8a65}{\omega_{\text{tot
 // =========================================================================
 
 function sharedDrawOmegaArrow(scene, objArray, d, key, ballCenter, makeLabel) {
+    const OMEGA_COLOR = 0xff8a65;  // orange — unified across all widgets
     const scale = 0.001;
     const dir = new THREE.Vector3(d.wx * scale, d.wz * scale, d.wy * scale);
     const len = dir.length();
@@ -1891,7 +1892,7 @@ function sharedDrawOmegaArrow(scene, objArray, d, key, ballCenter, makeLabel) {
     const arrowStart = ballCenter.clone().sub(halfDir);
     const shaftLen = len * 0.8;
     const shaftGeo = new THREE.CylinderGeometry(0.025, 0.025, shaftLen, 8);
-    const shaftMat = new THREE.MeshBasicMaterial({color: d.color});
+    const shaftMat = new THREE.MeshBasicMaterial({color: OMEGA_COLOR});
     const shaft = new THREE.Mesh(shaftGeo, shaftMat);
     const quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), dirNorm);
     shaft.quaternion.copy(quat);
@@ -1899,13 +1900,13 @@ function sharedDrawOmegaArrow(scene, objArray, d, key, ballCenter, makeLabel) {
     scene.add(shaft); objArray.push(shaft);
     const coneLen = len * 0.2;
     const coneGeo = new THREE.ConeGeometry(0.06, coneLen, 8);
-    const coneMat = new THREE.MeshBasicMaterial({color: d.color});
+    const coneMat = new THREE.MeshBasicMaterial({color: OMEGA_COLOR});
     const cone = new THREE.Mesh(coneGeo, coneMat);
     cone.quaternion.copy(quat);
     cone.position.copy(arrowStart).add(dirNorm.clone().multiplyScalar(shaftLen + coneLen / 2));
     scene.add(cone); objArray.push(cone);
     const tipPos = arrowStart.clone().add(dirNorm.clone().multiplyScalar(len * 1.2));
-    const label = makeLabel(key, tipPos, '#' + d.color.toString(16).padStart(6, '0'), 24);
+    const label = makeLabel(key, tipPos, '#ff8a65', 24);
     objArray.push(label);
     return {dir, len, data: d};
 }
