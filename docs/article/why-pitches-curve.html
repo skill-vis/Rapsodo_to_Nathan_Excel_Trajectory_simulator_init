@@ -1570,13 +1570,12 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\color{#ff8a65}{\omega_{\text{tot
         const sComp = Math.sin(sRad) * Math.cos(gRad);
         const gComp = Math.sin(gRad);
 
-        // Same mapping as Widget 2 free slider
+        // Compose ω in TSG basis so it aligns with the actual axis arrows
         const totalSpin = 1;  // unit sphere
-        const omegaVec = new THREE.Vector3(
-            tComp * totalSpin,          // wx
-            -sComp * totalSpin,         // wz (Three.js Y)
-            -gComp * totalSpin          // wy (Three.js Z, toward catcher)
-        );
+        const omegaVec = new THREE.Vector3(0, 0, 0)
+            .add(tDir.clone().multiplyScalar(tComp * totalSpin))
+            .add(sDir.clone().multiplyScalar(sComp * totalSpin))
+            .add(gDir.clone().multiplyScalar(gComp * totalSpin));
         const omLen = omegaVec.length();
 
         if (omLen > 0.01) {
