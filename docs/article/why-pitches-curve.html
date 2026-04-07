@@ -435,7 +435,14 @@ $$\color{#aaaaaa}{\mathbf{F}_D = -\frac{1}{2}C_D \rho A {\color{#44ff44}v} {\col
 <p>$C_D$ は抗力係数、$\rho$ は空気密度（約 1.2 kg/m³）、$A$ はボールの断面積（$\pi r^2$, $r$ ≈ 0.037 m）、$\color{#44ff44}v$ は速度の大きさ、$\color{#44ff44}\mathbf{v}$ は速度ベクトル。力は常に進行方向と逆向きで、速度の2乗に比例する。</p>
 <p>本シミュレータでは Nathan モデルの抗力係数を用いる:</p>
 $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\color{#ff8a65}{\omega_{\text{total}}}}{1000}$$
-<p>($c_{d0} = 0.297$, $c_{d,\text{spin}} = 0.0292$). スピンが増えると抗力も増加する。</p>
+<p>($c_{d0} = 0.297$, $c_{d,\text{spin}} = 0.0292$). スピンが増えると抗力係数も増加する（縫い目による乱流促進効果）。</p>
+<p>ただし、スピンによる抗力増加の影響は限定的である。95 mph の投球で比較すると:</p>
+<table style="font-size:0.9em;color:#aaa;border-collapse:collapse;width:100%;">
+<tr style="border-bottom:1px solid #444;"><th style="text-align:left;padding:4px;">条件</th><th>$C_D$</th><th>到達速度</th><th>速度低下</th></tr>
+<tr><td style="padding:4px;">無回転</td><td>0.297</td><td>86.3 mph</td><td>8.7 mph (9.2%)</td></tr>
+<tr><td style="padding:4px;">2000 rpm バックスピン</td><td>0.355 (+20%)</td><td>84.6 mph</td><td>10.4 mph (10.9%)</td></tr>
+</table>
+<p>$C_D$ は約20%増加するが、到達速度の追加低下は約1.6 mph にとどまる。抗力の主要因は速度の2乗項であり、スピンによる増加は補正的な効果である。</p>
 </div>
 </details>
 
