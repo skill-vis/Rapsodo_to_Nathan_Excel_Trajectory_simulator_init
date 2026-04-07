@@ -1134,15 +1134,15 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 
 <h3>3-7. カッター（FC）</h3>
 
-<p>投手目線ではFFとほぼ同じ方向に見えるが、真上から見るとωが<strong>速度方向に大きく傾いている</strong>（ジャイロ成分が非常に大きい）。回転数は多い（2440 rpm）がスピン効率は29%しかなく、わずかなグラブサイドへの横変化でバットの芯を外す。球速もFF並み（90〜93 mph）のため打者は球種を判別しにくい。FF → FC → SLと、ωのジャイロ成分が増加していく<strong>連続的な変化</strong>として理解できる。</p>
+<p>カッターのωはFFと同じバックスピン系だが、ジャイロ成分を含むため<strong>スピン効率が低下</strong>する。バーンズのFCは回転数2603 rpmに対してスピン効率46%で、有効なtransverse spinは約半分。球速はFF並み（94 mph）でグラブサイドへの小さな横変化でバットの芯を外す。FF → FC → SLと、ωのジャイロ成分が増加していく<strong>連続的な変化</strong>として理解できる。</p>
 
 <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
 <button class="w3-jump" data-pitch="fc" style="font-size:12px;background:#333;color:#cc6600;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ FCのωを3Dで見る</button>
-<a href="https://baseball.skill-vis.com/?mlbam_id=506433&year=2025&date=2025-08-27&pitch=5" target="_blank" class="sim-link orange" style="margin:0;">🟠 ダルビッシュのFCをシミュレート</a>
+<a href="https://baseball.skill-vis.com/?mlbam_id=669203&year=2025&date=2025-05-27&pitch=0" target="_blank" class="sim-link orange" style="margin:0;">🟠 バーンズのFCをシミュレート</a>
 </div>
 
 <details>
-<summary>📊 FC の ω 方向図（ダルビッシュ有 92.1mph, 2440rpm, 効率29%）</summary>
+<summary>📊 FC の ω 方向図（バーンズ 94.1mph, 2603rpm, 効率46%）</summary>
 <div>
 <figure style="margin:16px auto;text-align:center;">
 <svg viewBox="0 0 240 380" style="max-width:240px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
@@ -1153,10 +1153,10 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="140" y="40" fill="#4488ff" font-size="10" font-weight="bold">投球方向</text>
 <circle cx="120" cy="115" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="115" r="3" fill="#888"/>
-<line x1="112" y1="150" x2="132" y2="75" stroke="#ff8a65" stroke-width="3"/>
-<polygon points="134,69 127,80 139,80" fill="#ff8a65"/>
-<text x="140" y="76" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
-<text x="56" y="100" fill="#555" font-size="8" opacity="0.6">G成分 大</text>
+<!-- Burnes FC top: wx=-1180(left), wy=-2256(forward=up) → left-up -->
+<line x1="148" y1="130" x2="82" y2="96" stroke="#ff8a65" stroke-width="3"/>
+<polygon points="76,93 88,90 86,102" fill="#ff8a65"/>
+<text x="60" y="90" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
 <line x1="54" y1="130" x2="186" y2="100" stroke="#e94560" stroke-width="1" stroke-dasharray="4,3" opacity="0.3"/>
 <text x="188" y="98" fill="#e94560" font-size="8" opacity="0.4">FF</text>
 <text x="120" y="172" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
@@ -1167,14 +1167,15 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="148" y="226" fill="#4488ff" font-size="10" font-weight="bold">投球方向</text>
 <circle cx="120" cy="290" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="290" r="3" fill="#888"/>
-<line x1="100" y1="292" x2="155" y2="288" stroke="#ff8a65" stroke-width="3"/>
-<polygon points="161,287 149,282 149,294" fill="#ff8a65"/>
-<text x="165" y="286" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
+<!-- Burnes FC rear: wx=-1180(left), wz=87(up,~0) → left -->
+<line x1="186" y1="294" x2="68" y2="286" stroke="#ff8a65" stroke-width="3"/>
+<polygon points="62,285 74,280 74,292" fill="#ff8a65"/>
+<text x="46" y="284" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
 <line x1="48" y1="275" x2="192" y2="305" stroke="#e94560" stroke-width="1" stroke-dasharray="4,3" opacity="0.3"/>
 <text x="194" y="312" fill="#e94560" font-size="8" opacity="0.4">FF</text>
 <text x="120" y="356" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
-<text x="120" y="370" fill="#888" font-size="9" text-anchor="middle">ダルビッシュ有 FC: 92.1mph</text>
-<text x="120" y="380" fill="#888" font-size="9" text-anchor="middle">2440rpm, 効率29%</text>
+<text x="120" y="370" fill="#888" font-size="9" text-anchor="middle">バーンズ FC: 94.1mph</text>
+<text x="120" y="380" fill="#888" font-size="9" text-anchor="middle">2603rpm, 効率46%</text>
 </svg>
 </figure>
 </div>
@@ -1226,9 +1227,9 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <!-- FS: T=-67, S=-1481 → x=200+(-67*0.05)=197, y=200-(-1481*0.05)=274 -->
 <circle cx="197" cy="274" r="6" fill="#88cc88" opacity="0.8"/>
 <text x="206" y="280" fill="#88cc88" font-size="10" font-weight="bold">FS</text>
-<!-- FC: T=-534, S=-73 → x=200+(-534*0.05)=173, y=200-(-73*0.05)=204 -->
-<circle cx="173" cy="204" r="6" fill="#cc6600" opacity="0.8"/>
-<text x="150" y="198" fill="#cc6600" font-size="10" font-weight="bold">FC</text>
+<!-- FC: T=-1180, S=87 → x=200+(-1180*0.05)=141, y=200-(87*0.05)=196 -->
+<circle cx="141" cy="196" r="6" fill="#cc6600" opacity="0.8"/>
+<text x="118" y="190" fill="#cc6600" font-size="10" font-weight="bold">FC</text>
 <!-- Annotations -->
 <line x1="105" y1="243" x2="269" y2="144" stroke="#666" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
 <text x="188" y="180" fill="#666" font-size="8" text-anchor="middle" opacity="0.6">FF↔CU 対極</text>
@@ -1258,7 +1259,7 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <li><strong>STはS軸方向</strong>: サイドスピンが支配的で、FFやCUとは直交する方向に変化する</li>
 <li><strong>SIはFFの下方</strong>: FFからS軸の負方向（アームサイド）に傾く。バックスピンが減り横変化が増える</li>
 <li><strong>FSはSIに近いが原点寄り</strong>: 方向は似ているが、回転数が少ないため原点に近い = 変化量が小さい</li>
-<li><strong>FCは原点の近く</strong>: transverse spinが非常に小さい。ジャイロ成分が大きいためT-S平面にはほとんど現れない</li>
+<li><strong>FCはFFとCUの中間</strong>: ジャイロ成分を含むためFFほど原点から離れないが、バックスピン方向（T &lt; 0）にtransverse spinを持つ</li>
 </ul>
 
 <!-- T-G plane (spin efficiency view) -->
@@ -1288,9 +1289,9 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <!-- FS: trans=sqrt(67²+1481²)=1483, G=0 → x=60, y=280-1483*0.1=132 -->
 <circle cx="60" cy="132" r="6" fill="#88cc88" opacity="0.8"/>
 <text x="72" y="128" fill="#88cc88" font-size="10" font-weight="bold">FS</text>
-<!-- FC: trans=sqrt(534²+73²)=539, G=2334 → x=60+2334*0.1=293, y=280-539*0.1=226 -->
-<circle cx="293" cy="226" r="6" fill="#cc6600" opacity="0.8"/>
-<text x="302" y="222" fill="#cc6600" font-size="10" font-weight="bold">FC</text>
+<!-- FC: trans=sqrt(1180²+87²)=1183, G=2256 → x=60+2256*0.1=286, y=280-1183*0.1=162 -->
+<circle cx="286" cy="162" r="6" fill="#cc6600" opacity="0.8"/>
+<text x="295" y="158" fill="#cc6600" font-size="10" font-weight="bold">FC</text>
 <!-- Spin efficiency lines -->
 <line x1="60" y1="280" x2="340" y2="40" stroke="#555" stroke-width="1" stroke-dasharray="3,3" opacity="0.3"/>
 <text x="310" y="56" fill="#555" font-size="8" opacity="0.5">eff=50%</text>
@@ -1318,7 +1319,7 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <li><strong>ST・FS</strong>はG=0の左端に位置し、スピン効率が最高（100%）。ただしFSは回転数自体が少ないため、transverse spinの絶対値はSTより小さい</li>
 <li><strong>FF・SI</strong>はジャイロ成分が小〜中程度で、高いtransverse spinを維持している</li>
 <li><strong>CU</strong>は意外にジャイロ成分が大きい。カーブは回転数が多いが、その一部はジャイロ方向に分配されている</li>
-<li><strong>FC</strong>はジャイロ成分が非常に大きく、transverse spinは小さい。回転数は多い（2440 rpm）にもかかわらず、変化に寄与する成分は少ない</li>
+<li><strong>FC</strong>はジャイロ成分が大きく、transverse spinはFFより小さい。回転数は多い（2603 rpm）が、スピン効率は46%で変化に寄与する成分はFFの約半分</li>
 </ul>
 
 <p>これらの「地図」上の距離が、2つの投球の回転特性の近さを定量的に表す。球種分類は離散的だが、ω空間では<strong>連続的な分布</strong>であり、投手によって同じ球種名でもω空間上の位置は異なる。この視点は、球種分類やピッチトンネリングの分析に活用できる。</p>
@@ -2155,7 +2156,7 @@ function sharedComputeTrajectory(scene, trajObjArray, d) {
         sl: {name:'SL 山本由伸', color:0x4488ff, wx:209, wz:279, wy:-2595, speed:87.1, spin:2626},
         si: {name:'SI ダルビッシュ有', color:0xff8844, wx:320, wz:-1891, wy:-1126, speed:93.8, spin:2228},
         fs: {name:'FS 山本由伸', color:0x88cc88, wx:67, wz:-1481, wy:0, speed:92.9, spin:1483},
-        fc: {name:'FC ダルビッシュ有', color:0xcc6600, wx:534, wz:-73, wy:-2334, speed:92.1, spin:2440},
+        fc: {name:'FC バーンズ', color:0xcc6600, wx:-1180, wz:87, wy:-2256, speed:94.1, spin:2603},
     };
 
     let currentArrows = [];

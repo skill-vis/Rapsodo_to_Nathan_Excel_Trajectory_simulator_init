@@ -1109,15 +1109,15 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 
 <h3>3-7. Cutter (FC)</h3>
 
-<p>From the pitcher's view, omega looks nearly identical to FF (rightward). But from above, omega is <strong>tilted heavily toward the velocity direction</strong> (very large gyrospin). Despite high spin rate (2440 rpm), spin efficiency is only 29%. Slight glove-side movement at FF-like speed (90-93 mph) misses the bat's sweet spot. FF → FC → SL forms a <strong>continuous progression</strong> with increasing gyrospin.</p>
+<p>The cutter's omega belongs to the same backspin family as FF but includes a gyro component, resulting in <strong>lower spin efficiency</strong>. Burnes' FC has 2603 rpm but only 46% spin efficiency — about half of the spin contributes to movement. At FF-like speed (94 mph), slight glove-side movement misses the bat's sweet spot. FF → FC → SL forms a <strong>continuous progression</strong> with increasing gyrospin.</p>
 
 <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
 <button class="w3-jump" data-pitch="fc" style="font-size:12px;background:#333;color:#cc6600;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ View FC omega in 3D</button>
-<a href="https://baseball.skill-vis.com/?mlbam_id=506433&year=2025&date=2025-08-27&pitch=5" target="_blank" class="sim-link orange" style="margin:0;">🟠 Simulate Darvish's FC</a>
+<a href="https://baseball.skill-vis.com/?mlbam_id=669203&year=2025&date=2025-05-27&pitch=0" target="_blank" class="sim-link orange" style="margin:0;">🟠 Simulate Burnes' FC</a>
 </div>
 
 <details>
-<summary>📊 FC omega direction diagram (Yu Darvish 92.1mph, 2440rpm, eff.29%)</summary>
+<summary>📊 FC omega direction diagram (C. Burnes 94.1mph, 2603rpm, eff.46%)</summary>
 <div>
 <figure style="margin:16px auto;text-align:center;">
 <svg viewBox="0 0 240 380" style="max-width:240px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI','Helvetica Neue',sans-serif">
@@ -1128,10 +1128,10 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="140" y="40" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
 <circle cx="120" cy="115" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="115" r="3" fill="#888"/>
-<line x1="112" y1="150" x2="132" y2="75" stroke="#ff8a65" stroke-width="3"/>
-<polygon points="134,69 127,80 139,80" fill="#ff8a65"/>
-<text x="140" y="76" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
-<text x="56" y="100" fill="#555" font-size="8" opacity="0.6">High G comp.</text>
+<!-- Burnes FC top: wx=-1180(left), wy=-2256(forward=up) → left-up -->
+<line x1="148" y1="130" x2="82" y2="96" stroke="#ff8a65" stroke-width="3"/>
+<polygon points="76,93 88,90 86,102" fill="#ff8a65"/>
+<text x="60" y="90" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
 <line x1="54" y1="130" x2="186" y2="100" stroke="#e94560" stroke-width="1" stroke-dasharray="4,3" opacity="0.3"/>
 <text x="188" y="98" fill="#e94560" font-size="8" opacity="0.4">FF</text>
 <text x="120" y="172" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
@@ -1142,14 +1142,15 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="148" y="226" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
 <circle cx="120" cy="290" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="290" r="3" fill="#888"/>
-<line x1="100" y1="292" x2="155" y2="288" stroke="#ff8a65" stroke-width="3"/>
-<polygon points="161,287 149,282 149,294" fill="#ff8a65"/>
-<text x="165" y="286" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
+<!-- Burnes FC rear: wx=-1180(left), wz=87(up,~0) → left -->
+<line x1="186" y1="294" x2="68" y2="286" stroke="#ff8a65" stroke-width="3"/>
+<polygon points="62,285 74,280 74,292" fill="#ff8a65"/>
+<text x="46" y="284" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
 <line x1="48" y1="275" x2="192" y2="305" stroke="#e94560" stroke-width="1" stroke-dasharray="4,3" opacity="0.3"/>
 <text x="194" y="312" fill="#e94560" font-size="8" opacity="0.4">FF</text>
 <text x="120" y="356" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
-<text x="120" y="370" fill="#888" font-size="9" text-anchor="middle">Yu Darvish FC: 92.1mph</text>
-<text x="120" y="380" fill="#888" font-size="9" text-anchor="middle">2440rpm, eff.29%</text>
+<text x="120" y="370" fill="#888" font-size="9" text-anchor="middle">C. Burnes FC: 94.1mph</text>
+<text x="120" y="380" fill="#888" font-size="9" text-anchor="middle">2603rpm, eff.46%</text>
 </svg>
 </figure>
 </div>
@@ -1201,9 +1202,9 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <!-- FS: T=-67, S=-1481 → x=200+(-67*0.05)=197, y=200-(-1481*0.05)=274 -->
 <circle cx="197" cy="274" r="6" fill="#88cc88" opacity="0.8"/>
 <text x="206" y="280" fill="#88cc88" font-size="10" font-weight="bold">FS</text>
-<!-- FC: T=-534, S=-73 → x=200+(-534*0.05)=173, y=200-(-73*0.05)=204 -->
-<circle cx="173" cy="204" r="6" fill="#cc6600" opacity="0.8"/>
-<text x="150" y="198" fill="#cc6600" font-size="10" font-weight="bold">FC</text>
+<!-- FC: T=-1180, S=87 → x=200+(-1180*0.05)=141, y=200-(87*0.05)=196 -->
+<circle cx="141" cy="196" r="6" fill="#cc6600" opacity="0.8"/>
+<text x="118" y="190" fill="#cc6600" font-size="10" font-weight="bold">FC</text>
 <!-- Annotations -->
 <line x1="105" y1="243" x2="269" y2="144" stroke="#666" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
 <text x="188" y="180" fill="#666" font-size="8" text-anchor="middle" opacity="0.6">FF↔CU opposite</text>
@@ -1233,7 +1234,7 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <li><strong>ST lies along the S axis</strong>: Sidespin is dominant, producing movement in a direction orthogonal to FF and CU</li>
 <li><strong>SI is below FF</strong>: Tilted from FF toward the negative S direction (arm side). Less backspin, more horizontal movement</li>
 <li><strong>FS is near SI but closer to the origin</strong>: Similar direction, but closer to the origin due to lower spin rate = less movement</li>
-<li><strong>FC is near the origin</strong>: Very small transverse spin. The large gyrospin component barely appears on the T-S plane</li>
+<li><strong>FC is between FF and CU</strong>: Contains a gyro component so it doesn't extend as far from the origin as FF, but has transverse spin in the backspin direction (T &lt; 0)</li>
 </ul>
 
 <!-- T-G plane (spin efficiency view) -->
@@ -1263,9 +1264,9 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <!-- FS: trans=sqrt(67²+1481²)=1483, G=0 → x=60, y=280-1483*0.1=132 -->
 <circle cx="60" cy="132" r="6" fill="#88cc88" opacity="0.8"/>
 <text x="72" y="128" fill="#88cc88" font-size="10" font-weight="bold">FS</text>
-<!-- FC: trans=sqrt(534²+73²)=539, G=2334 → x=60+2334*0.1=293, y=280-539*0.1=226 -->
-<circle cx="293" cy="226" r="6" fill="#cc6600" opacity="0.8"/>
-<text x="302" y="222" fill="#cc6600" font-size="10" font-weight="bold">FC</text>
+<!-- FC: trans=sqrt(1180²+87²)=1183, G=2256 → x=60+2256*0.1=286, y=280-1183*0.1=162 -->
+<circle cx="286" cy="162" r="6" fill="#cc6600" opacity="0.8"/>
+<text x="295" y="158" fill="#cc6600" font-size="10" font-weight="bold">FC</text>
 <!-- Spin efficiency lines -->
 <line x1="60" y1="280" x2="340" y2="40" stroke="#555" stroke-width="1" stroke-dasharray="3,3" opacity="0.3"/>
 <text x="310" y="56" fill="#555" font-size="8" opacity="0.5">eff=50%</text>
@@ -1293,7 +1294,7 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <li><strong>ST and FS</strong> sit at the far left where G=0, with the highest spin efficiency (100%). However, FS has a lower total spin rate, so its absolute transverse spin is smaller than ST</li>
 <li><strong>FF and SI</strong> have small to moderate gyrospin components while maintaining high transverse spin</li>
 <li><strong>CU</strong> surprisingly has a large gyrospin component. Curveballs have high spin rates, but some of that spin is allocated to the gyro direction</li>
-<li><strong>FC</strong> has a very large gyrospin component and small transverse spin. Despite the high spin rate (2440 rpm), the component contributing to movement is small</li>
+<li><strong>FC</strong> has a large gyrospin component and less transverse spin than FF. Despite high spin rate (2603 rpm), spin efficiency is 46% — about half contributes to movement</li>
 </ul>
 
 <p>The distances on these "maps" quantitatively represent how similar the spin characteristics of two pitches are. While pitch type classification is discrete, in omega space the distribution is <strong>continuous</strong>, and even pitches with the same type name occupy different positions depending on the pitcher. This perspective is useful for pitch type classification and pitch tunneling analysis.</p>
@@ -2133,7 +2134,7 @@ function sharedComputeTrajectory(scene, trajObjArray, d) {
         sl: {name:'SL Yamamoto', color:0x4488ff, wx:209, wz:279, wy:-2595, speed:87.1, spin:2626},
         si: {name:'SI Darvish', color:0xff8844, wx:320, wz:-1891, wy:-1126, speed:93.8, spin:2228},
         fs: {name:'FS Yamamoto', color:0x88cc88, wx:67, wz:-1481, wy:0, speed:92.9, spin:1483},
-        fc: {name:'FC Darvish', color:0xcc6600, wx:534, wz:-73, wy:-2334, speed:92.1, spin:2440},
+        fc: {name:'FC C.Burnes', color:0xcc6600, wx:-1180, wz:87, wy:-2256, speed:94.1, spin:2603},
     };
 
     let currentArrows = [];
