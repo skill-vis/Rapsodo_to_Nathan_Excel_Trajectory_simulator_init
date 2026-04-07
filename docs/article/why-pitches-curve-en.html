@@ -528,7 +528,9 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\color{#ff8a65}{\omega_{\text{tot
 
 <p>This rule — "the ball curves in the direction perpendicular to both the spin axis and the direction of travel" — provides a unified explanation for the movement of all pitch types.</p>
 
-<h3>Cross Product — The Math Behind the Magnus Force Direction</h3>
+<details>
+<summary>📐 Cross Product — The Math Behind the Magnus Force Direction</summary>
+<div>
 
 <p>The direction of the Magnus force is determined by the <strong>cross product</strong> $\boldsymbol{\omega} \times \mathbf{v}$ of the angular velocity vector $\boldsymbol{\omega}$ and the velocity vector $\mathbf{v}$. The cross product may look intimidating, but you only need to remember two rules (Fig. 5):</p>
 
@@ -544,8 +546,6 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\color{#ff8a65}{\omega_{\text{tot
 <li><strong>Magnitude</strong>: Equal to the <strong>area of the parallelogram</strong> spanned by $\mathbf{a}$ and $\mathbf{b}$. Maximum when the two vectors are perpendicular, zero when they are parallel.</li>
 </ol>
 </div>
-
-<p>Applied to the Magnus force:</p>
 
 <figure style="margin:16px auto;text-align:center;">
 <svg viewBox="0 0 480 220" style="max-width:480px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
@@ -592,25 +592,33 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\color{#ff8a65}{\omega_{\text{tot
 <li>When the angle between ω and v is intermediate (as is the case for most pitch types), the Magnus force takes a value between zero and the maximum</li>
 </ul>
 
+</div>
+</details>
+
 <p>In the 3D widget below, use the sliders to change the spin axis (<span style="color:#ff8a65">orange arrow ω</span>) and see how the Magnus force (<span style="color:#4fc3f7">blue arrow F</span>) direction and trajectory change. Start from the fastball setting and try moving the sliders.</p>
 
 <div style="background:#111;border-radius:8px;padding:16px;margin:20px 0;">
 <canvas id="magnus-canvas" style="width:100%;height:420px;border-radius:8px;cursor:grab;"></canvas>
 <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px;">
 <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center;">
-<label style="color:#aaa;font-size:13px;">T (topspin angle): <input type="range" id="m1-tilt" min="-90" max="90" value="66" style="width:160px;vertical-align:middle;"> <span id="m1-tilt-val" style="color:#ff8a65;font-weight:bold;">66°</span></label>
-<label style="color:#aaa;font-size:13px;">Sidespin angle: <input type="range" id="m1-yaw" min="-90" max="90" value="24" style="width:160px;vertical-align:middle;"> <span id="m1-yaw-val" style="color:#ff8a65;font-weight:bold;">24°</span></label>
+<label style="color:#aaa;font-size:13px;">T (topspin): <input type="range" id="m1-tilt" min="-90" max="90" value="60" style="width:140px;vertical-align:middle;"> <span id="m1-tilt-val" style="color:#ff8a65;font-weight:bold;">60°</span></label>
+<label style="color:#aaa;font-size:13px;">S (sidespin): <input type="range" id="m1-yaw" min="-120" max="120" value="23" style="width:140px;vertical-align:middle;"> <span id="m1-yaw-val" style="color:#ff8a65;font-weight:bold;">23°</span></label>
+<label style="color:#aaa;font-size:13px;">G (gyro): <input type="range" id="m1-gyro" min="-90" max="0" value="-70" style="width:120px;vertical-align:middle;"> <span id="m1-gyro-val" style="color:#ff8a65;font-weight:bold;">-70°</span></label>
 </div>
-<div style="display:flex;gap:8px;align-items:center;">
-<button id="m1-reset-ff" style="font-size:12px;background:#333;color:#ff4444;border:1px solid #555;border-radius:4px;padding:3px 12px;cursor:pointer;">↩ Reset to Fastball</button>
+<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+<span style="color:#666;font-size:12px;">Presets:</span>
+<button class="m1-preset" data-wx="1900" data-wz="-852" data-wy="-761" data-speed="96.3" data-name="FF Y.Yamamoto" style="font-size:11px;background:#333;color:#e94560;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">FF Fastball (ω⊥v)</button>
+<button class="m1-preset" data-wx="209" data-wz="279" data-wy="-2595" data-speed="87.1" data-name="SL Y.Yamamoto" style="font-size:11px;background:#333;color:#4488ff;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">SL Slider (ω≈v)</button>
 </div>
 </div>
 <div id="m1-info" style="color:#888;font-size:12px;margin-top:6px;"></div>
 </div>
 
-<p>First, try moving the sidespin (S) slider. Whether using the fastball or slider preset, changing S causes the <span style="color:#ff8a65">angular velocity vector ω</span> to tilt up or down. In both cases — whether ω is nearly perpendicular to v (fastball) or nearly parallel to v (slider with large gyro component) — the sidespin component determines the left-right direction of the <span style="color:#4fc3f7">Magnus force</span>, and the ball's trajectory shifts laterally in response.</p>
+<p>Click the "SL Slider" preset, then try moving the sidespin (S) slider. You'll see the <span style="color:#ff8a65">angular velocity vector ω</span> <strong>shift up or down</strong> relative to the velocity vector $\mathbf{v}$. Whether ω sits above or below $\mathbf{v}$ flips the direction of the cross product $\boldsymbol{\omega} \times \mathbf{v}$, reversing the left-right direction of the <span style="color:#4fc3f7">Magnus force</span>.</p>
 
-<p>Next, try the gyro (G) slider. As you increase the gyro component, the <span style="color:#4fc3f7">Magnus force arrow</span> gets shorter. This is because as ω approaches v in direction, the cross product $\boldsymbol{\omega} \times \mathbf{v}$ becomes smaller.</p>
+<p>In real pitchers, Yoshinobu Yamamoto's slider has ω positioned slightly above $\mathbf{v}$, producing movement toward the <strong>glove side (third base)</strong>. In contrast, Tatsuya Imai's slider has ω positioned below $\mathbf{v}$, producing movement in the opposite direction — toward the <strong>arm side (first base)</strong>. This is the so-called "wrong-way slider." Despite sharing the name "slider," the sign of the sidespin component is reversed, resulting in opposite movement directions. Toggle S from positive to negative in the widget above to experience this difference.</p>
+
+<p>Next, try the gyro (G) slider. As you increase the gyro component (move G toward 0), the <span style="color:#4fc3f7">Magnus force arrow</span> gets shorter. This is because as ω approaches $\mathbf{v}$ in direction, the cross product $\boldsymbol{\omega} \times \mathbf{v}$ becomes smaller.</p>
 
 <details>
 <summary>📐 For researchers: Magnus force equation</summary>
@@ -635,13 +643,13 @@ $$C_L = \frac{c_2 \cdot S}{c_0 + c_1 \cdot S}$$
 <!-- ========== Chapter 2 ========== -->
 <h2 id="ch2">Chapter 2: Understanding Spin with Vectors</h2>
 
-<h3>2-1. What Is an Angular Velocity Vector?</h3>
+<h3>2-1. The Angular Velocity Vector — Representing Spin as a Single Arrow</h3>
 
 <p>Spin can be represented as an <strong>angular velocity vector</strong> ($\boldsymbol{\omega}$). This arrow carries two pieces of information:</p>
 
 <ul>
 <li><strong>Direction</strong>: the orientation of the spin axis (right-hand rule)</li>
-<li><strong>Length</strong>: the speed of rotation (spin rate, rpm = revolutions per minute; 1 rpm = 0.1047 rad/s = 6 °/s)</li>
+<li><strong>Length</strong>: the speed of rotation (spin rate)</li>
 </ul>
 
 <p>The right-hand rule means: curl the fingers of your right hand in the direction of rotation, and your thumb points in the direction of the arrow (Fig. 6).</p>
@@ -650,8 +658,6 @@ $$C_L = \frac{c_2 \cdot S}{c_0 + c_1 \cdot S}$$
 <img src="img/screw_with_string_e.png" alt="Angular velocity vector: the arrow direction is the spin axis (right-hand screw direction), and the length is the spin rate" style="max-width:360px;width:100%;height:auto;">
 <figcaption>Fig. 6. Angular velocity vector ω: the arrow direction is the spin axis (right-hand screw direction), and the length represents spin rate.</figcaption>
 </figure>
-
-<h3>2-2. Why Vectors Instead of Angles?</h3>
 
 <p>In baseball, spin is often expressed as a "Spin Axis" angle (like a clock face direction). However, this representation has limitations:</p>
 
@@ -665,7 +671,7 @@ $$C_L = \frac{c_2 \cdot S}{c_0 + c_1 \cdot S}$$
 
 <p>With a vector representation, <strong>direction and magnitude can be expressed simultaneously</strong>, and the "similarity" of two pitches can be calculated as the distance between vectors.</p>
 
-<h3>2-3. Three Components: Topspin, Sidespin, and Gyrospin</h3>
+<h3>2-2. Three Components: Topspin, Sidespin, and Gyrospin</h3>
 
 <p>The angular velocity vector can be decomposed into three physically meaningful components relative to the pitch:</p>
 
@@ -704,7 +710,11 @@ $$C_L = \frac{c_2 \cdot S}{c_0 + c_1 \cdot S}$$
 <figcaption>Fig. 7. Relationship between the angular velocity vector ω and the TSG coordinate system. Left: ω lies in the T-S plane (no gyro component, spin efficiency 100%). Right: ω extends out of the T-S plane (gyro component present, lower spin efficiency).</figcaption>
 </figure>
 
-<p>These three T, S, G axes are mutually <strong>orthogonal</strong> and form the <strong>TSG coordinate system</strong> (right-handed: $\hat{\mathbf{e}}_T \times \hat{\mathbf{e}}_S = \hat{\mathbf{e}}_G$). The order of the names directly corresponds to the cyclic order of the mathematical right-hand system, and any angular velocity vector $\boldsymbol{\omega}$ can be uniquely decomposed as projections onto these three axes. In the 3D widget below, you can see the relationship between the three TSG axes and the velocity vector. Drag with the mouse to rotate the viewpoint.</p>
+<p>As shown in Fig. 7 left, when $\boldsymbol{\omega}$ lies in the T-S plane (perpendicular to the pitch direction), all spin is converted to Magnus force, and spin efficiency is 100%. When $\boldsymbol{\omega}$ tilts toward the G axis (right), the gyro component increases and movement decreases. However, less movement is not necessarily bad — some pitch types actively use the gyro component to disrupt the batter's timing.</p>
+
+<p>The gyro component $\omega_G$ is crucial for trajectory calculation, but MLB's public Statcast data does not include it. The <a href="../">simulator</a> on this site estimates the gyro component from public data to compute trajectories, which is one of its key features.</p>
+
+<p>T, S, and G are mutually <strong>orthogonal</strong>, forming the <strong>TSG coordinate system</strong> where the name order matches the right-hand cyclic order ($\hat{\mathbf{e}}_T \times \hat{\mathbf{e}}_S = \hat{\mathbf{e}}_G$). Any $\boldsymbol{\omega}$ can be uniquely decomposed as projections onto these three axes. Explore the relationship in the 3D widget below.</p>
 
 <div style="background:#111;border-radius:8px;padding:16px;margin:20px 0;">
 <canvas id="bsg-axes-canvas" style="width:100%;height:420px;border-radius:8px;cursor:grab;"></canvas>
@@ -734,7 +744,7 @@ $$C_L = \frac{c_2 \cdot S}{c_0 + c_1 \cdot S}$$
 </div>
 </details>
 
-<h3>2-4. Spin Efficiency</h3>
+<h3>2-3. Spin Efficiency</h3>
 
 <p>Since the gyrospin component (G) does not generate Magnus force, the <strong>fraction of total spin that actually contributes to movement</strong> becomes important. This is called <strong>spin efficiency</strong> (Active Spin %).</p>
 
@@ -812,7 +822,7 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <!-- ========== Chapter 3 ========== -->
 <h2 id="ch3">Chapter 3: The omega Vector of Each Pitch Type — Why They Curve</h2>
 
-<p>Let's examine the typical omega vector and trajectory for each pitch type in 3D. Select a pitch type to see the spin axis, Magnus force, and trajectory.</p>
+<p>Pitch type names are convenient categories, but in reality they lie on a <strong>continuous spectrum</strong> of omega vectors. Below we examine 7 representative pitch types. Select a pitch type to see the spin axis, Magnus force, and trajectory in 3D.</p>
 
 <div style="background:#111;border-radius:8px;padding:16px;margin:20px 0;">
 <canvas id="w3-canvas" style="width:100%;height:420px;border-radius:8px;cursor:grab;"></canvas>
@@ -831,23 +841,29 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 
 <h3>3-1. Four-Seam Fastball (FF)</h3>
 
+<p>Backspin (T &lt; 0) is dominant, with omega pointing nearly horizontally and perpendicular to the direction of travel. $\boldsymbol{\omega} \times \mathbf{v}$ produces an <strong>upward</strong> Magnus force, counteracting gravity and making the ball "drop less." The closer the spin efficiency is to 100%, the greater the hop for the same spin rate.</p>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w3-jump" data-pitch="ff" style="font-size:12px;background:#333;color:#e94560;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ View FF omega in 3D</button>
+<a href="https://baseball.skill-vis.com/?mlbam_id=660271&year=2025&date=2025-06-28&pitch=0" target="_blank" class="sim-link" style="margin:0;">🔵 Simulate Ohtani's FF</a>
+</div>
+
+<details>
+<summary>📊 FF omega direction diagram (Y. Yamamoto 96.3mph, 2240rpm, eff.94%)</summary>
+<div>
 <figure style="margin:16px auto;text-align:center;">
 <svg viewBox="0 0 240 380" style="max-width:240px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI','Helvetica Neue',sans-serif">
 <rect width="240" height="380" rx="8" fill="#12122a"/>
-<!-- === Top: Top view === -->
 <text x="120" y="18" fill="#888" font-size="11" text-anchor="middle">Top view</text>
 <polygon points="120,28 113,42 127,42" fill="#4488ff"/>
 <line x1="120" y1="42" x2="120" y2="62" stroke="#4488ff" stroke-width="4"/>
 <text x="140" y="40" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
 <circle cx="120" cy="115" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="115" r="3" fill="#888"/>
-<!-- Yamamoto FF top: wx=1900(→1B=right), wy=-761(→catcher=up in top view) → ω right + slightly forward -->
 <line x1="54" y1="130" x2="186" y2="100" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="192,98 180,94 180,106" fill="#ff8a65"/>
 <text x="194" y="96" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
 <text x="120" y="172" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
-
-<!-- === Bottom: Pitcher's view === -->
 <text x="120" y="196" fill="#888" font-size="11" text-anchor="middle">Pitcher's view</text>
 <polygon points="120,204 113,218 127,218" fill="#4488ff"/>
 <line x1="120" y1="218" x2="120" y2="230" stroke="#4488ff" stroke-width="4"/>
@@ -856,28 +872,29 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="148" y="226" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
 <circle cx="120" cy="290" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="290" r="3" fill="#888"/>
-<!-- Yamamoto FF rear: wx=1900(→1B=right), wz=-852(→down) → ω right-down -->
 <line x1="48" y1="265" x2="192" y2="315" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="198,317 186,311 186,323" fill="#ff8a65"/>
 <text x="198" y="322" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
 <text x="120" y="348" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
-<!-- Info -->
 <text x="120" y="365" fill="#888" font-size="9" text-anchor="middle">Y. Yamamoto FF: 96.3mph</text>
 <text x="120" y="377" fill="#888" font-size="9" text-anchor="middle">2240rpm, eff.94%</text>
 </svg>
 </figure>
-
-<p>The omega of a four-seam fastball points nearly horizontally and perpendicular to the direction of travel. This means backspin (T &lt; 0 in the TSG coordinate system) is dominant. As a result of $\boldsymbol{\omega} \times \mathbf{v}$, the Magnus force acts <strong>upward</strong>, counteracting gravity and making the ball "ride" (more precisely, "drop less").</p>
-
-<p>For a right-handed pitcher, omega points toward <strong>the first base side (right)</strong> from the pitcher's view (see figure). From the top view, omega may include a small gyrospin component (velocity-direction component). Since gyrospin does not contribute to the Magnus force, the closer the spin efficiency is to 100%, the greater the hop for the same spin rate.</p>
-
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-<button class="w3-jump" data-pitch="ff" style="font-size:12px;background:#333;color:#e94560;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ View FF omega in 3D</button>
-<a href="https://baseball.skill-vis.com/?mlbam_id=660271&year=2025&date=2025-06-28&pitch=0" target="_blank" class="sim-link" style="margin:0;">🔵 Simulate Ohtani's FF</a>
 </div>
+</details>
 
 <h3>3-2. Curveball (CU)</h3>
 
+<p>Omega points in nearly the <strong>opposite direction</strong> from FF (topspin, T &gt; 0). $\boldsymbol{\omega} \times \mathbf{v}$ produces a <strong>downward + horizontal</strong> force, making the ball drop sharply while curving. Speed is low (70-80 mph) but spin rate is high (2500-2800 rpm), with the sidespin component adding glove-side horizontal movement.</p>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w3-jump" data-pitch="cu" style="font-size:12px;background:#333;color:#44ccff;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ View CU omega in 3D</button>
+<a href="https://baseball.skill-vis.com/?mlbam_id=660271&year=2025&date=2025-08-27&pitch=5" target="_blank" class="sim-link orange" style="margin:0;">🟠 Simulate Ohtani's CU</a>
+</div>
+
+<details>
+<summary>📊 CU omega direction diagram (S. Ohtani 77.6mph, 2622rpm, eff.65%)</summary>
+<div>
 <figure style="margin:16px auto;text-align:center;">
 <svg viewBox="0 0 240 380" style="max-width:240px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI','Helvetica Neue',sans-serif">
 <rect width="240" height="380" rx="8" fill="#12122a"/>
@@ -887,20 +904,17 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="140" y="40" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
 <circle cx="120" cy="115" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="115" r="3" fill="#888"/>
-<!-- CU top ω: wx=-1376(left), wy=-1971(forward=up in top view) → left-up -->
 <line x1="168" y1="152" x2="72" y2="78" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="66,74 78,72 76,84" fill="#ff8a65"/>
 <text x="50" y="72" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
 <text x="120" y="172" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
 <text x="120" y="196" fill="#888" font-size="11" text-anchor="middle">Pitcher's view</text>
-<!-- Perspective arrow: narrow top, wide bottom (into screen) -->
 <polygon points="120,204 112,230 128,230" fill="#4488ff"/>
 <polygon points="112,230 108,236 132,236 128,230" fill="#3366cc"/>
 <polygon points="108,236 104,240 136,240 132,236" fill="#2244aa"/>
 <text x="148" y="226" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
 <circle cx="120" cy="280" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="280" r="3" fill="#888"/>
-<!-- CU rear ω: wx=-1376(left), wz=1127(up) → left-up -->
 <line x1="172" y1="320" x2="68" y2="240" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="62,236 74,234 72,246" fill="#ff8a65"/>
 <text x="46" y="234" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
@@ -909,18 +923,21 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="120" y="377" fill="#888" font-size="9" text-anchor="middle">2622rpm, eff.65%</text>
 </svg>
 </figure>
-
-<p>The omega of a curveball points in nearly the <strong>opposite direction</strong> from the FF (topspin direction, T &gt; 0 in the TSG coordinate system). This causes $\boldsymbol{\omega} \times \mathbf{v}$ to produce a <strong>downward + horizontal</strong> force, making the ball drop sharply while curving.</p>
-
-<p>The pitch speed is significantly lower than a fastball (70-80 mph), but the spin rate is high (2500-2800 rpm). For a right-handed pitcher, the sidespin component in omega produces horizontal movement toward the glove side (third base direction) in addition to the drop. From the top view, omega may include a gyrospin component, and spin efficiency varies by pitcher.</p>
-
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-<button class="w3-jump" data-pitch="cu" style="font-size:12px;background:#333;color:#44ccff;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ View CU omega in 3D</button>
-<a href="https://baseball.skill-vis.com/?mlbam_id=660271&year=2025&date=2025-08-27&pitch=5" target="_blank" class="sim-link orange" style="margin:0;">🟠 Simulate Ohtani's CU</a>
 </div>
+</details>
 
 <h3>3-3. Sweeper (ST)</h3>
 
+<p>Sidespin is dominant, with omega pointing nearly <strong>straight up</strong> from the pitcher's view. Virtually zero gyrospin (spin efficiency ≈ 100%), so $\boldsymbol{\omega} \times \mathbf{v}$ produces a large <strong>horizontal</strong> force, resulting in sharp lateral movement. Ohtani's 2023 sweeper reached ≈ 61.6 cm of horizontal break.</p>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w3-jump" data-pitch="st" style="font-size:12px;background:#333;color:#aa44ff;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ View ST omega in 3D</button>
+<a href="https://baseball.skill-vis.com/?mlbam_id=660271&year=2023&date=2023-03-30&pitch=25" target="_blank" class="sim-link orange" style="margin:0;">🟠 Simulate Ohtani's ST</a>
+</div>
+
+<details>
+<summary>📊 ST omega direction diagram (S. Ohtani 85.2mph, 2625rpm, eff.100%)</summary>
+<div>
 <figure style="margin:16px auto;text-align:center;">
 <svg viewBox="0 0 240 380" style="max-width:240px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI','Helvetica Neue',sans-serif">
 <rect width="240" height="380" rx="8" fill="#12122a"/>
@@ -930,7 +947,6 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="140" y="40" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
 <circle cx="120" cy="115" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="115" r="3" fill="#888"/>
-<!-- ST top ω: wx=643(right), wy=0(G=0) → short right -->
 <line x1="100" y1="115" x2="150" y2="115" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="156,115 144,109 144,121" fill="#ff8a65"/>
 <text x="160" y="112" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
@@ -942,7 +958,6 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="148" y="226" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
 <circle cx="120" cy="280" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="280" r="3" fill="#888"/>
-<!-- ST rear ω: wx=643(right,small), wz=2545(up,large) → mostly up, slightly right -->
 <line x1="108" y1="340" x2="132" y2="220" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="134,214 127,226 139,226" fill="#ff8a65"/>
 <text x="140" y="222" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
@@ -951,18 +966,21 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="120" y="377" fill="#888" font-size="9" text-anchor="middle">2625rpm, eff.100%</text>
 </svg>
 </figure>
-
-<p>The omega of a sweeper points nearly <strong>straight up</strong> from the pitcher's view. This means sidespin is dominant. From the top view, omega is <strong>perpendicular</strong> (horizontal) to the direction of travel, with virtually zero gyrospin (spin efficiency ≈ 100%).</p>
-
-<p>$\boldsymbol{\omega} \times \mathbf{v}$ produces a large force in the <strong>horizontal direction</strong>, resulting in sharp lateral movement. Ohtani's 2023 sweeper reached ≈ 61.6 cm of horizontal break, recording one of the largest in MLB. This example is an <strong>extreme sweeper</strong> — an ideal sidespin pitch with spin efficiency ≈ 100%.</p>
-
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-<button class="w3-jump" data-pitch="st" style="font-size:12px;background:#333;color:#aa44ff;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ View ST omega in 3D</button>
-<a href="https://baseball.skill-vis.com/?mlbam_id=660271&year=2023&date=2023-03-30&pitch=25" target="_blank" class="sim-link orange" style="margin:0;">🟠 Simulate Ohtani's ST</a>
 </div>
+</details>
 
 <h3>3-4. Slider (SL)</h3>
 
+<p>In contrast to the sweeper, omega points <strong>close to the velocity direction (gyro axis)</strong>. Transverse spin is small (Yamamoto's example: eff. 13%), so lateral movement is less than ST, but vertical drop is added, creating a "sharp, dropping slider." From ST to SL, the gyrospin component <strong>varies continuously</strong>.</p>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w3-jump" data-pitch="sl" style="font-size:12px;background:#333;color:#4488ff;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ View SL omega in 3D</button>
+<a href="https://baseball.skill-vis.com/?mlbam_id=808967&year=2026&date=2026-04-01&pitch=57" target="_blank" class="sim-link orange" style="margin:0;">🟠 Simulate Yamamoto's SL</a>
+</div>
+
+<details>
+<summary>📊 SL omega direction diagram (Y. Yamamoto 87.1mph, 2626rpm, eff.13%)</summary>
+<div>
 <figure style="margin:16px auto;text-align:center;">
 <svg viewBox="0 0 240 380" style="max-width:240px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI','Helvetica Neue',sans-serif">
 <rect width="240" height="380" rx="8" fill="#12122a"/>
@@ -972,7 +990,6 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="140" y="40" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
 <circle cx="120" cy="115" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="115" r="3" fill="#888"/>
-<!-- SL top ω: wx=209(right,small), wy=-2595(forward=up,very large) → mostly upward, slightly right -->
 <line x1="114" y1="150" x2="128" y2="75" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="130,69 123,80 135,80" fill="#ff8a65"/>
 <text x="136" y="76" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
@@ -985,7 +1002,6 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="148" y="226" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
 <circle cx="120" cy="290" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="290" r="3" fill="#888"/>
-<!-- SL rear ω: wx=209(right,small), wz=279(up,small) → slightly right-up, short -->
 <line x1="112" y1="300" x2="134" y2="274" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="137,269 128,270 130,282" fill="#ff8a65"/>
 <text x="140" y="272" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
@@ -994,20 +1010,21 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="120" y="377" fill="#888" font-size="9" text-anchor="middle">2626rpm, eff.13%</text>
 </svg>
 </figure>
-
-<p>The omega of a slider points in a direction <strong>close to the velocity direction (gyro axis)</strong>, in contrast to the sweeper. From the top view, omega is nearly parallel to the pitch direction, meaning transverse spin is small. The average MLB RHP slider has a spin efficiency of about 30%, and Yamamoto's example (13%) is even more gyro-heavy.</p>
-
-<p>From the pitcher's view, omega points only slightly upper-right from the center of the ball, with a much smaller tilt compared to FF or CU. The small transverse spin component is biased toward sidespin, so $\boldsymbol{\omega} \times \mathbf{v}$ produces a <strong>horizontal</strong> force, but not as much movement as a sweeper. Instead, vertical drop is added, creating a "sharp, dropping slider."</p>
-
-<p>From sweeper (ST) to slider (SL), the gyrospin component of omega <strong>varies continuously</strong>. Pitch type classification is a matter of convenience — in reality, it is a continuous spectrum.</p>
-
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-<button class="w3-jump" data-pitch="sl" style="font-size:12px;background:#333;color:#4488ff;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ View SL omega in 3D</button>
-<a href="https://baseball.skill-vis.com/?mlbam_id=808967&year=2026&date=2026-04-01&pitch=57" target="_blank" class="sim-link orange" style="margin:0;">🟠 Simulate Yamamoto's SL</a>
 </div>
+</details>
 
 <h3>3-5. Sinker (SI)</h3>
 
+<p>Same backspin family as FF, but omega <strong>tilts significantly downward</strong> from the pitcher's view (increased sidespin component). This reduces hop while producing <strong>arm-side horizontal movement</strong>. Speed is similar to FF (93-96 mph), but the different movement direction combined with FF creates deception.</p>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w3-jump" data-pitch="si" style="font-size:12px;background:#333;color:#ff8844;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ View SI omega in 3D</button>
+<a href="https://baseball.skill-vis.com/?mlbam_id=506433&year=2025&date=2025-08-17&pitch=0" target="_blank" class="sim-link orange" style="margin:0;">🟠 Simulate Darvish's SI</a>
+</div>
+
+<details>
+<summary>📊 SI omega direction diagram (Yu Darvish 93.8mph, 2228rpm, eff.86%)</summary>
+<div>
 <figure style="margin:16px auto;text-align:center;">
 <svg viewBox="0 0 240 380" style="max-width:240px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI','Helvetica Neue',sans-serif">
 <rect width="240" height="380" rx="8" fill="#12122a"/>
@@ -1017,11 +1034,9 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="140" y="40" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
 <circle cx="120" cy="115" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="115" r="3" fill="#888"/>
-<!-- SI top ω: wx=320(right,small), wy=-1126(forward=up,medium) → slightly right + forward -->
 <line x1="110" y1="145" x2="140" y2="80" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="142,74 135,84 147,84" fill="#ff8a65"/>
 <text x="148" y="78" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
-<!-- FF reference ghost: wx=1900(right,large), wy=-761(forward,small) → mostly right -->
 <line x1="54" y1="130" x2="186" y2="100" stroke="#e94560" stroke-width="1" stroke-dasharray="4,3" opacity="0.3"/>
 <text x="188" y="98" fill="#e94560" font-size="8" opacity="0.4">FF</text>
 <text x="120" y="172" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
@@ -1032,11 +1047,9 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="148" y="226" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
 <circle cx="120" cy="290" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="290" r="3" fill="#888"/>
-<!-- SI rear ω: wx=320(right,small), wz=-1891(down,large) → mostly downward, slightly right -->
 <line x1="114" y1="230" x2="130" y2="340" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="131,346 124,336 138,336" fill="#ff8a65"/>
 <text x="138" y="346" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
-<!-- FF reference ghost: wx=1900(right,large), wz=-852(down,medium) → right-down -->
 <line x1="48" y1="275" x2="192" y2="305" stroke="#e94560" stroke-width="1" stroke-dasharray="4,3" opacity="0.3"/>
 <text x="194" y="312" fill="#e94560" font-size="8" opacity="0.4">FF</text>
 <text x="120" y="356" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
@@ -1044,20 +1057,21 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="120" y="380" fill="#888" font-size="9" text-anchor="middle">2228rpm, eff.86%</text>
 </svg>
 </figure>
-
-<p>The omega of a sinker belongs to the same backspin family as the FF, but from the pitcher's view, it <strong>tilts significantly downward</strong>. This means the sidespin component has increased. For a right-handed pitcher, $\boldsymbol{\omega} \times \mathbf{v}$ shifts the Magnus force from the FF's "upward" to "arm-side (first base direction) + slightly upward."</p>
-
-<p>Due to this tilt, the backspin component (|T|) becomes smaller than the FF, resulting in <strong>less hop</strong>, while the sidespin component (S) increases, producing <strong>horizontal movement toward the arm side</strong>. Compared to the dashed line (FF) in the figure, you can see that omega tilts downward from the pitcher's view and toward the pitch direction from the top view.</p>
-
-<p>A typical sinker has relatively high spin efficiency (small gyrospin component), with most of the spin contributing to movement. The pitch speed is similar to an FF (93-96 mph), but the different movement direction combined with the FF creates deception against batters.</p>
-
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-<button class="w3-jump" data-pitch="si" style="font-size:12px;background:#333;color:#ff8844;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ View SI omega in 3D</button>
-<a href="https://baseball.skill-vis.com/?mlbam_id=506433&year=2025&date=2025-08-17&pitch=0" target="_blank" class="sim-link orange" style="margin:0;">🟠 Simulate Darvish's SI</a>
 </div>
+</details>
 
 <h3>3-6. Forkball / Splitter (FS)</h3>
 
+<p>The key is a <strong>lower spin rate</strong> than FF (Yamamoto FS: 1483 rpm vs FF: 2240 rpm). At the same speed (92 mph), the weak hop force means gravity pulls the ball into a trajectory that <strong>"doesn't ride like a fastball" = sinks</strong>. Physically, it's not "it drops" but "it doesn't rise."</p>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w3-jump" data-pitch="fs" style="font-size:12px;background:#333;color:#88cc88;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ View FS omega in 3D</button>
+<a href="https://baseball.skill-vis.com/?mlbam_id=808967&year=2026&date=2026-03-26&pitch=6" target="_blank" class="sim-link orange" style="margin:0;">🟠 Simulate Yamamoto's FS</a>
+</div>
+
+<details>
+<summary>📊 FS omega direction diagram (Y. Yamamoto 92.9mph, 1483rpm, eff.100%)</summary>
+<div>
 <figure style="margin:16px auto;text-align:center;">
 <svg viewBox="0 0 240 380" style="max-width:240px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI','Helvetica Neue',sans-serif">
 <rect width="240" height="380" rx="8" fill="#12122a"/>
@@ -1067,11 +1081,9 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="140" y="40" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
 <circle cx="120" cy="115" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="115" r="3" fill="#888"/>
-<!-- FS top ω: wx=67(right,~0), wy=0(G=0) → tiny right. Much shorter than FF -->
 <line x1="116" y1="115" x2="130" y2="115" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="136,115 126,110 126,120" fill="#ff8a65"/>
 <text x="137" y="112" fill="#ff8a65" font-size="9">ω (small)</text>
-<!-- FF reference ghost: mostly right, long -->
 <line x1="54" y1="130" x2="186" y2="100" stroke="#e94560" stroke-width="1" stroke-dasharray="4,3" opacity="0.3"/>
 <text x="188" y="98" fill="#e94560" font-size="8" opacity="0.4">FF</text>
 <text x="120" y="172" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
@@ -1082,11 +1094,9 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="148" y="226" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
 <circle cx="120" cy="290" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="290" r="3" fill="#888"/>
-<!-- FS rear ω: wx=67(right,~0), wz=-1481(down,large) → mostly downward -->
 <line x1="118" y1="250" x2="122" y2="330" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="123,336 116,326 130,326" fill="#ff8a65"/>
 <text x="134" y="334" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
-<!-- FF reference ghost: right-down -->
 <line x1="48" y1="275" x2="192" y2="305" stroke="#e94560" stroke-width="1" stroke-dasharray="4,3" opacity="0.3"/>
 <text x="194" y="312" fill="#e94560" font-size="8" opacity="0.4">FF</text>
 <text x="120" y="356" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
@@ -1094,18 +1104,21 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="120" y="380" fill="#888" font-size="9" text-anchor="middle">1483rpm, eff.100%</text>
 </svg>
 </figure>
-
-<p>The essence of a forkball/splitter is its <strong>lower spin rate</strong> compared to the FF. Yamamoto's FS is 1483 rpm — about 2/3 of his FF (2240 rpm). From the pitcher's view, omega points downward similarly to the SI (arm-side sidespin), but the Magnus force is small because the spin rate itself is low.</p>
-
-<p>Even at the same speed as the FF (92 mph), the weak hop force means gravity pulls the ball into a trajectory that <strong>"doesn't ride like a fastball" = sinks</strong>. Physically, the accurate description is not "it drops" but "it doesn't rise." From the top view, omega is very short (compare to the FF reference line), showing that the absolute amount of spin is low.</p>
-
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-<button class="w3-jump" data-pitch="fs" style="font-size:12px;background:#333;color:#88cc88;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ View FS omega in 3D</button>
-<a href="https://baseball.skill-vis.com/?mlbam_id=808967&year=2026&date=2026-03-26&pitch=6" target="_blank" class="sim-link orange" style="margin:0;">🟠 Simulate Yamamoto's FS</a>
 </div>
+</details>
 
 <h3>3-7. Cutter (FC)</h3>
 
+<p>From the pitcher's view, omega looks nearly identical to FF (rightward). But from above, omega is <strong>tilted heavily toward the velocity direction</strong> (very large gyrospin). Despite high spin rate (2440 rpm), spin efficiency is only 29%. Slight glove-side movement at FF-like speed (90-93 mph) misses the bat's sweet spot. FF → FC → SL forms a <strong>continuous progression</strong> with increasing gyrospin.</p>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w3-jump" data-pitch="fc" style="font-size:12px;background:#333;color:#cc6600;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ View FC omega in 3D</button>
+<a href="https://baseball.skill-vis.com/?mlbam_id=506433&year=2025&date=2025-08-27&pitch=5" target="_blank" class="sim-link orange" style="margin:0;">🟠 Simulate Darvish's FC</a>
+</div>
+
+<details>
+<summary>📊 FC omega direction diagram (Yu Darvish 92.1mph, 2440rpm, eff.29%)</summary>
+<div>
 <figure style="margin:16px auto;text-align:center;">
 <svg viewBox="0 0 240 380" style="max-width:240px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI','Helvetica Neue',sans-serif">
 <rect width="240" height="380" rx="8" fill="#12122a"/>
@@ -1115,12 +1128,10 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="140" y="40" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
 <circle cx="120" cy="115" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="115" r="3" fill="#888"/>
-<!-- FC top ω: wx=534(right,small), wy=-2334(forward=up,very large) → mostly upward(=pitch dir), slightly right -->
 <line x1="112" y1="150" x2="132" y2="75" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="134,69 127,80 139,80" fill="#ff8a65"/>
 <text x="140" y="76" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
 <text x="56" y="100" fill="#555" font-size="8" opacity="0.6">High G comp.</text>
-<!-- FF reference ghost: mostly right -->
 <line x1="54" y1="130" x2="186" y2="100" stroke="#e94560" stroke-width="1" stroke-dasharray="4,3" opacity="0.3"/>
 <text x="188" y="98" fill="#e94560" font-size="8" opacity="0.4">FF</text>
 <text x="120" y="172" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
@@ -1131,11 +1142,9 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="148" y="226" fill="#4488ff" font-size="10" font-weight="bold">Pitch dir.</text>
 <circle cx="120" cy="290" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="290" r="3" fill="#888"/>
-<!-- FC rear ω: wx=534(right,small), wz=-73(down,~0) → almost purely right, very short (only transverse component) -->
 <line x1="100" y1="292" x2="155" y2="288" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="161,287 149,282 149,294" fill="#ff8a65"/>
 <text x="165" y="286" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
-<!-- FF reference ghost: right-down -->
 <line x1="48" y1="275" x2="192" y2="305" stroke="#e94560" stroke-width="1" stroke-dasharray="4,3" opacity="0.3"/>
 <text x="194" y="312" fill="#e94560" font-size="8" opacity="0.4">FF</text>
 <text x="120" y="356" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
@@ -1143,17 +1152,8 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="120" y="380" fill="#888" font-size="9" text-anchor="middle">2440rpm, eff.29%</text>
 </svg>
 </figure>
-
-<p>The omega of a cutter looks nearly identical to the FF (rightward) from the pitcher's view. However, from the top view, omega is <strong>tilted heavily toward the velocity direction</strong> (very large gyrospin component). Despite the high spin rate (2440 rpm), the transverse spin that actually contributes to movement is small (spin efficiency 29%).</p>
-
-<p>This characteristic — "looks like an FF from the pitcher's view, but is actually different inside" — is the cutter's weapon. The batter times it expecting an FF, but slight glove-side horizontal movement (toward third base for an RHP) misses the sweet spot of the bat. The speed is also similar to an FF (90-93 mph), making it difficult for the batter to identify the pitch type.</p>
-
-<p>This can be understood as a continuous progression from fastball to cutter to slider, with increasing gyrospin component in omega. Pitch types are not discrete categories but rather a <strong>continuous distribution in omega space</strong>.</p>
-
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-<button class="w3-jump" data-pitch="fc" style="font-size:12px;background:#333;color:#cc6600;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ View FC omega in 3D</button>
-<a href="https://baseball.skill-vis.com/?mlbam_id=506433&year=2025&date=2025-08-27&pitch=5" target="_blank" class="sim-link orange" style="margin:0;">🟠 Simulate Darvish's FC</a>
 </div>
+</details>
 
 <h3>Comparing Pitch Types</h3>
 
@@ -1792,32 +1792,32 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\color{#ff8a65}{\omega_{\text{tot
         w1VelObjs = [];
     }
 
-    function update() {
-        const tilt = parseFloat(document.getElementById('m1-tilt').value);
-        const yaw  = parseFloat(document.getElementById('m1-yaw').value);
-        document.getElementById('m1-tilt-val').textContent = tilt + '°';
-        document.getElementById('m1-yaw-val').textContent = yaw + '°';
+    function updateFromSliders() {
+        const tVal = parseFloat(document.getElementById('m1-tilt').value);
+        const sVal = parseFloat(document.getElementById('m1-yaw').value);
+        const gVal = parseFloat(document.getElementById('m1-gyro').value);
+        document.getElementById('m1-tilt-val').textContent = tVal + '°';
+        document.getElementById('m1-yaw-val').textContent = sVal + '°';
+        document.getElementById('m1-gyro-val').textContent = gVal + '°';
 
         clearAll();
 
-        const tiltRad = tilt * Math.PI / 180;
-        const yawRad  = yaw  * Math.PI / 180;
+        // Same formula as Widget 2 free slider
+        const tRad = tVal * Math.PI / 180;
+        const sRad = sVal * Math.PI / 180;
+        const gRad = gVal * Math.PI / 180;
 
         const totalSpin = 2200;
-        const tComp = Math.sin(tiltRad);
-        const sComp = Math.sin(yawRad);
-        const wx = tComp * totalSpin;
-        const wz = -sComp * totalSpin;
-        const wy = 0;
+        const wx = Math.sin(tRad) * Math.cos(gRad) * totalSpin;
+        const wz = -Math.sin(sRad) * Math.cos(gRad) * totalSpin;
+        const wy = Math.sin(gRad) * totalSpin;
 
-        // Build synthData in same format as Widget 2/3
         const synthData = {
             name: 'Free setting', color: 0xff8a65,
             wx: wx, wz: wz, wy: wy,
             speed: 92, spin: totalSpin
         };
 
-        // Use shared functions (same as Widget 2/3)
         const result = sharedComputeTrajectory(scene, currentObjs, synthData);
         const ballPos = result ? result.pos : new THREE.Vector3(0, 0.8, 0);
         ball.position.copy(ballPos);
@@ -1831,31 +1831,43 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\color{#ff8a65}{\omega_{\text{tot
         sharedDrawOmegaArrow(scene, currentObjs, synthData, 'ω', ballPos, makeTextSprite);
         sharedDrawForceArrow(scene, currentObjs, synthData, ballPos, ballRadius, makeTextSprite);
 
-        // Ball rotation (physical ω, same convention as Widget 2/3)
         const rotScale = 0.00015;
         ballOmega.set(wx * rotScale, wz * rotScale, wy * rotScale);
 
-        // Info text
-        let desc = '';
-        if (tilt < -30 && Math.abs(yaw) < 30) desc = '→ T<0 Backspin dominant: upward force makes ball "ride"';
-        else if (tilt > 30 && Math.abs(yaw) < 30) desc = '→ T>0 Topspin dominant: downward force makes ball drop';
-        else if (Math.abs(yaw) > 30 && Math.abs(tilt) < 30) desc = '→ Sidespin dominant: curves horizontally';
-        else if (Math.abs(tilt) < 15 && Math.abs(yaw) < 15) desc = '→ Spin axis near velocity direction: weak Magnus force';
-        else desc = '→ Mix of topspin and sidespin';
+        const transSpin = Math.sqrt(wx*wx + wz*wz);
+        const totalW = Math.sqrt(wx*wx + wz*wz + wy*wy);
+        const eff = totalW > 0 ? Math.round(transSpin / totalW * 100) : 0;
         document.getElementById('m1-info').textContent =
-            `T=${tilt}°, S=${yaw}°  ${desc}`;
+            `T=${tVal}°, S=${sVal}°, G=${gVal}°  Spin eff.=${eff}%`;
     }
 
-    document.getElementById('m1-tilt').addEventListener('input', update);
-    document.getElementById('m1-yaw').addEventListener('input', update);
-    document.getElementById('m1-reset-ff').addEventListener('click', function() {
-        document.getElementById('m1-tilt').value = 66;
-        document.getElementById('m1-yaw').value = 24;
-        update();
+    document.getElementById('m1-tilt').addEventListener('input', updateFromSliders);
+    document.getElementById('m1-yaw').addEventListener('input', updateFromSliders);
+    document.getElementById('m1-gyro').addEventListener('input', updateFromSliders);
+
+    // Preset buttons: FF uses real data as-is; SL fixes G=-70° for pedagogical clarity
+    // (allows demonstrating S slider effect on ω direction at a consistent gyro angle)
+    document.querySelectorAll('.m1-preset').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const wx = parseFloat(this.dataset.wx);
+            const wz = parseFloat(this.dataset.wz);
+            const wy = parseFloat(this.dataset.wy);
+            const transSpin = Math.sqrt(wx*wx + wz*wz);
+            const total = Math.sqrt(wx*wx + wz*wz + wy*wy);
+            const tApprox = transSpin > 0 ? Math.round(Math.asin(Math.max(-1, Math.min(1, wx / transSpin))) * 180 / Math.PI) : 0;
+            const sApprox = transSpin > 0 ? Math.round(Math.asin(Math.max(-1, Math.min(1, -wz / transSpin))) * 180 / Math.PI) : 0;
+            // FF: use real G from data; SL: fix G=-70°
+            const isFF = this.dataset.name.startsWith('FF');
+            const gVal = isFF ? -Math.round(Math.asin(Math.max(0, Math.min(1, Math.abs(wy) / total))) * 180 / Math.PI) : -70;
+            document.getElementById('m1-tilt').value = tApprox;
+            document.getElementById('m1-yaw').value = sApprox;
+            document.getElementById('m1-gyro').value = gVal;
+            updateFromSliders();
+        });
     });
 
-    // Initial: Fastball
-    update();
+    // Initial
+    updateFromSliders();
 
     const clock = new THREE.Clock();
     function animate() {

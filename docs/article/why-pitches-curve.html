@@ -528,7 +528,9 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\color{#ff8a65}{\omega_{\text{tot
 
 <p>この「回転軸と進行方向に直交する方向に曲がる」ルールが、全ての球種の変化を統一的に説明する。</p>
 
-<h3>外積（クロス積）— マグヌス力の方向を決める数学</h3>
+<details>
+<summary>📐 外積（クロス積）— マグヌス力の方向を決める数学</summary>
+<div>
 
 <p>マグヌス力の方向は、角速度ベクトル $\boldsymbol{\omega}$ と速度ベクトル $\mathbf{v}$ の<strong>外積</strong>（クロス積） $\boldsymbol{\omega} \times \mathbf{v}$ で決まる。外積は難しそうに見えるが、次の2つのルールだけ覚えれば十分だ（図5）:</p>
 
@@ -544,8 +546,6 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\color{#ff8a65}{\omega_{\text{tot
 <li><strong>大きさ</strong>: $\mathbf{a}$ と $\mathbf{b}$ が張る<strong>平行四辺形の面積</strong>に等しい。2つのベクトルが直交するとき最大、平行のときゼロ。</li>
 </ol>
 </div>
-
-<p>マグヌス力に当てはめると:</p>
 
 <figure style="margin:16px auto;text-align:center;">
 <svg viewBox="0 0 480 220" style="max-width:480px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
@@ -603,6 +603,9 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\color{#ff8a65}{\omega_{\text{tot
 <li>ωとvの角度が中間的な場合（多くの球種がこれに該当）、マグヌス力はゼロと最大の間の値をとる</li>
 </ul>
 
+</div>
+</details>
+
 <p>下の3Dウィジェットで、回転軸（<span style="color:#ff8a65">オレンジの矢印 ω</span>）をスライダーで動かすと、マグヌス力（<span style="color:#4fc3f7">水色の矢印 F</span>）の方向と軌道がどう変わるか体験できる。ストレート（ω⊥v）とスライダー（ω≈v）をプリセットで切り替えて、力の大きさと方向の違いを比べてみよう。</p>
 
 <div style="background:#111;border-radius:8px;padding:16px;margin:20px 0;">
@@ -610,8 +613,8 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\color{#ff8a65}{\omega_{\text{tot
 <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px;">
 <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center;">
 <label style="color:#aaa;font-size:13px;">T (トップスピン): <input type="range" id="m1-tilt" min="-90" max="90" value="60" style="width:140px;vertical-align:middle;"> <span id="m1-tilt-val" style="color:#ff8a65;font-weight:bold;">60°</span></label>
-<label style="color:#aaa;font-size:13px;">S (サイドスピン): <input type="range" id="m1-yaw" min="-90" max="90" value="23" style="width:140px;vertical-align:middle;"> <span id="m1-yaw-val" style="color:#ff8a65;font-weight:bold;">23°</span></label>
-<label style="color:#aaa;font-size:13px;">G (ジャイロ): <input type="range" id="m1-gyro" min="-90" max="0" value="-20" style="width:120px;vertical-align:middle;"> <span id="m1-gyro-val" style="color:#ff8a65;font-weight:bold;">-20°</span></label>
+<label style="color:#aaa;font-size:13px;">S (サイドスピン): <input type="range" id="m1-yaw" min="-120" max="120" value="23" style="width:140px;vertical-align:middle;"> <span id="m1-yaw-val" style="color:#ff8a65;font-weight:bold;">23°</span></label>
+<label style="color:#aaa;font-size:13px;">G (ジャイロ): <input type="range" id="m1-gyro" min="-90" max="0" value="-70" style="width:120px;vertical-align:middle;"> <span id="m1-gyro-val" style="color:#ff8a65;font-weight:bold;">-70°</span></label>
 </div>
 <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
 <span style="color:#666;font-size:12px;">プリセット:</span>
@@ -622,9 +625,11 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\color{#ff8a65}{\omega_{\text{tot
 <div id="m1-info" style="color:#888;font-size:12px;margin-top:6px;"></div>
 </div>
 
-<p>まず、サイドスピン（S）のスライダーを動かしてみよう。ストレートのプリセットでもスライダーのプリセットでも、Sを変えると<span style="color:#ff8a65">角速度ベクトル ω</span> の向きが上下に変化するのがわかるだろう。ストレート系（ωとvがほぼ直交）でもスライダー系（ωがv方向に近くジャイロ成分が大きい）でも、サイドスピン成分の上下が<span style="color:#4fc3f7">マグヌス力</span>の左右方向を決め、それに連動してボールの軌道が左右に変化する。</p>
+<p>「SL スライダー」プリセットを押してから、サイドスピン（S）のスライダーを動かしてみよう。Sを変えると<span style="color:#ff8a65">角速度ベクトル ω</span> が速度ベクトル $\mathbf{v}$ に対して<strong>上下に移動する</strong>のがわかるだろう。ωが $\mathbf{v}$ の上側にあるか下側にあるかで、外積 $\boldsymbol{\omega} \times \mathbf{v}$ の向きが反転し、<span style="color:#4fc3f7">マグヌス力</span>の左右方向が逆になる。</p>
 
-<p>次にジャイロ（G）のスライダーを動かしてみよう。ジャイロ成分を増やすと、<span style="color:#4fc3f7">マグヌス力の矢印</span>が短くなっていく。ωがvに平行に近づくほど、外積 $\boldsymbol{\omega} \times \mathbf{v}$ が小さくなるためだ。</p>
+<p>実際の投手で見ると、山本由伸のスライダーはωが $\mathbf{v}$ のわずかに上側に位置し、<strong>グラブサイド（三塁方向）</strong>へ変化する。一方、今井達也のスライダーはωが $\mathbf{v}$ の下側に位置し、通常とは逆の<strong>アームサイド（一塁方向）</strong>へ変化する。これがいわゆる "Wrong-way slider" だ。同じ「スライダー」という名前でも、サイドスピン成分の符号が逆なだけで、変化方向が正反対になる。上のウィジェットでSを正→負に切り替えると、この違いを体験できる。</p>
+
+<p>次にジャイロ（G）のスライダーを動かしてみよう。ジャイロ成分を増やす（Gを0に近づける）と、<span style="color:#4fc3f7">マグヌス力の矢印</span>が短くなっていく。ωが $\mathbf{v}$ に平行に近づくほど、外積 $\boldsymbol{\omega} \times \mathbf{v}$ が小さくなるためだ。</p>
 
 <details>
 <summary>📐 研究者向け: マグヌス力の数式</summary>
@@ -649,13 +654,13 @@ $$C_L = \frac{c_2 \cdot S}{c_0 + c_1 \cdot S}$$
 <!-- ========== 第2章 ========== -->
 <h2 id="ch2">第2章: 回転を矢印（ベクトル）で理解する</h2>
 
-<h3>2-1. 角速度ベクトルとは</h3>
+<h3>2-1. 角速度ベクトル — 回転を1本の矢印で表す</h3>
 
 <p>回転は<strong>角速度ベクトル</strong>（$\boldsymbol{\omega}$）で表現できる。この矢印は次の2つの情報を持つ:</p>
 
 <ul>
 <li><strong>方向</strong>: 回転軸の向き（右ねじの法則）</li>
-<li><strong>長さ</strong>: 回転の速さ（回転数, rpm = revolutions per minute, 1分間の回転数。1 rpm = 0.1047 rad/s = 6 °/s）</li>
+<li><strong>長さ</strong>: 回転の速さ（回転数）</li>
 </ul>
 
 <p>右ねじの法則とは、右手の指を回転方向に巻いたとき、親指が指す向きが矢印の方向だ（図6）。</p>
@@ -664,8 +669,6 @@ $$C_L = \frac{c_2 \cdot S}{c_0 + c_1 \cdot S}$$
 <img src="img/screw_with_string.png" alt="角速度ベクトル: 矢印の方向が回転軸（右ねじが進む向き）、長さが回転の速さ" style="max-width:360px;width:100%;height:auto;">
 <figcaption>図6. 角速度ベクトル ω: 矢印の方向が回転軸（右ねじが進む向き）、長さが回転の速さを表す。</figcaption>
 </figure>
-
-<h3>2-2. なぜ「角度」ではなく「ベクトル」なのか</h3>
 
 <p>野球界では回転を「Spin Axis」の角度（時計の文字盤の何時方向か）で表現することが多い。しかしこの表現には限界がある:</p>
 
@@ -679,7 +682,7 @@ $$C_L = \frac{c_2 \cdot S}{c_0 + c_1 \cdot S}$$
 
 <p>ベクトル表現なら、<strong>方向と大きさを同時に</strong>表現でき、2つの投球の「似ている度」をベクトルの距離として計算できる。</p>
 
-<h3>2-3. 3つの成分: トップスピン・サイドスピン・ジャイロスピン</h3>
+<h3>2-2. 3つの成分: トップスピン・サイドスピン・ジャイロスピン</h3>
 
 <p>角速度ベクトルは、投球に対して意味のある3つの成分に分解できる:</p>
 
@@ -732,11 +735,11 @@ $$C_L = \frac{c_2 \cdot S}{c_0 + c_1 \cdot S}$$
 <figcaption>図7. 角速度ベクトル ω と TSG座標系の関係。左: ωがT-S面内にある場合（ジャイロ成分ゼロ、スピン効率100%）。右: ωがT-S面からはみ出す場合（ジャイロ成分あり、スピン効率が低下）。</figcaption>
 </figure>
 
-<p>図7の左図のように、角速度ベクトル $\boldsymbol{\omega}$ がT-S平面内（＝投球方向に垂直な面内）にある場合、回転エネルギーのすべてがマグヌス力に変換され、ボールは左右・上下に効率よく変化する。次に述べるスピン効率は100%となる。一方、右図のように $\boldsymbol{\omega}$ が投球方向（G軸）に近づくと、ジャイロ成分が増えてマグヌス力への寄与が減り、上下左右の変化量は小さくなる。ただし、変化量が小さいこと自体が悪いわけではない。球種によっては、ジャイロ成分を積極的に利用して打者のタイミングを外す投球もある。</p>
+<p>図7左のように $\boldsymbol{\omega}$ がT-S平面内（投球方向に垂直な面）にあれば、回転のすべてがマグヌス力に変換され、スピン効率は100%になる。右図のように $\boldsymbol{\omega}$ がG軸に近づくと、ジャイロ成分が増えて変化量は小さくなる。ただし変化量が小さいこと自体が悪いわけではなく、ジャイロ成分を積極的に利用して打者のタイミングを外す球種もある。</p>
 
-<p>ジャイロ成分 $\omega_G$（角速度ベクトルのG軸への射影）は、投球軌道の変化を左右する重要な成分である。しかし残念ながら、MLBのStatcastが公開するデータにはこの成分が含まれておらず、公開データだけでは角速度ベクトルを完全に復元することも、物理的に正確な軌道計算を行うこともできない。本サイトの<a href="../">Baseball Pitch Trajectory Simulator</a>は、Statcastの公開データからジャイロ成分を推定したうえでシミュレーションを実現しており、これが大きな特徴のひとつである。</p>
+<p>ジャイロ成分 $\omega_G$ は投球軌道を左右する重要な成分だが、MLBのStatcast公開データにはこの成分が含まれていない。本サイトの<a href="../">シミュレータ</a>は、公開データからジャイロ成分を推定したうえで軌道計算を行っており、これが大きな特徴のひとつである。</p>
 
-<p>この T, S, G の3つの軸は互いに<strong>直交</strong>し、<strong>TSG座標系</strong>（右手系: $\hat{\mathbf{e}}_T \times \hat{\mathbf{e}}_S = \hat{\mathbf{e}}_G$）を構成する。名前の並び順がそのまま数学的な右手系の巡回順であり、任意の角速度ベクトル $\boldsymbol{\omega}$ はこの3軸への射影として一意に分解できる。下の3Dウィジェットで、TSG座標系の3軸と速度ベクトルの関係を確認しよう。マウスドラッグで視点を回転できる。</p>
+<p>T, S, Gは互いに<strong>直交</strong>し、名前の並び順がそのまま右手系の巡回順（$\hat{\mathbf{e}}_T \times \hat{\mathbf{e}}_S = \hat{\mathbf{e}}_G$）となる<strong>TSG座標系</strong>を構成する。任意の $\boldsymbol{\omega}$ はこの3軸への射影として一意に分解できる。下の3Dウィジェットで確認しよう。</p>
 
 <div style="background:#111;border-radius:8px;padding:16px;margin:20px 0;">
 <canvas id="bsg-axes-canvas" style="width:100%;height:420px;border-radius:8px;cursor:grab;"></canvas>
@@ -766,7 +769,7 @@ $$C_L = \frac{c_2 \cdot S}{c_0 + c_1 \cdot S}$$
 </div>
 </details>
 
-<h3>2-4. スピン効率</h3>
+<h3>2-3. スピン効率</h3>
 
 <p>ジャイロ成分（G）はマグヌス力を生まないため、全回転数のうち<strong>実際に変化に寄与する割合</strong>が重要になる。これを<strong>スピン効率</strong>（Active Spin %）と呼ぶ。</p>
 
@@ -844,7 +847,7 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <!-- ========== 第3章 ========== -->
 <h2 id="ch3">第3章: 各球種のωベクトル — なぜそう曲がるのか</h2>
 
-<p>各球種の典型的なωベクトルと軌跡を3Dで確認しよう。球種を選択すると、回転軸・マグヌス力・軌跡が表示される。</p>
+<p>球種名は便宜的なカテゴリであり、実際にはωベクトルの<strong>連続的なスペクトラム</strong>上に位置する。以下では代表的な7球種の典型的なωと軌跡を確認する。球種を選択すると、回転軸・マグヌス力・軌跡が3Dで表示される。</p>
 
 <div style="background:#111;border-radius:8px;padding:16px;margin:20px 0;">
 <canvas id="w3-canvas" style="width:100%;height:420px;border-radius:8px;cursor:grab;"></canvas>
@@ -863,23 +866,29 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 
 <h3>3-1. ストレート（4シーム, FF）</h3>
 
+<p>バックスピン（T &lt; 0）が支配的で、ωはほぼ水平・投球方向に垂直。$\boldsymbol{\omega} \times \mathbf{v}$ により<strong>上向き</strong>のマグヌス力が発生し、重力に抗ってボールを「落ちにくく」する。スピン効率が100%に近いほど、同じ回転数でもホップ量が大きくなる。</p>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w3-jump" data-pitch="ff" style="font-size:12px;background:#333;color:#e94560;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ FFのωを3Dで見る</button>
+<a href="https://baseball.skill-vis.com/?mlbam_id=660271&year=2025&date=2025-06-28&pitch=0" target="_blank" class="sim-link" style="margin:0;">🔵 大谷のFFをシミュレート</a>
+</div>
+
+<details>
+<summary>📊 FF の ω 方向図（山本由伸 96.3mph, 2240rpm, 効率94%）</summary>
+<div>
 <figure style="margin:16px auto;text-align:center;">
 <svg viewBox="0 0 240 380" style="max-width:240px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
 <rect width="240" height="380" rx="8" fill="#12122a"/>
-<!-- === Top: 真上から === -->
 <text x="120" y="18" fill="#888" font-size="11" text-anchor="middle">真上から</text>
 <polygon points="120,28 113,42 127,42" fill="#4488ff"/>
 <line x1="120" y1="42" x2="120" y2="62" stroke="#4488ff" stroke-width="4"/>
 <text x="140" y="40" fill="#4488ff" font-size="10" font-weight="bold">投球方向</text>
 <circle cx="120" cy="115" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="115" r="3" fill="#888"/>
-<!-- Yamamoto FF top: wx=1900(→1B=right), wy=-761(→catcher=up in top view) → ω right + slightly forward -->
 <line x1="54" y1="130" x2="186" y2="100" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="192,98 180,94 180,106" fill="#ff8a65"/>
 <text x="194" y="96" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
 <text x="120" y="172" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
-
-<!-- === Bottom: 投手目線 === -->
 <text x="120" y="196" fill="#888" font-size="11" text-anchor="middle">投手目線</text>
 <polygon points="120,204 113,218 127,218" fill="#4488ff"/>
 <line x1="120" y1="218" x2="120" y2="230" stroke="#4488ff" stroke-width="4"/>
@@ -888,28 +897,29 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="148" y="226" fill="#4488ff" font-size="10" font-weight="bold">投球方向</text>
 <circle cx="120" cy="290" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="290" r="3" fill="#888"/>
-<!-- Yamamoto FF rear: wx=1900(→1B=right), wz=-852(→down) → ω right-down -->
 <line x1="48" y1="265" x2="192" y2="315" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="198,317 186,311 186,323" fill="#ff8a65"/>
 <text x="198" y="322" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
 <text x="120" y="348" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
-<!-- Info -->
 <text x="120" y="365" fill="#888" font-size="9" text-anchor="middle">山本由伸 FF: 96.3mph</text>
 <text x="120" y="377" fill="#888" font-size="9" text-anchor="middle">2240rpm, 効率94%</text>
 </svg>
 </figure>
-
-<p>ストレート（4シーム）のωは、ほぼ水平で進行方向に垂直な方向を向く。これはバックスピン（TSG座標系で T &lt; 0）が支配的であることを意味する。$\boldsymbol{\omega} \times \mathbf{v}$ の結果、マグヌス力は<strong>上向き</strong>に作用し、重力に抗ってボールを「浮かせる」（正確には「落ちにくくする」）。</p>
-
-<p>右投手の場合、投手目線でωは<strong>一塁方向（右）</strong>を向く（図参照）。真上から見ると、ωにはわずかなジャイロ成分（速度方向の成分）が含まれることがある。ジャイロ成分はマグヌス力に寄与しないため、スピン効率が100%に近いほど、同じ回転数でもホップ量が大きくなる。</p>
-
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-<button class="w3-jump" data-pitch="ff" style="font-size:12px;background:#333;color:#e94560;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ FFのωを3Dで見る</button>
-<a href="https://baseball.skill-vis.com/?mlbam_id=660271&year=2025&date=2025-06-28&pitch=0" target="_blank" class="sim-link" style="margin:0;">🔵 大谷のFFをシミュレート</a>
 </div>
+</details>
 
 <h3>3-2. カーブ（CU）</h3>
 
+<p>FFとほぼ<strong>逆方向</strong>のトップスピン（T &gt; 0）が支配的。$\boldsymbol{\omega} \times \mathbf{v}$ が<strong>下向き + 横方向</strong>の力を生み、大きく落下しながら曲がる。球速は低い（70〜80 mph）が回転数は高く（2500〜2800 rpm）、サイドスピン成分によりグラブサイドへの横変化も加わる。</p>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w3-jump" data-pitch="cu" style="font-size:12px;background:#333;color:#44ccff;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ CUのωを3Dで見る</button>
+<a href="https://baseball.skill-vis.com/?mlbam_id=660271&year=2025&date=2025-08-27&pitch=5" target="_blank" class="sim-link orange" style="margin:0;">🟠 大谷のCUをシミュレート</a>
+</div>
+
+<details>
+<summary>📊 CU の ω 方向図（大谷翔平 77.6mph, 2622rpm, 効率65%）</summary>
+<div>
 <figure style="margin:16px auto;text-align:center;">
 <svg viewBox="0 0 240 380" style="max-width:240px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
 <rect width="240" height="380" rx="8" fill="#12122a"/>
@@ -919,20 +929,17 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="140" y="40" fill="#4488ff" font-size="10" font-weight="bold">投球方向</text>
 <circle cx="120" cy="115" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="115" r="3" fill="#888"/>
-<!-- CU top ω: wx=-1376(left), wy=-1971(forward=up in top view) → left-up -->
 <line x1="168" y1="152" x2="72" y2="78" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="66,74 78,72 76,84" fill="#ff8a65"/>
 <text x="50" y="72" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
 <text x="120" y="172" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
 <text x="120" y="196" fill="#888" font-size="11" text-anchor="middle">投手目線</text>
-<!-- Perspective arrow: narrow top, wide bottom (into screen) -->
 <polygon points="120,204 112,230 128,230" fill="#4488ff"/>
 <polygon points="112,230 108,236 132,236 128,230" fill="#3366cc"/>
 <polygon points="108,236 104,240 136,240 132,236" fill="#2244aa"/>
 <text x="148" y="226" fill="#4488ff" font-size="10" font-weight="bold">投球方向</text>
 <circle cx="120" cy="280" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="280" r="3" fill="#888"/>
-<!-- CU rear ω: wx=-1376(left), wz=1127(up) → left-up -->
 <line x1="172" y1="320" x2="68" y2="240" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="62,236 74,234 72,246" fill="#ff8a65"/>
 <text x="46" y="234" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
@@ -941,18 +948,21 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="120" y="377" fill="#888" font-size="9" text-anchor="middle">2622rpm, 効率65%</text>
 </svg>
 </figure>
-
-<p>カーブのωは、FFとほぼ<strong>逆方向</strong>（トップスピン方向、TSG座標系で T &gt; 0）を向く。これにより $\boldsymbol{\omega} \times \mathbf{v}$ が<strong>下向き + 横方向</strong>の力を生み、ボールが大きく落下しながら曲がる。</p>
-
-<p>球速はストレートより大幅に低い（70〜80 mph / 113〜129 km/h）が、回転数は高い（2500〜2800 rpm）。右投手の場合、ωに含まれるサイドスピン成分により、落下に加えてグラブサイド（三塁方向）への横変化も生まれる。真上から見ると、ωにはジャイロ成分が含まれることもあり、スピン効率は投手によって異なる。</p>
-
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-<button class="w3-jump" data-pitch="cu" style="font-size:12px;background:#333;color:#44ccff;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ CUのωを3Dで見る</button>
-<a href="https://baseball.skill-vis.com/?mlbam_id=660271&year=2025&date=2025-08-27&pitch=5" target="_blank" class="sim-link orange" style="margin:0;">🟠 大谷のCUをシミュレート</a>
 </div>
+</details>
 
 <h3>3-3. スイーパー（ST）</h3>
 
+<p>サイドスピンが支配的で、投手目線でωはほぼ<strong>鉛直上向き</strong>。ジャイロ成分がほぼゼロ（スピン効率≈100%）のため、$\boldsymbol{\omega} \times \mathbf{v}$ は<strong>水平方向</strong>に大きな力を生み、鋭い横変化となる。大谷の2023年スイーパーは横変化量 ≈ 61.6 cm を記録した。</p>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w3-jump" data-pitch="st" style="font-size:12px;background:#333;color:#aa44ff;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ STのωを3Dで見る</button>
+<a href="https://baseball.skill-vis.com/?mlbam_id=660271&year=2023&date=2023-03-30&pitch=25" target="_blank" class="sim-link orange" style="margin:0;">🟠 大谷のSTをシミュレート</a>
+</div>
+
+<details>
+<summary>📊 ST の ω 方向図（大谷翔平 85.2mph, 2625rpm, 効率100%）</summary>
+<div>
 <figure style="margin:16px auto;text-align:center;">
 <svg viewBox="0 0 240 380" style="max-width:240px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
 <rect width="240" height="380" rx="8" fill="#12122a"/>
@@ -962,7 +972,6 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="140" y="40" fill="#4488ff" font-size="10" font-weight="bold">投球方向</text>
 <circle cx="120" cy="115" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="115" r="3" fill="#888"/>
-<!-- ST top ω: wx=643(right), wy=0(G=0) → short right -->
 <line x1="100" y1="115" x2="150" y2="115" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="156,115 144,109 144,121" fill="#ff8a65"/>
 <text x="160" y="112" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
@@ -974,7 +983,6 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="148" y="226" fill="#4488ff" font-size="10" font-weight="bold">投球方向</text>
 <circle cx="120" cy="280" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="280" r="3" fill="#888"/>
-<!-- ST rear ω: wx=643(right,small), wz=2545(up,large) → mostly up, slightly right -->
 <line x1="108" y1="340" x2="132" y2="220" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="134,214 127,226 139,226" fill="#ff8a65"/>
 <text x="140" y="222" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
@@ -983,18 +991,21 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="120" y="377" fill="#888" font-size="9" text-anchor="middle">2625rpm, 効率100%</text>
 </svg>
 </figure>
-
-<p>スイーパーのωは、投手目線でほぼ<strong>鉛直上向き</strong>を向く。これはサイドスピンが支配的であることを意味する。真上から見るとωは進行方向に対して<strong>垂直</strong>（横向き）で、ジャイロ成分がほぼゼロ（スピン効率≈100%）。</p>
-
-<p>$\boldsymbol{\omega} \times \mathbf{v}$ は<strong>水平方向</strong>に大きな力を生み、鋭い横変化となる。大谷の2023年スイーパーは横変化量 ≈ 61.6 cm に達し、MLB最大級の横変化を記録した。この例は<strong>極端なスイーパー</strong>で、スピン効率≈100%という理想的なサイドスピン球だ。</p>
-
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-<button class="w3-jump" data-pitch="st" style="font-size:12px;background:#333;color:#aa44ff;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ STのωを3Dで見る</button>
-<a href="https://baseball.skill-vis.com/?mlbam_id=660271&year=2023&date=2023-03-30&pitch=25" target="_blank" class="sim-link orange" style="margin:0;">🟠 大谷のSTをシミュレート</a>
 </div>
+</details>
 
 <h3>3-4. スライダー（SL）</h3>
 
+<p>STとは対照的にωが<strong>速度方向（ジャイロ軸）に近い</strong>。transverse spinが小さく（山本の例でスピン効率13%）、横変化はSTほど大きくならないが、縦の落差が加わり「キレのある落ちるスライダー」となる。ST→SLはωのジャイロ成分の大小として<strong>連続的に変化する</strong>。</p>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w3-jump" data-pitch="sl" style="font-size:12px;background:#333;color:#4488ff;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ SLのωを3Dで見る</button>
+<a href="https://baseball.skill-vis.com/?mlbam_id=808967&year=2026&date=2026-04-01&pitch=57" target="_blank" class="sim-link orange" style="margin:0;">🟠 山本のSLをシミュレート</a>
+</div>
+
+<details>
+<summary>📊 SL の ω 方向図（山本由伸 87.1mph, 2626rpm, 効率13%）</summary>
+<div>
 <figure style="margin:16px auto;text-align:center;">
 <svg viewBox="0 0 240 380" style="max-width:240px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
 <rect width="240" height="380" rx="8" fill="#12122a"/>
@@ -1004,7 +1015,6 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="140" y="40" fill="#4488ff" font-size="10" font-weight="bold">投球方向</text>
 <circle cx="120" cy="115" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="115" r="3" fill="#888"/>
-<!-- SL top ω: wx=209(right,small), wy=-2595(forward=up,very large) → mostly upward, slightly right -->
 <line x1="114" y1="150" x2="128" y2="75" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="130,69 123,80 135,80" fill="#ff8a65"/>
 <text x="136" y="76" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
@@ -1017,7 +1027,6 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="148" y="226" fill="#4488ff" font-size="10" font-weight="bold">投球方向</text>
 <circle cx="120" cy="290" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="290" r="3" fill="#888"/>
-<!-- SL rear ω: wx=209(right,small), wz=279(up,small) → slightly right-up, short -->
 <line x1="112" y1="300" x2="134" y2="274" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="137,269 128,270 130,282" fill="#ff8a65"/>
 <text x="140" y="272" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
@@ -1026,20 +1035,21 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="120" y="377" fill="#888" font-size="9" text-anchor="middle">2626rpm, 効率13%</text>
 </svg>
 </figure>
-
-<p>スライダーのωは、スイーパーとは対照的に<strong>速度方向（ジャイロ軸）に近い</strong>方向を向く。真上から見るとωがほぼ投球方向に平行で、transverse spinが小さい。MLB右投手平均のスライダーのスピン効率は約30%で、山本の例（13%）はさらにジャイロ寄りだ。</p>
-
-<p>投手目線では、ωはボール中心からわずかに右上を向く程度で、FFやCUと比べて傾きが小さい。わずかなtransverse spin成分がサイドスピン方向に偏るため、$\boldsymbol{\omega} \times \mathbf{v}$ は<strong>横方向</strong>の力を生むが、スイーパーほどの変化量にはならない。代わりに縦の落差が加わり、「キレのある落ちるスライダー」となる。</p>
-
-<p>スイーパー（ST）からスライダー（SL）まで、ωのジャイロ成分の大小として<strong>連続的に変化する</strong>。球種分類は便宜的なカテゴリであり、実際には連続的なスペクトラムだ。</p>
-
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-<button class="w3-jump" data-pitch="sl" style="font-size:12px;background:#333;color:#4488ff;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ SLのωを3Dで見る</button>
-<a href="https://baseball.skill-vis.com/?mlbam_id=808967&year=2026&date=2026-04-01&pitch=57" target="_blank" class="sim-link orange" style="margin:0;">🟠 山本のSLをシミュレート</a>
 </div>
+</details>
 
 <h3>3-5. シンカー（SI）</h3>
 
+<p>FFと同じバックスピン系だが、ωが投手目線で<strong>大きく下方向に傾く</strong>（サイドスピン成分の増加）。バックスピン成分が減るため<strong>ホップ量が減り</strong>、代わりにアームサイドへの横変化が生まれる。球速はFF並み（93〜96 mph）で、変化方向の違いによりFFとの組み合わせで打者を惑わす。</p>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w3-jump" data-pitch="si" style="font-size:12px;background:#333;color:#ff8844;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ SIのωを3Dで見る</button>
+<a href="https://baseball.skill-vis.com/?mlbam_id=506433&year=2025&date=2025-08-17&pitch=0" target="_blank" class="sim-link orange" style="margin:0;">🟠 ダルビッシュのSIをシミュレート</a>
+</div>
+
+<details>
+<summary>📊 SI の ω 方向図（ダルビッシュ有 93.8mph, 2228rpm, 効率86%）</summary>
+<div>
 <figure style="margin:16px auto;text-align:center;">
 <svg viewBox="0 0 240 380" style="max-width:240px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
 <rect width="240" height="380" rx="8" fill="#12122a"/>
@@ -1049,11 +1059,9 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="140" y="40" fill="#4488ff" font-size="10" font-weight="bold">投球方向</text>
 <circle cx="120" cy="115" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="115" r="3" fill="#888"/>
-<!-- SI top ω: wx=320(right,small), wy=-1126(forward=up,medium) → slightly right + forward -->
 <line x1="110" y1="145" x2="140" y2="80" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="142,74 135,84 147,84" fill="#ff8a65"/>
 <text x="148" y="78" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
-<!-- FF reference ghost: wx=1900(right,large), wy=-761(forward,small) → mostly right -->
 <line x1="54" y1="130" x2="186" y2="100" stroke="#e94560" stroke-width="1" stroke-dasharray="4,3" opacity="0.3"/>
 <text x="188" y="98" fill="#e94560" font-size="8" opacity="0.4">FF</text>
 <text x="120" y="172" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
@@ -1064,11 +1072,9 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="148" y="226" fill="#4488ff" font-size="10" font-weight="bold">投球方向</text>
 <circle cx="120" cy="290" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="290" r="3" fill="#888"/>
-<!-- SI rear ω: wx=320(right,small), wz=-1891(down,large) → mostly downward, slightly right -->
 <line x1="114" y1="230" x2="130" y2="340" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="131,346 124,336 138,336" fill="#ff8a65"/>
 <text x="138" y="346" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
-<!-- FF reference ghost: wx=1900(right,large), wz=-852(down,medium) → right-down -->
 <line x1="48" y1="275" x2="192" y2="305" stroke="#e94560" stroke-width="1" stroke-dasharray="4,3" opacity="0.3"/>
 <text x="194" y="312" fill="#e94560" font-size="8" opacity="0.4">FF</text>
 <text x="120" y="356" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
@@ -1076,20 +1082,21 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="120" y="380" fill="#888" font-size="9" text-anchor="middle">2228rpm, 効率86%</text>
 </svg>
 </figure>
-
-<p>シンカーのωはFFと同じバックスピン系だが、投手目線で<strong>大きく下方向に傾く</strong>。これはサイドスピン成分が増加したことを意味する。右投手の場合、$\boldsymbol{\omega} \times \mathbf{v}$ の結果、マグヌス力はFFの「上向き」から「アームサイド（一塁方向）+ やや上向き」に変わる。</p>
-
-<p>この傾きにより、バックスピン成分（|T|）がFFより小さくなるため<strong>ホップ量が減り</strong>、代わりにサイドスピン成分（S）が増えて<strong>アームサイドへの横変化</strong>が生まれる。図中の破線（FF）と比較すると、投手目線でωが下方向に、真上からは投球方向寄りに傾いていることがわかる。</p>
-
-<p>典型的なシンカーはスピン効率が比較的高く（ジャイロ成分が小さい）、回転のほとんどがボールの変化に寄与する。球速はFF並み（93〜96 mph / 150〜154 km/h）だが、変化方向が異なるためFFとの組み合わせで打者を惑わす。</p>
-
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-<button class="w3-jump" data-pitch="si" style="font-size:12px;background:#333;color:#ff8844;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ SIのωを3Dで見る</button>
-<a href="https://baseball.skill-vis.com/?mlbam_id=506433&year=2025&date=2025-08-17&pitch=0" target="_blank" class="sim-link orange" style="margin:0;">🟠 ダルビッシュのSIをシミュレート</a>
 </div>
+</details>
 
 <h3>3-6. フォーク / スプリット（FS）</h3>
 
+<p>本質はFFに比べて<strong>回転数が少ない</strong>こと（山本FS: 1483 rpm vs FF: 2240 rpm）。FFと同じ球速（92 mph）でもホップ力が弱いため、重力に引かれて<strong>「浮かない」= 沈む</strong>軌道になる。物理的には「落ちる」のではなく「浮かない」が正確な表現だ。</p>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w3-jump" data-pitch="fs" style="font-size:12px;background:#333;color:#88cc88;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ FSのωを3Dで見る</button>
+<a href="https://baseball.skill-vis.com/?mlbam_id=808967&year=2026&date=2026-03-26&pitch=6" target="_blank" class="sim-link orange" style="margin:0;">🟠 山本のFSをシミュレート</a>
+</div>
+
+<details>
+<summary>📊 FS の ω 方向図（山本由伸 92.9mph, 1483rpm, 効率100%）</summary>
+<div>
 <figure style="margin:16px auto;text-align:center;">
 <svg viewBox="0 0 240 380" style="max-width:240px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
 <rect width="240" height="380" rx="8" fill="#12122a"/>
@@ -1099,11 +1106,9 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="140" y="40" fill="#4488ff" font-size="10" font-weight="bold">投球方向</text>
 <circle cx="120" cy="115" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="115" r="3" fill="#888"/>
-<!-- FS top ω: wx=67(right,~0), wy=0(G=0) → tiny right. Much shorter than FF -->
 <line x1="116" y1="115" x2="130" y2="115" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="136,115 126,110 126,120" fill="#ff8a65"/>
 <text x="140" y="112" fill="#ff8a65" font-size="9">ω (小)</text>
-<!-- FF reference ghost: mostly right, long -->
 <line x1="54" y1="130" x2="186" y2="100" stroke="#e94560" stroke-width="1" stroke-dasharray="4,3" opacity="0.3"/>
 <text x="188" y="98" fill="#e94560" font-size="8" opacity="0.4">FF</text>
 <text x="120" y="172" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
@@ -1114,11 +1119,9 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="148" y="226" fill="#4488ff" font-size="10" font-weight="bold">投球方向</text>
 <circle cx="120" cy="290" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="290" r="3" fill="#888"/>
-<!-- FS rear ω: wx=67(right,~0), wz=-1481(down,large) → mostly downward -->
 <line x1="118" y1="250" x2="122" y2="330" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="123,336 116,326 130,326" fill="#ff8a65"/>
 <text x="134" y="334" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
-<!-- FF reference ghost: right-down -->
 <line x1="48" y1="275" x2="192" y2="305" stroke="#e94560" stroke-width="1" stroke-dasharray="4,3" opacity="0.3"/>
 <text x="194" y="312" fill="#e94560" font-size="8" opacity="0.4">FF</text>
 <text x="120" y="356" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
@@ -1126,18 +1129,21 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="120" y="380" fill="#888" font-size="9" text-anchor="middle">1483rpm, 効率100%</text>
 </svg>
 </figure>
-
-<p>フォーク/スプリットの本質は、FFに比べて<strong>回転数が少ない</strong>こと。山本由伸のFSは1483 rpmで、FF（2240 rpm）の約2/3。投手目線ではωはSIに似た下方向（アームサイド方向のサイドスピン）を向くが、回転数自体が少ないためマグヌス力は小さい。</p>
-
-<p>FFと同じ球速（92 mph / 148 km/h）でもホップ力が弱いため、重力に引かれて<strong>「ストレートのように浮かない」= 沈む</strong>軌道になる。物理的には「落ちる」のではなく「浮かない」が正確な表現だ。真上から見るとωは非常に短く（FFの参照線と比較）、回転の絶対量が少ないことがわかる。</p>
-
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-<button class="w3-jump" data-pitch="fs" style="font-size:12px;background:#333;color:#88cc88;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ FSのωを3Dで見る</button>
-<a href="https://baseball.skill-vis.com/?mlbam_id=808967&year=2026&date=2026-03-26&pitch=6" target="_blank" class="sim-link orange" style="margin:0;">🟠 山本のFSをシミュレート</a>
 </div>
+</details>
 
 <h3>3-7. カッター（FC）</h3>
 
+<p>投手目線ではFFとほぼ同じ方向に見えるが、真上から見るとωが<strong>速度方向に大きく傾いている</strong>（ジャイロ成分が非常に大きい）。回転数は多い（2440 rpm）がスピン効率は29%しかなく、わずかなグラブサイドへの横変化でバットの芯を外す。球速もFF並み（90〜93 mph）のため打者は球種を判別しにくい。FF → FC → SLと、ωのジャイロ成分が増加していく<strong>連続的な変化</strong>として理解できる。</p>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+<button class="w3-jump" data-pitch="fc" style="font-size:12px;background:#333;color:#cc6600;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ FCのωを3Dで見る</button>
+<a href="https://baseball.skill-vis.com/?mlbam_id=506433&year=2025&date=2025-08-27&pitch=5" target="_blank" class="sim-link orange" style="margin:0;">🟠 ダルビッシュのFCをシミュレート</a>
+</div>
+
+<details>
+<summary>📊 FC の ω 方向図（ダルビッシュ有 92.1mph, 2440rpm, 効率29%）</summary>
+<div>
 <figure style="margin:16px auto;text-align:center;">
 <svg viewBox="0 0 240 380" style="max-width:240px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
 <rect width="240" height="380" rx="8" fill="#12122a"/>
@@ -1147,12 +1153,10 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="140" y="40" fill="#4488ff" font-size="10" font-weight="bold">投球方向</text>
 <circle cx="120" cy="115" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="115" r="3" fill="#888"/>
-<!-- FC top ω: wx=534(right,small), wy=-2334(forward=up,very large) → mostly upward(=pitch dir), slightly right -->
 <line x1="112" y1="150" x2="132" y2="75" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="134,69 127,80 139,80" fill="#ff8a65"/>
 <text x="140" y="76" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
 <text x="56" y="100" fill="#555" font-size="8" opacity="0.6">G成分 大</text>
-<!-- FF reference ghost: mostly right -->
 <line x1="54" y1="130" x2="186" y2="100" stroke="#e94560" stroke-width="1" stroke-dasharray="4,3" opacity="0.3"/>
 <text x="188" y="98" fill="#e94560" font-size="8" opacity="0.4">FF</text>
 <text x="120" y="172" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
@@ -1163,11 +1167,9 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="148" y="226" fill="#4488ff" font-size="10" font-weight="bold">投球方向</text>
 <circle cx="120" cy="290" r="42" fill="none" stroke="#555" stroke-width="1.5"/>
 <circle cx="120" cy="290" r="3" fill="#888"/>
-<!-- FC rear ω: wx=534(right,small), wz=-73(down,~0) → almost purely right, very short (only transverse component) -->
 <line x1="100" y1="292" x2="155" y2="288" stroke="#ff8a65" stroke-width="3"/>
 <polygon points="161,287 149,282 149,294" fill="#ff8a65"/>
 <text x="165" y="286" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
-<!-- FF reference ghost: right-down -->
 <line x1="48" y1="275" x2="192" y2="305" stroke="#e94560" stroke-width="1" stroke-dasharray="4,3" opacity="0.3"/>
 <text x="194" y="312" fill="#e94560" font-size="8" opacity="0.4">FF</text>
 <text x="120" y="356" fill="#555" font-size="9" text-anchor="middle">3B ← → 1B</text>
@@ -1175,17 +1177,8 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <text x="120" y="380" fill="#888" font-size="9" text-anchor="middle">2440rpm, 効率29%</text>
 </svg>
 </figure>
-
-<p>カッターのωは、投手目線ではFFとほぼ同じ方向（右方向）に見える。しかし真上から見ると、ωが<strong>速度方向に大きく傾いている</strong>（ジャイロ成分が非常に大きい）。つまり回転数は多い（2440 rpm）にもかかわらず、実際にボールの変化に寄与するtransverse spinは小さい（スピン効率29%）。</p>
-
-<p>この「投手目線ではFFに見えるが、実は中身が違う」という特性がカッターの武器だ。打者はFFのつもりでタイミングを合わせるが、わずかなグラブサイド（右投手なら三塁方向）への横変化により、バットの芯を外す。球速もFF並み（90〜93 mph / 145〜150 km/h）のため、打者は球種を判別しにくい。</p>
-
-<p>ストレート → カッター → スライダーと、ωのジャイロ成分が増加していく連続的な変化として理解できる。球種は離散的なカテゴリではなく、<strong>ω空間上の連続的な分布</strong>だ。</p>
-
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-<button class="w3-jump" data-pitch="fc" style="font-size:12px;background:#333;color:#cc6600;border:1px solid #555;border-radius:4px;padding:4px 12px;cursor:pointer;">▶ FCのωを3Dで見る</button>
-<a href="https://baseball.skill-vis.com/?mlbam_id=506433&year=2025&date=2025-08-27&pitch=5" target="_blank" class="sim-link orange" style="margin:0;">🟠 ダルビッシュのFCをシミュレート</a>
 </div>
+</details>
 
 <h3>球種の比較</h3>
 
@@ -1874,38 +1867,29 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\color{#ff8a65}{\omega_{\text{tot
     document.getElementById('m1-yaw').addEventListener('input', updateFromSliders);
     document.getElementById('m1-gyro').addEventListener('input', updateFromSliders);
 
-    // Preset buttons (use real pitch data directly + sync sliders)
+    // Preset buttons: FF uses real data as-is; SL fixes G=-70° for pedagogical clarity
+    // (allows demonstrating S slider effect on ω direction at a consistent gyro angle)
     document.querySelectorAll('.m1-preset').forEach(btn => {
         btn.addEventListener('click', function() {
             const wx = parseFloat(this.dataset.wx);
             const wz = parseFloat(this.dataset.wz);
             const wy = parseFloat(this.dataset.wy);
-            const d = {
-                name: this.dataset.name,
-                color: 0xff8a65,
-                wx: wx, wz: wz, wy: wy,
-                speed: parseFloat(this.dataset.speed),
-                spin: 2200
-            };
-            // Sync sliders to approximate T/S/G angles
+            const transSpin = Math.sqrt(wx*wx + wz*wz);
             const total = Math.sqrt(wx*wx + wz*wz + wy*wy);
-            const gComp = -wy / total;  // wy = -gComp * total
-            const gAbs = Math.round(Math.asin(Math.max(0, Math.min(1, gComp))) * 180 / Math.PI);
-            const cosG = Math.cos(gAbs * Math.PI / 180);
-            const tApprox = cosG > 0.01 ? Math.round(Math.asin(Math.max(-1, Math.min(1, wx / (total * cosG)))) * 180 / Math.PI) : 0;
-            const sApprox = cosG > 0.01 ? Math.round(Math.asin(Math.max(-1, Math.min(1, -wz / (total * cosG)))) * 180 / Math.PI) : 0;
+            const tApprox = transSpin > 0 ? Math.round(Math.asin(Math.max(-1, Math.min(1, wx / transSpin))) * 180 / Math.PI) : 0;
+            const sApprox = transSpin > 0 ? Math.round(Math.asin(Math.max(-1, Math.min(1, -wz / transSpin))) * 180 / Math.PI) : 0;
+            // FF: use real G from data; SL: fix G=-70°
+            const isFF = this.dataset.name.startsWith('FF');
+            const gVal = isFF ? -Math.round(Math.asin(Math.max(0, Math.min(1, Math.abs(wy) / total))) * 180 / Math.PI) : -70;
             document.getElementById('m1-tilt').value = tApprox;
             document.getElementById('m1-yaw').value = sApprox;
-            document.getElementById('m1-gyro').value = -gAbs;
-            document.getElementById('m1-tilt-val').textContent = tApprox + '°';
-            document.getElementById('m1-yaw-val').textContent = sApprox + '°';
-            document.getElementById('m1-gyro-val').textContent = -gAbs + '°';
-            render(d);
+            document.getElementById('m1-gyro').value = gVal;
+            updateFromSliders();
         });
     });
 
-    // Initial: Fastball (trigger FF preset click)
-    document.querySelector('.m1-preset').click();
+    // Initial: use slider default values
+    updateFromSliders();
 
     const clock = new THREE.Clock();
     function animate() {
