@@ -614,8 +614,8 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\color{#ff8a65}{\omega_{\text{tot
 </div>
 <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
 <span style="color:#666;font-size:12px;">プリセット:</span>
-<button class="m1-preset" data-t="66" data-s="24" style="font-size:11px;background:#333;color:#e94560;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">FF ストレート（ω⊥v）</button>
-<button class="m1-preset" data-t="65" data-s="-25" style="font-size:11px;background:#333;color:#4488ff;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">SL スライダー（ω≈v）</button>
+<button class="m1-preset" data-wx="1900" data-wz="-852" data-wy="-761" data-speed="96.3" data-name="FF 山本由伸" style="font-size:11px;background:#333;color:#e94560;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">FF ストレート（ω⊥v）</button>
+<button class="m1-preset" data-wx="209" data-wz="279" data-wy="-2595" data-speed="87.1" data-name="SL 山本由伸" style="font-size:11px;background:#333;color:#4488ff;border:1px solid #555;border-radius:4px;padding:2px 10px;cursor:pointer;">SL スライダー（ω≈v）</button>
 </div>
 </div>
 <div id="m1-info" style="color:#888;font-size:12px;margin-top:6px;"></div>
@@ -1772,32 +1772,9 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\color{#ff8a65}{\omega_{\text{tot
         w1VelObjs = [];
     }
 
-    function update() {
-        const tilt = parseFloat(document.getElementById('m1-tilt').value);
-        const yaw  = parseFloat(document.getElementById('m1-yaw').value);
-        document.getElementById('m1-tilt-val').textContent = tilt + '°';
-        document.getElementById('m1-yaw-val').textContent = yaw + '°';
-
+    function render(synthData) {
         clearAll();
 
-        const tiltRad = tilt * Math.PI / 180;
-        const yawRad  = yaw  * Math.PI / 180;
-
-        const totalSpin = 2200;
-        const tComp = Math.sin(tiltRad);
-        const sComp = Math.sin(yawRad);
-        const wx = tComp * totalSpin;
-        const wz = -sComp * totalSpin;
-        const wy = 0;
-
-        // Build synthData in same format as Widget 2/3
-        const synthData = {
-            name: '自由設定', color: 0xff8a65,
-            wx: wx, wz: wz, wy: wy,
-            speed: 92, spin: totalSpin
-        };
-
-        // Use shared functions (same as Widget 2/3)
         const result = sharedComputeTrajectory(scene, currentObjs, synthData);
         const ballPos = result ? result.pos : new THREE.Vector3(0, 0.8, 0);
         ball.position.copy(ballPos);
@@ -1811,35 +1788,50 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\color{#ff8a65}{\omega_{\text{tot
         sharedDrawOmegaArrow(scene, currentObjs, synthData, 'ω', ballPos, makeTextSprite);
         sharedDrawForceArrow(scene, currentObjs, synthData, ballPos, ballRadius, makeTextSprite);
 
-        // Ball rotation (physical ω, same convention as Widget 2/3)
         const rotScale = 0.00015;
-        ballOmega.set(wx * rotScale, wz * rotScale, wy * rotScale);
+        ballOmega.set(synthData.wx * rotScale, synthData.wz * rotScale, synthData.wy * rotScale);
 
-        // Info text
-        let desc = '';
-        if (tilt < -30 && Math.abs(yaw) < 30) desc = '→ T<0 バックスピン主体: 上向きの力でボールが「浮く」';
-        else if (tilt > 30 && Math.abs(yaw) < 30) desc = '→ T>0 トップスピン主体: 下向きの力でボールが落ちる';
-        else if (Math.abs(yaw) > 30 && Math.abs(tilt) < 30) desc = '→ サイドスピン主体: 横方向に曲がる';
-        else if (Math.abs(tilt) < 15 && Math.abs(yaw) < 15) desc = '→ 回転軸が速度方向に近い: マグヌス力が弱い';
-        else desc = '→ トップスピンとサイドスピンの混合';
+        // Spin efficiency
+        const total = Math.sqrt(synthData.wx**2 + synthData.wz**2 + synthData.wy**2);
+        const trans = Math.sqrt(synthData.wx**2 + synthData.wz**2);
+        const eff = total > 0 ? Math.round(trans / total * 100) : 0;
         document.getElementById('m1-info').textContent =
-            `T=${tilt}°, S=${yaw}°  ${desc}`;
+            `${synthData.name || ''} ${synthData.speed || ''}mph  スピン効率=${eff}%`;
     }
 
-    document.getElementById('m1-tilt').addEventListener('input', update);
-    document.getElementById('m1-yaw').addEventListener('input', update);
+    function updateFromSliders() {
+        const tilt = parseFloat(document.getElementById('m1-tilt').value);
+        const yaw  = parseFloat(document.getElementById('m1-yaw').value);
+        document.getElementById('m1-tilt-val').textContent = tilt + '°';
+        document.getElementById('m1-yaw-val').textContent = yaw + '°';
 
-    // Preset buttons
+        const totalSpin = 2200;
+        const wx = Math.sin(tilt * Math.PI / 180) * totalSpin;
+        const wz = -Math.sin(yaw * Math.PI / 180) * totalSpin;
+        render({name: '自由設定', color: 0xff8a65, wx: wx, wz: wz, wy: 0, speed: 92, spin: totalSpin});
+    }
+
+    document.getElementById('m1-tilt').addEventListener('input', updateFromSliders);
+    document.getElementById('m1-yaw').addEventListener('input', updateFromSliders);
+
+    // Preset buttons (use real pitch data directly)
     document.querySelectorAll('.m1-preset').forEach(btn => {
         btn.addEventListener('click', function() {
-            document.getElementById('m1-tilt').value = this.dataset.t;
-            document.getElementById('m1-yaw').value = this.dataset.s;
-            update();
+            const d = {
+                name: this.dataset.name,
+                color: 0xff8a65,
+                wx: parseFloat(this.dataset.wx),
+                wz: parseFloat(this.dataset.wz),
+                wy: parseFloat(this.dataset.wy),
+                speed: parseFloat(this.dataset.speed),
+                spin: 2200
+            };
+            render(d);
         });
     });
 
-    // Initial: Fastball
-    update();
+    // Initial: Fastball (use real data)
+    render({name: 'FF 山本由伸', color: 0xff8a65, wx: 1900, wz: -852, wy: -761, speed: 96.3, spin: 2240});
 
     const clock = new THREE.Clock();
     function animate() {
