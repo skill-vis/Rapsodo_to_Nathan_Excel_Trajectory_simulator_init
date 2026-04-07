@@ -1693,153 +1693,36 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\omega_{\text{total}}}{1000}$$
         const yawRad  = yaw  * Math.PI / 180;
 
         const totalSpin = 2200;
-        // tilt is T (topspin angle): T>0 = topspin, T<0 = backspin
-        // Internal backspin component = -T
         const tComp = Math.sin(tiltRad);
         const sComp = Math.sin(yawRad);
-        const wx = tComp * totalSpin;  // T>0 → wx>0 → topspin (drop)
+        const wx = tComp * totalSpin;
         const wz = -sComp * totalSpin;
         const wy = 0;
 
-        const scale = 0.001;
-        const dir = new THREE.Vector3(wx * scale, wz * scale, wy * scale);
-        const len = dir.length();
+        // Build synthData in same format as Widget 2/3
+        const synthData = {
+            name: '自由設定', color: 0xff8a65,
+            wx: wx, wz: wz, wy: wy,
+            speed: 92, spin: totalSpin
+        };
 
-        // --- Compute trajectory & ball position first ---
-        const transverse = Math.sqrt(wx*wx + wz*wz);
-        const nSteps = 80, startZ = 2.0, endZ = -3.0;
-        const totalDist = startZ - endZ;
-        const releaseH = 1.6, initUp = 0.06;
-        const ballT = (startZ - 0) / totalDist;  // t at z=0
-
-        let ballPos = new THREE.Vector3(0, releaseH + (-0.8*ballT*ballT) + (initUp*totalDist*ballT), 0);
-
-        if (transverse > 10 && len > 0.01) {
-            const dirNorm = dir.clone().normalize();
-            const vDir2 = new THREE.Vector3(0, 0, -1);
-            const fDir2 = new THREE.Vector3().crossVectors(vDir2, dirNorm).normalize();
-            const deflectScale = transverse / 2500 * 1.2;
-
-            // Ball position on spin trajectory at z=0
-            const bDeflect = deflectScale * ballT * ballT;
-            const bGrav = -0.8 * ballT * ballT;
-            const bUp = initUp * totalDist * ballT;
-            ballPos.set(fDir2.x * bDeflect, releaseH + fDir2.y * bDeflect + bGrav + bUp, 0);
-
-            // Trajectories
-            const pts = [], nsPts = [];
-            for (let i = 0; i <= nSteps; i++) {
-                const t = i / nSteps;
-                const z = startZ - t * totalDist;
-                const gDrop = -0.8 * t * t;
-                const up = initUp * totalDist * t;
-                const deflect = deflectScale * t * t;
-                const yS = releaseH + fDir2.y * deflect + gDrop + up;
-                const yNS = releaseH + gDrop + up;
-                if (yS > 0.01) pts.push(new THREE.Vector3(fDir2.x * deflect, yS, z));
-                if (yNS > 0.01) nsPts.push(new THREE.Vector3(0, yNS, z));
-            }
-
-            if (nsPts.length > 1) {
-                const nsGeo = new THREE.BufferGeometry().setFromPoints(nsPts);
-                const nsMat = new THREE.LineDashedMaterial({color: 0x00cccc, dashSize: 0.15, gapSize: 0.1});
-                const nsLine = new THREE.Line(nsGeo, nsMat);
-                nsLine.computeLineDistances();
-                scene.add(nsLine); currentObjs.push(nsLine);
-            }
-            if (pts.length > 2) {
-                const curve = new THREE.CatmullRomCurve3(pts);
-                const tubeGeo = new THREE.TubeGeometry(curve, pts.length * 2, 0.012, 6, false);
-                const tubeMat = new THREE.MeshBasicMaterial({color: 0xff4444});
-                const tube = new THREE.Mesh(tubeGeo, tubeMat);
-                scene.add(tube); currentObjs.push(tube);
-            }
-        }
-
-        // --- Place ball on trajectory ---
+        // Use shared functions (same as Widget 2/3)
+        const result = sharedComputeTrajectory(scene, currentObjs, synthData);
+        const ballPos = result ? result.pos : new THREE.Vector3(0, 0.8, 0);
         ball.position.copy(ballPos);
 
-        // --- Velocity arrow along trajectory tangent ---
-        if (transverse > 10 && len > 0.01) {
-            const dirNorm = dir.clone().normalize();
-            const vDir2 = new THREE.Vector3(0, 0, -1);
-            const fDir2 = new THREE.Vector3().crossVectors(vDir2, dirNorm).normalize();
-            const deflectScale = transverse / 2500 * 1.2;
-            const dt = 0.01;
-            const t2 = ballT + dt;
-            const z2 = startZ - t2 * totalDist;
-            const ballPos2 = new THREE.Vector3(
-                fDir2.x * deflectScale * t2 * t2,
-                releaseH + fDir2.y * deflectScale * t2 * t2 + (-0.8 * t2 * t2) + initUp * totalDist * t2,
-                z2
-            );
-            const tangent = ballPos2.clone().sub(ballPos).normalize();
-            sharedDrawVelArrow(scene, w1VelObjs, ballPos, tangent, makeTextSprite);
+        if (result) {
+            sharedDrawVelArrow(scene, w1VelObjs, ballPos, result.tangent, makeTextSprite);
         } else {
-            // No spin: straight toward catcher
             sharedDrawVelArrow(scene, w1VelObjs, ballPos, new THREE.Vector3(0, 0, -1), makeTextSprite);
         }
 
-        // --- Draw arrows at ball position ---
-        if (len > 0.01) {
-            const dirNorm = dir.clone().normalize();
+        sharedDrawOmegaArrow(scene, currentObjs, synthData, 'ω', ballPos, makeTextSprite);
+        sharedDrawForceArrow(scene, currentObjs, synthData, ballPos, ballRadius, makeTextSprite);
 
-            // ω arrow through ball
-            const halfDir = dirNorm.clone().multiplyScalar(len / 2);
-            const arrowStart = ballPos.clone().sub(halfDir);
-            const shaftLen = len * 0.8;
-            const shaftGeo = new THREE.CylinderGeometry(0.025, 0.025, shaftLen, 8);
-            const shaftMat = new THREE.MeshBasicMaterial({color: 0xff8a65});
-            const shaft = new THREE.Mesh(shaftGeo, shaftMat);
-            const quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), dirNorm);
-            shaft.quaternion.copy(quat);
-            shaft.position.copy(arrowStart).add(dirNorm.clone().multiplyScalar(shaftLen / 2));
-            scene.add(shaft); currentObjs.push(shaft);
-
-            const coneLen = len * 0.2;
-            const coneGeo = new THREE.ConeGeometry(0.06, coneLen, 8);
-            const coneMat = new THREE.MeshBasicMaterial({color: 0xff8a65});
-            const cone = new THREE.Mesh(coneGeo, coneMat);
-            cone.quaternion.copy(quat);
-            cone.position.copy(arrowStart).add(dirNorm.clone().multiplyScalar(shaftLen + coneLen / 2));
-            scene.add(cone); currentObjs.push(cone);
-
-            const tipPos = arrowStart.clone().add(dirNorm.clone().multiplyScalar(len * 1.2));
-            currentObjs.push(makeTextSprite('ω', tipPos, '#ff8a65', 24));
-
-            // Magnus force arrow
-            const vDir = new THREE.Vector3(0, 0, -1);
-            const fDir = new THREE.Vector3().crossVectors(vDir, dirNorm);
-            if (fDir.length() > 0.001) {
-                fDir.normalize();
-                const fLen = 0.8;
-                const fShaftLen = fLen * 0.75;
-                const fShaftGeo = new THREE.CylinderGeometry(0.02, 0.02, fShaftLen, 8);
-                const fShaftMat = new THREE.MeshBasicMaterial({color: 0x4fc3f7});
-                const fShaft = new THREE.Mesh(fShaftGeo, fShaftMat);
-                const fQuat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), fDir);
-                fShaft.quaternion.copy(fQuat);
-                fShaft.position.copy(ballPos).add(fDir.clone().multiplyScalar(fShaftLen/2 + ballRadius + 0.05));
-                scene.add(fShaft); currentObjs.push(fShaft);
-
-                const fConeLen = fLen * 0.25;
-                const fConeGeo = new THREE.ConeGeometry(0.05, fConeLen, 8);
-                const fConeMat = new THREE.MeshBasicMaterial({color: 0x4fc3f7});
-                const fCone = new THREE.Mesh(fConeGeo, fConeMat);
-                fCone.quaternion.copy(fQuat);
-                fCone.position.copy(ballPos).add(fDir.clone().multiplyScalar(fShaftLen + fConeLen/2 + ballRadius + 0.05));
-                scene.add(fCone); currentObjs.push(fCone);
-
-                const fLabelPos = ballPos.clone().add(fDir.clone().multiplyScalar(fLen + ballRadius + 0.2));
-                currentObjs.push(makeTextSprite('マグヌス力 F', fLabelPos, '#4fc3f7', 20));
-            }
-
-            // Ball rotation
-            const rotScale = 0.00015;
-            ballOmega.set(wx * rotScale, wz * rotScale, wy * rotScale);
-        } else {
-            ballOmega.set(0, 0, 0);
-        }
+        // Ball rotation (physical ω, same convention as Widget 2/3)
+        const rotScale = 0.00015;
+        ballOmega.set(wx * rotScale, wz * rotScale, wy * rotScale);
 
         // Info text
         let desc = '';
