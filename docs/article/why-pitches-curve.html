@@ -696,9 +696,9 @@ $$C_L = \frac{c_2 \cdot S}{c_0 + c_1 \cdot S}$$
 <!-- Left figure labels -->
 <text x="158" y="24" fill="#ddd" font-size="13" font-weight="bold" text-anchor="middle">ジャイロ成分なし</text>
 <!-- Left: T axis (vertical white arrow, upper-left area) -->
-<text x="108" y="72" fill="#ff4444" font-size="12" font-weight="bold">T軸</text>
+<text x="140" y="125" fill="#ff4444" font-size="12" font-weight="bold">T軸</text>
 <!-- Left: S axis (horizontal white arrow, left area) -->
-<text x="48" y="195" fill="#4488ff" font-size="12" font-weight="bold">S軸</text>
+<text x="55" y="83" fill="#4488ff" font-size="12" font-weight="bold">S軸</text>
 <!-- Left: G axis (arrow going to the right, depth direction) -->
 <text x="230" y="205" fill="#44ff44" font-size="12" font-weight="bold">G軸</text>
 <!-- Left: ω arrow (orange) -->
@@ -712,9 +712,9 @@ $$C_L = \frac{c_2 \cdot S}{c_0 + c_1 \cdot S}$$
 <!-- Right figure labels -->
 <text x="472" y="24" fill="#ddd" font-size="13" font-weight="bold" text-anchor="middle">ジャイロ成分あり</text>
 <!-- Right: T axis -->
-<text x="385" y="100" fill="#ff4444" font-size="12" font-weight="bold">T軸</text>
+<text x="500" y="122" fill="#ff4444" font-size="12" font-weight="bold">T軸</text>
 <!-- Right: S axis -->
-<text x="348" y="210" fill="#4488ff" font-size="12" font-weight="bold">S軸</text>
+<text x="428" y="83" fill="#4488ff" font-size="12" font-weight="bold">S軸</text>
 <!-- Right: G axis -->
 <text x="540" y="215" fill="#44ff44" font-size="12" font-weight="bold">G軸</text>
 <!-- Right: ω arrow (orange, pointing right out of T-S plane) -->
@@ -731,6 +731,10 @@ $$C_L = \frac{c_2 \cdot S}{c_0 + c_1 \cdot S}$$
 </svg>
 <figcaption>図7. 角速度ベクトル ω と TSG座標系の関係。左: ωがT-S面内にある場合（ジャイロ成分ゼロ、スピン効率100%）。右: ωがT-S面からはみ出す場合（ジャイロ成分あり、スピン効率が低下）。</figcaption>
 </figure>
+
+<p>図7の左図のように、角速度ベクトル $\boldsymbol{\omega}$ がT-S平面内（＝投球方向に垂直な面内）にある場合、回転エネルギーのすべてがマグヌス力に変換され、ボールは左右・上下に効率よく変化する。次に述べるスピン効率は100%となる。一方、右図のように $\boldsymbol{\omega}$ が投球方向（G軸）に近づくと、ジャイロ成分が増えてマグヌス力への寄与が減り、上下左右の変化量は小さくなる。ただし、変化量が小さいこと自体が悪いわけではない。球種によっては、ジャイロ成分を積極的に利用して打者のタイミングを外す投球もある。</p>
+
+<p>ジャイロ成分 $\omega_G$（角速度ベクトルのG軸への射影）は、投球軌道の変化を左右する重要な成分である。しかし残念ながら、MLBのStatcastが公開するデータにはこの成分が含まれておらず、公開データだけでは角速度ベクトルを完全に復元することも、物理的に正確な軌道計算を行うこともできない。本サイトの<a href="../">Baseball Pitch Trajectory Simulator</a>は、Statcastの公開データからジャイロ成分を推定したうえでシミュレーションを実現しており、これが大きな特徴のひとつである。</p>
 
 <p>この T, S, G の3つの軸は互いに<strong>直交</strong>し、<strong>TSG座標系</strong>（右手系: $\hat{\mathbf{e}}_T \times \hat{\mathbf{e}}_S = \hat{\mathbf{e}}_G$）を構成する。名前の並び順がそのまま数学的な右手系の巡回順であり、任意の角速度ベクトル $\boldsymbol{\omega}$ はこの3軸への射影として一意に分解できる。下の3Dウィジェットで、TSG座標系の3軸と速度ベクトルの関係を確認しよう。マウスドラッグで視点を回転できる。</p>
 
