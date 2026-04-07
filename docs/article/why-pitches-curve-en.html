@@ -546,10 +546,50 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\color{#ff8a65}{\omega_{\text{tot
 </div>
 
 <p>Applied to the Magnus force:</p>
+
+<figure style="margin:16px auto;text-align:center;">
+<svg viewBox="0 0 480 220" style="max-width:480px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="'Hiragino Sans','Noto Sans JP',sans-serif">
+<rect width="480" height="220" rx="8" fill="#12122a"/>
+
+<!-- Left: Backspin (ω ⊥ v) → Force maximum -->
+<text x="120" y="20" fill="#ddd" font-size="12" font-weight="bold" text-anchor="middle">Backspin (ω ⊥ v)</text>
+<circle cx="120" cy="110" r="35" fill="none" stroke="#555" stroke-width="1.5"/>
+<line x1="120" y1="110" x2="195" y2="110" stroke="#44ff44" stroke-width="2.5" stroke-dasharray="6,4"/>
+<polygon points="200,110 188,105 188,115" fill="#44ff44"/>
+<text x="178" y="102" fill="#44ff44" font-size="10" font-weight="bold">v</text>
+<circle cx="120" cy="110" r="10" fill="none" stroke="#ff8a65" stroke-width="2"/>
+<circle cx="120" cy="110" r="3" fill="#ff8a65"/>
+<text x="134" y="98" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
+<text x="134" y="110" fill="#ff8a65" font-size="8">(out of page)</text>
+<line x1="120" y1="75" x2="120" y2="35" stroke="#4fc3f7" stroke-width="3"/>
+<polygon points="120,28 114,42 126,42" fill="#4fc3f7"/>
+<text x="130" y="40" fill="#4fc3f7" font-size="10" font-weight="bold">F = ω × v</text>
+<text x="120" y="170" fill="#4fc3f7" font-size="11" font-weight="bold" text-anchor="middle">Force: Maximum</text>
+<text x="120" y="186" fill="#888" font-size="10" text-anchor="middle">ω and v perpendicular → max area</text>
+<text x="120" y="200" fill="#666" font-size="9" text-anchor="middle">(Fastball backspin)</text>
+
+<line x1="240" y1="10" x2="240" y2="210" stroke="#333" stroke-width="1" stroke-dasharray="4,4"/>
+
+<!-- Right: Gyro (ω ∥ v) → Force zero -->
+<text x="360" y="20" fill="#ddd" font-size="12" font-weight="bold" text-anchor="middle">Gyrospin (ω ∥ v)</text>
+<circle cx="360" cy="110" r="35" fill="none" stroke="#555" stroke-width="1.5"/>
+<line x1="360" y1="110" x2="435" y2="110" stroke="#44ff44" stroke-width="2.5" stroke-dasharray="6,4"/>
+<polygon points="440,110 428,105 428,115" fill="#44ff44"/>
+<text x="418" y="102" fill="#44ff44" font-size="10" font-weight="bold">v</text>
+<line x1="360" y1="110" x2="420" y2="110" stroke="#ff8a65" stroke-width="2.5"/>
+<polygon points="425,110 413,105 413,115" fill="#ff8a65"/>
+<text x="400" y="130" fill="#ff8a65" font-size="11" font-weight="bold">ω</text>
+<text x="360" y="55" fill="#888" font-size="10" text-anchor="middle">F = ω × v = 0</text>
+<text x="360" y="170" fill="#888" font-size="11" font-weight="bold" text-anchor="middle">Force: Zero</text>
+<text x="360" y="186" fill="#888" font-size="10" text-anchor="middle">ω and v parallel → area zero</text>
+<text x="360" y="200" fill="#666" font-size="9" text-anchor="middle">(Gyrospin = bullet spin)</text>
+</svg>
+<figcaption>Fig. 5b. Cross product rule applied to the Magnus force. Left: ω⊥v gives maximum hop. Right: ω∥v gives zero force.</figcaption>
+</figure>
+
 <ul>
-<li>When $\boldsymbol{\omega}$ (spin axis) and $\mathbf{v}$ (velocity) are <strong>perpendicular</strong> → parallelogram area is maximum → Magnus force is maximum (fastball backspin is this case)</li>
-<li>When $\boldsymbol{\omega}$ and $\mathbf{v}$ are <strong>parallel</strong> → area is zero → Magnus force is also zero (gyrospin is this case)</li>
 <li>The force direction is always <strong>perpendicular to both</strong> $\boldsymbol{\omega}$ and $\mathbf{v}$ → the ball moves in a direction perpendicular to the spin axis and the direction of travel</li>
+<li>When the angle between ω and v is intermediate (as is the case for most pitch types), the Magnus force takes a value between zero and the maximum</li>
 </ul>
 
 <p>In the 3D widget below, use the sliders to change the spin axis (<span style="color:#ff8a65">orange arrow ω</span>) and see how the Magnus force (<span style="color:#4fc3f7">blue arrow F</span>) direction and trajectory change. Start from the fastball setting and try moving the sliders.</p>
