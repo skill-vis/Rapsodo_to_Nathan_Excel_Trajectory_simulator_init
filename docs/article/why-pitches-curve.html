@@ -609,8 +609,9 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\color{#ff8a65}{\omega_{\text{tot
 <canvas id="magnus-canvas" style="width:100%;height:420px;border-radius:8px;cursor:grab;"></canvas>
 <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px;">
 <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center;">
-<label style="color:#aaa;font-size:13px;">T (トップスピン角): <input type="range" id="m1-tilt" min="-90" max="90" value="60" style="width:160px;vertical-align:middle;"> <span id="m1-tilt-val" style="color:#ff8a65;font-weight:bold;">60°</span></label>
-<label style="color:#aaa;font-size:13px;">サイドスピン角: <input type="range" id="m1-yaw" min="-90" max="90" value="23" style="width:160px;vertical-align:middle;"> <span id="m1-yaw-val" style="color:#ff8a65;font-weight:bold;">23°</span></label>
+<label style="color:#aaa;font-size:13px;">T (トップスピン): <input type="range" id="m1-tilt" min="-90" max="90" value="60" style="width:140px;vertical-align:middle;"> <span id="m1-tilt-val" style="color:#ff8a65;font-weight:bold;">60°</span></label>
+<label style="color:#aaa;font-size:13px;">S (サイドスピン): <input type="range" id="m1-yaw" min="-90" max="90" value="23" style="width:140px;vertical-align:middle;"> <span id="m1-yaw-val" style="color:#ff8a65;font-weight:bold;">23°</span></label>
+<label style="color:#aaa;font-size:13px;">G (ジャイロ): <input type="range" id="m1-gyro" min="-90" max="0" value="-20" style="width:120px;vertical-align:middle;"> <span id="m1-gyro-val" style="color:#ff8a65;font-weight:bold;">-20°</span></label>
 </div>
 <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
 <span style="color:#666;font-size:12px;">プリセット:</span>
@@ -1800,19 +1801,28 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\color{#ff8a65}{\omega_{\text{tot
     }
 
     function updateFromSliders() {
-        const tilt = parseFloat(document.getElementById('m1-tilt').value);
-        const yaw  = parseFloat(document.getElementById('m1-yaw').value);
-        document.getElementById('m1-tilt-val').textContent = tilt + '°';
-        document.getElementById('m1-yaw-val').textContent = yaw + '°';
+        const tVal = parseFloat(document.getElementById('m1-tilt').value);
+        const sVal = parseFloat(document.getElementById('m1-yaw').value);
+        const gVal = parseFloat(document.getElementById('m1-gyro').value);
+        document.getElementById('m1-tilt-val').textContent = tVal + '°';
+        document.getElementById('m1-yaw-val').textContent = sVal + '°';
+        document.getElementById('m1-gyro-val').textContent = gVal + '°';
 
+        // Same formula as Widget 2 free slider
+        const gAbs = Math.abs(gVal);
+        const tComp = Math.sin(tVal * Math.PI / 180) * Math.cos(gAbs * Math.PI / 180);
+        const sComp = Math.sin(sVal * Math.PI / 180) * Math.cos(gAbs * Math.PI / 180);
+        const gComp = Math.sin(gAbs * Math.PI / 180);
         const totalSpin = 2200;
-        const wx = Math.sin(tilt * Math.PI / 180) * totalSpin;
-        const wz = -Math.sin(yaw * Math.PI / 180) * totalSpin;
-        render({name: '自由設定', color: 0xff8a65, wx: wx, wz: wz, wy: 0, speed: 92, spin: totalSpin});
+        const wx = tComp * totalSpin;
+        const wz = -sComp * totalSpin;
+        const wy = -gComp * totalSpin;
+        render({name: '自由設定', color: 0xff8a65, wx: wx, wz: wz, wy: wy, speed: 92, spin: totalSpin});
     }
 
     document.getElementById('m1-tilt').addEventListener('input', updateFromSliders);
     document.getElementById('m1-yaw').addEventListener('input', updateFromSliders);
+    document.getElementById('m1-gyro').addEventListener('input', updateFromSliders);
 
     // Preset buttons (use real pitch data directly + sync sliders)
     document.querySelectorAll('.m1-preset').forEach(btn => {
@@ -1827,23 +1837,25 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\color{#ff8a65}{\omega_{\text{tot
                 speed: parseFloat(this.dataset.speed),
                 spin: 2200
             };
-            // Sync sliders to approximate T/S angles (wy ignored by sliders)
-            const tApprox = Math.round(Math.asin(Math.max(-1, Math.min(1, wx / 2200))) * 180 / Math.PI);
-            const sApprox = Math.round(Math.asin(Math.max(-1, Math.min(1, -wz / 2200))) * 180 / Math.PI);
+            // Sync sliders to approximate T/S/G angles
+            const total = Math.sqrt(wx*wx + wz*wz + wy*wy);
+            const gComp = -wy / total;  // wy = -gComp * total
+            const gAbs = Math.round(Math.asin(Math.max(0, Math.min(1, gComp))) * 180 / Math.PI);
+            const cosG = Math.cos(gAbs * Math.PI / 180);
+            const tApprox = cosG > 0.01 ? Math.round(Math.asin(Math.max(-1, Math.min(1, wx / (total * cosG)))) * 180 / Math.PI) : 0;
+            const sApprox = cosG > 0.01 ? Math.round(Math.asin(Math.max(-1, Math.min(1, -wz / (total * cosG)))) * 180 / Math.PI) : 0;
             document.getElementById('m1-tilt').value = tApprox;
             document.getElementById('m1-yaw').value = sApprox;
+            document.getElementById('m1-gyro').value = -gAbs;
             document.getElementById('m1-tilt-val').textContent = tApprox + '°';
             document.getElementById('m1-yaw-val').textContent = sApprox + '°';
+            document.getElementById('m1-gyro-val').textContent = -gAbs + '°';
             render(d);
         });
     });
 
-    // Initial: Fastball (use real data, sync sliders)
-    document.getElementById('m1-tilt').value = 60;
-    document.getElementById('m1-yaw').value = 23;
-    document.getElementById('m1-tilt-val').textContent = '60°';
-    document.getElementById('m1-yaw-val').textContent = '23°';
-    render({name: 'FF 山本由伸', color: 0xff8a65, wx: 1900, wz: -852, wy: -761, speed: 96.3, spin: 2240});
+    // Initial: Fastball (trigger FF preset click)
+    document.querySelector('.m1-preset').click();
 
     const clock = new THREE.Clock();
     function animate() {
