@@ -498,22 +498,56 @@ def simulate(req: SimulationRequest):
 # HawkEye session endpoints
 # ---------------------------------------------------------------------------
 
-# In-memory session store (UUID → data). Auto-evict after 1 hour, max 50 sessions.
+# In-memory session store (UUID → data). Auto-evict after TTL, max 50 sessions.
+# Persistent sessions (saved to disk) are never evicted.
 _hawkeye_sessions: Dict[str, dict] = {}
 _HAWKEYE_MAX = 50
 _HAWKEYE_TTL = 7 * 24 * 3600  # 1 week
+_HAWKEYE_PERSIST_DIR = os.path.join(os.path.dirname(__file__), "hawkeye_sessions")
+
+
+def _hawkeye_load_persistent():
+    """Load persistent sessions from disk at startup."""
+    if not os.path.isdir(_HAWKEYE_PERSIST_DIR):
+        return
+    for fname in os.listdir(_HAWKEYE_PERSIST_DIR):
+        if not fname.endswith(".json"):
+            continue
+        sid = fname[:-5]
+        try:
+            with open(os.path.join(_HAWKEYE_PERSIST_DIR, fname), "r") as f:
+                data = json.load(f)
+            data["_persistent"] = True
+            _hawkeye_sessions[sid] = data
+        except Exception:
+            pass
+
+
+def _hawkeye_save_persistent(session_id: str, data: dict):
+    """Save a session to disk for persistence."""
+    os.makedirs(_HAWKEYE_PERSIST_DIR, exist_ok=True)
+    fpath = os.path.join(_HAWKEYE_PERSIST_DIR, f"{session_id}.json")
+    with open(fpath, "w") as f:
+        json.dump({k: v for k, v in data.items() if not k.startswith("_")}, f)
+    data["_persistent"] = True
 
 
 def _hawkeye_cleanup():
-    """Remove expired sessions."""
+    """Remove expired sessions (persistent sessions are exempt)."""
     now = time.time()
-    expired = [k for k, v in _hawkeye_sessions.items() if now - v.get("_ts", 0) > _HAWKEYE_TTL]
+    expired = [k for k, v in _hawkeye_sessions.items()
+               if not v.get("_persistent") and now - v.get("_ts", 0) > _HAWKEYE_TTL]
     for k in expired:
         del _hawkeye_sessions[k]
-    # If still over limit, remove oldest
     while len(_hawkeye_sessions) > _HAWKEYE_MAX:
-        oldest = min(_hawkeye_sessions, key=lambda k: _hawkeye_sessions[k].get("_ts", 0))
+        non_persistent = {k: v for k, v in _hawkeye_sessions.items() if not v.get("_persistent")}
+        if not non_persistent:
+            break
+        oldest = min(non_persistent, key=lambda k: non_persistent[k].get("_ts", 0))
         del _hawkeye_sessions[oldest]
+
+
+_hawkeye_load_persistent()
 
 
 class HawkEyeSessionRequest(BaseModel):
@@ -521,6 +555,7 @@ class HawkEyeSessionRequest(BaseModel):
     pitch: PitchRequest
     env: Optional[EnvRequest] = Field(default_factory=EnvRequest)
     label: str = ""
+    persistent: bool = False  # Save to disk for survival across server restarts
     # Ball trajectory from HawkEye (measured)
     ball_time: Optional[List[float]] = None
     ball_pos: Optional[List[List[float]]] = None   # [[x,y,z], ...]
@@ -615,6 +650,9 @@ def hawkeye_create_session(req: HawkEyeSessionRequest):
         "release_pos": req.release_pos,
         "pitch_params": req.pitch.model_dump(),
     }
+
+    if req.persistent:
+        _hawkeye_save_persistent(session_id, _hawkeye_sessions[session_id])
 
     return HawkEyeSessionResponse(
         session_id=session_id,
@@ -1645,10 +1683,12 @@ def mocap_simulate_from_session(session_id: str):
         integration_method=IntegrationMethod.RK4,
         lift_model=LiftModel.NATHAN_EXP,
     )
-    traj_spin = sim_spin.simulate(pitch=pitch_spin, env=env, max_time=1.0, save_interval=1)
+    # home_plate_y=0: simulate until rear edge of home plate
+    traj_spin = sim_spin.simulate(pitch=pitch_spin, env=env, max_time=1.0, save_interval=1, home_plate_y=0.0)
 
     spin_points = [{
         "t": p["t"], "x": p["x"], "y": p["y"], "z": p["z"],
+        "vx": p.get("vx", 0), "vy": p.get("vy", 0), "vz": p.get("vz", 0),
         "magnus_x": p.get("magnus_x", 0), "magnus_y": p.get("magnus_y", 0), "magnus_z": p.get("magnus_z", 0),
     } for p in traj_spin]
 
@@ -1671,7 +1711,7 @@ def mocap_simulate_from_session(session_id: str):
         integration_method=IntegrationMethod.RK4,
         lift_model=LiftModel.NATHAN_EXP,
     )
-    traj_nospin = sim_nospin.simulate(pitch=pitch_nospin, env=env, max_time=1.0, save_interval=1)
+    traj_nospin = sim_nospin.simulate(pitch=pitch_nospin, env=env, max_time=1.0, save_interval=1, home_plate_y=0.0)
 
     nospin_points = [{"t": p["t"], "x": p["x"], "y": p["y"], "z": p["z"]} for p in traj_nospin]
 
