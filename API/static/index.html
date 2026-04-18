@@ -2521,16 +2521,17 @@ function drawHawkeyeBallPath() {
     hawkeyeSplineLine.frustumCulled = false;
     scene.add(hawkeyeSplineLine);
 
-    // Extrapolate from last pitcher-side point to home plate
-    const tangent = hawkeyeSplineCurve.getTangent(1.0);
+    // Extrapolate from last pitcher-side point to behind home plate (z=0 in Three.js = y=0 in HE)
+    // Use spline tangent direction, with step size matched to ball speed (~40m/s at 300 steps/s)
+    const tangent = hawkeyeSplineCurve.getTangent(1.0).normalize();
     const lastPt = pitcherSidePoints[pitcherSidePoints.length - 1];
     const extPts = [lastPt.clone()];
-    const step = 0.01;
+    const step = 0.05;  // ~5cm per step (larger to cover the distance)
     let p = lastPt.clone();
-    for (let i = 0; i < 300; i++) {
+    for (let i = 0; i < 100; i++) {
         p = p.clone().add(tangent.clone().multiplyScalar(step));
         extPts.push(p);
-        if (p.z <= HP_Z) break;
+        if (p.z <= 0) break;  // rear edge of home plate (HE y=0)
     }
     const extGeo = new THREE.BufferGeometry().setFromPoints(extPts);
     const extMat = new THREE.LineDashedMaterial({
@@ -2543,10 +2544,12 @@ function drawHawkeyeBallPath() {
     scene.add(extLine);
     sceneObjects.push(extLine);
 
-    // Ring marker at home plate crossing on extrapolated trajectory
-    const hpPt = extPts[extPts.length - 1];  // last point ≈ HP_Z
-    if (hpPt) {
-        addRingMarker(hpPt.x, hpPt.y, hpPt.z, 0x44ff88, 0.037);
+    // Ring marker at home plate front edge crossing on extrapolated trajectory
+    for (const ep of extPts) {
+        if (ep.z <= HP_Z) {
+            addRingMarker(ep.x, ep.y, ep.z, 0x44ff88, 0.037);
+            break;
+        }
     }
 }
 
@@ -2933,11 +2936,38 @@ function updateMeasuredBallAtTime(simTime) {
             const pt = seg.spline.getPoint(Math.max(0, Math.min(1, u)));
             hawkeyeMeasuredBall.position.copy(pt);
             hawkeyeMeasuredBall.visible = true;
-            // Spin rotation (same axis/rate as sim ball)
             if (spinAxisVec && spinRateRadS > 0.01 && _measuredBallLastSimTime !== null) {
                 const dt = simTime - _measuredBallLastSimTime;
                 if (Math.abs(dt) > 0 && Math.abs(dt) < 0.1) {
                     rotateBallSpin(hawkeyeMeasuredBall, dt);
+                }
+            }
+            _measuredBallLastSimTime = simTime;
+            return;
+        }
+    }
+    // Extrapolate beyond the pitch spline (for swing-miss: ball past last sample)
+    const pitchSeg = hawkeyeMeasuredSplines[0];
+    if (pitchSeg && heTime > pitchSeg.tEnd && hawkeyeSplineCurve) {
+        const dt = heTime - pitchSeg.tEnd;
+        // Estimate ball speed from last two samples
+        const times = pitchSeg.times;
+        const dtSample = times[times.length - 1] - times[times.length - 2];
+        const lastPt = hawkeyeSplineCurve.getPoint(1.0);
+        const tangent = hawkeyeSplineCurve.getTangent(1.0).normalize();
+        // Distance = speed * dt; speed ≈ segment_length / dtSample
+        const prevPt = hawkeyeSplineCurve.getPoint((times.length - 2) / (times.length - 1));
+        const segSpeed = lastPt.distanceTo(prevPt) / dtSample;
+        const dist = segSpeed * dt;
+        const extPt = lastPt.clone().add(tangent.multiplyScalar(dist));
+        // Stop at home plate rear edge (Three.js z <= 0)
+        if (extPt.z > 0) {
+            hawkeyeMeasuredBall.position.copy(extPt);
+            hawkeyeMeasuredBall.visible = true;
+            if (spinAxisVec && spinRateRadS > 0.01 && _measuredBallLastSimTime !== null) {
+                const dtSpin = simTime - _measuredBallLastSimTime;
+                if (Math.abs(dtSpin) > 0 && Math.abs(dtSpin) < 0.1) {
+                    rotateBallSpin(hawkeyeMeasuredBall, dtSpin);
                 }
             }
             _measuredBallLastSimTime = simTime;
