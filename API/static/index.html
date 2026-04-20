@@ -1388,7 +1388,7 @@ let he2MeasuredBall = null, he2MeasuredSpline = null, he2MeasuredHitSpline = nul
 let he2MeasuredTimes = null, he2MeasuredSplines = null;
 let he2IsaData = null, he2IsaArrow = null, he2IsaTrailDots = [];
 let he2PitcherSkel = null, he2BatterSkel = null;
-let he2GripMaxTime = null, he2ImpactTime = null, he2SwingStartTime = null;
+let he2GripMaxTime = null, he2ImpactTime = null, he2SwingStartTime = null, he2ImpactMinusNR = null;
 let he2VelChart = null;
 let he2Label = '';
 const HE2_COLOR = 0xff8844;  // orange for 2nd session (1st is green 0x44ff88)
@@ -1894,7 +1894,8 @@ let batterBoneLines = [];    // THREE.Line[] for batter skeleton
 let hawkeyeGripMaxTime = null; // NR start time (grip speed max, HawkEye time)
 let hawkeyeImpactTime = null;  // impact time (HawkEye time)
 let hawkeyeSwingStartTime = null; // swing start (grip axial zero-cross)
-let hawkeyeVelChart = null;    // {time:[], head:[], grip:[]}
+let hawkeyeImpactMinusNR = null; // (impact - NR) × 1000 [ms]
+let hawkeyeVelChart = null;    // {time:[], head:[], grip:[]}  head/grip may contain null
 let isaArrow = null;         // THREE.ArrowHelper for ISA
 let isaTrailDots = [];       // THREE.Mesh[] for ISA trail
 
@@ -2949,6 +2950,15 @@ function updateMeasuredBallAtTime(simTime) {
     // Extrapolate beyond the pitch spline (for swing-miss: ball past last sample)
     const pitchSeg = hawkeyeMeasuredSplines[0];
     if (pitchSeg && heTime > pitchSeg.tEnd && hawkeyeSplineCurve) {
+        // Whiff では、server 側で impact_time = ボール-バット最接近時刻 を記録済み。
+        // 表示はその時刻で停止する (補外で home plate まで流さない)。
+        const isWhiff = !hawkeyeHitBallData || !hawkeyeHitBallData.pos
+                         || hawkeyeHitBallData.pos.length === 0;
+        if (isWhiff && hawkeyeImpactTime != null && heTime > hawkeyeImpactTime) {
+            hawkeyeMeasuredBall.visible = false;
+            _measuredBallLastSimTime = simTime;
+            return;
+        }
         const dt = heTime - pitchSeg.tEnd;
         // Estimate ball speed from last two samples
         const times = pitchSeg.times;
@@ -3976,13 +3986,15 @@ function drawBatVelChart(currentSimTime) {
 
     const vc = hawkeyeVelChart;
     let t0 = vc.time[0], t1 = vc.time[vc.time.length - 1];
-    let vMax = Math.max(...vc.head, ...vc.grip);
-    // Expand range if 2nd session exists
+    // Arrays may contain null outside the [swing_start, impact) window
+    const _finite = a => a.filter(v => v != null && isFinite(v));
+    let vMax = Math.max(..._finite(vc.head), ..._finite(vc.grip));
     if (he2VelChart) {
         t0 = Math.min(t0, he2VelChart.time[0]);
         t1 = Math.max(t1, he2VelChart.time[he2VelChart.time.length - 1]);
-        vMax = Math.max(vMax, ...he2VelChart.head, ...he2VelChart.grip);
+        vMax = Math.max(vMax, ..._finite(he2VelChart.head), ..._finite(he2VelChart.grip));
     }
+    if (!isFinite(vMax) || vMax <= 0) vMax = 200;
     vMax *= 1.1;
 
     // Time offset for sim time
@@ -3999,21 +4011,22 @@ function drawBatVelChart(currentSimTime) {
         ctx.fillText(v.toFixed(0), pad.l - 4, ty(v) + 3);
     }
 
-    // Head speed (orange)
-    ctx.strokeStyle = '#ff8844'; ctx.lineWidth = 2; ctx.beginPath();
-    for (let i = 0; i < vc.time.length; i++) {
-        const x = tx(vc.time[i]), y = ty(vc.head[i]);
-        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    // Draw a polyline that breaks on null values (null = outside window).
+    function drawBrokenLine(times, values, color, lw) {
+        ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.beginPath();
+        let pen = false;  // true = currently drawing a segment
+        for (let i = 0; i < times.length; i++) {
+            const v = values[i];
+            if (v == null || !isFinite(v)) { pen = false; continue; }
+            const x = tx(times[i]), y = ty(v);
+            if (!pen) { ctx.moveTo(x, y); pen = true; }
+            else { ctx.lineTo(x, y); }
+        }
+        ctx.stroke();
     }
-    ctx.stroke();
 
-    // Grip speed (cyan)
-    ctx.strokeStyle = '#44ddff'; ctx.lineWidth = 2; ctx.beginPath();
-    for (let i = 0; i < vc.time.length; i++) {
-        const x = tx(vc.time[i]), y = ty(vc.grip[i]);
-        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-    }
-    ctx.stroke();
+    drawBrokenLine(vc.time, vc.head, '#ff8844', 2);  // Head (orange)
+    drawBrokenLine(vc.time, vc.grip, '#44ddff', 2);  // Grip (cyan)
 
     // Vertical line: swing start (green dashed)
     if (hawkeyeSwingStartTime != null) {
@@ -4061,20 +4074,8 @@ function drawBatVelChart(currentSimTime) {
     // --- 2nd session overlay (dimmer, same structure) ---
     if (he2VelChart) {
         const vc2 = he2VelChart;
-        // Head speed (dim orange)
-        ctx.strokeStyle = 'rgba(255,136,68,0.4)'; ctx.lineWidth = 1.5; ctx.beginPath();
-        for (let i = 0; i < vc2.time.length; i++) {
-            const x = tx(vc2.time[i]), y = ty(vc2.head[i]);
-            i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-        }
-        ctx.stroke();
-        // Grip speed (dim cyan)
-        ctx.strokeStyle = 'rgba(68,221,255,0.4)'; ctx.lineWidth = 1.5; ctx.beginPath();
-        for (let i = 0; i < vc2.time.length; i++) {
-            const x = tx(vc2.time[i]), y = ty(vc2.grip[i]);
-            i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-        }
-        ctx.stroke();
+        drawBrokenLine(vc2.time, vc2.head, 'rgba(255,136,68,0.4)', 1.5);
+        drawBrokenLine(vc2.time, vc2.grip, 'rgba(68,221,255,0.4)', 1.5);
         // Swing start (dim green)
         if (he2SwingStartTime != null) {
             ctx.strokeStyle = 'rgba(68,204,68,0.4)'; ctx.lineWidth = 1; ctx.setLineDash([4, 3]);
@@ -4113,6 +4114,37 @@ function drawBatVelChart(currentSimTime) {
     ctx.fillStyle = '#ff8844'; ctx.fillText('Head', pad.l + 5, pad.t + 12);
     ctx.fillStyle = '#44ddff'; ctx.fillText('Grip', pad.l + 40, pad.t + 12);
     ctx.fillStyle = '#888'; ctx.fillText('km/h', pad.l - 45, pad.t + 12);
+
+    // Timing badges (top-right) — 各値を改行して縦 2 段に表示
+    {
+        ctx.font = '10px sans-serif'; ctx.textAlign = 'right';
+        // トグルボタン (右上 22x22px + 余白) を避けて左にオフセット
+        const xRight = pad.l + cw - 36;
+        let y = pad.t + 12;
+
+        // 1st session
+        ctx.fillStyle = '#ffcc66';
+        if (hawkeyeSwingStartTime != null && hawkeyeImpactTime != null) {
+            const ms = (hawkeyeImpactTime - hawkeyeSwingStartTime) * 1000;
+            ctx.fillText(`Swing→Impact: ${ms.toFixed(1)} ms`, xRight, y);
+            y += 12;
+        }
+        if (hawkeyeImpactMinusNR != null) {
+            ctx.fillText(`Impact−NR: ${hawkeyeImpactMinusNR.toFixed(1)} ms`, xRight, y);
+            y += 12;
+        }
+
+        // 2nd session (比較モード時)
+        ctx.fillStyle = 'rgba(255,204,102,0.55)';
+        if (he2SwingStartTime != null && he2ImpactTime != null) {
+            const ms = (he2ImpactTime - he2SwingStartTime) * 1000;
+            ctx.fillText(`2nd Swing→Impact: ${ms.toFixed(1)} ms`, xRight, y);
+            y += 12;
+        }
+        if (he2ImpactMinusNR != null) {
+            ctx.fillText(`2nd Impact−NR: ${he2ImpactMinusNR.toFixed(1)} ms`, xRight, y);
+        }
+    }
 }
 
 function drawChart() {
@@ -5414,6 +5446,7 @@ logEvent('page_view');
             if (data.grip_max_time != null) hawkeyeGripMaxTime = data.grip_max_time;
             if (data.impact_time != null) hawkeyeImpactTime = data.impact_time;
             if (data.swing_start_time != null) hawkeyeSwingStartTime = data.swing_start_time;
+            if (data.impact_minus_nr_ms != null) hawkeyeImpactMinusNR = data.impact_minus_nr_ms;
             if (data.vel_time && data.vel_head && data.vel_grip) {
                 hawkeyeVelChart = { time: data.vel_time, head: data.vel_head, grip: data.vel_grip };
                 // chartHidden remains true — user can open via button
@@ -5570,6 +5603,7 @@ logEvent('page_view');
                     if (d2.grip_max_time != null) he2GripMaxTime = d2.grip_max_time;
                     if (d2.impact_time != null) he2ImpactTime = d2.impact_time;
                     if (d2.swing_start_time != null) he2SwingStartTime = d2.swing_start_time;
+                    if (d2.impact_minus_nr_ms != null) he2ImpactMinusNR = d2.impact_minus_nr_ms;
                     if (d2.vel_time && d2.vel_head && d2.vel_grip) {
                         he2VelChart = { time: d2.vel_time, head: d2.vel_head, grip: d2.vel_grip };
                     }

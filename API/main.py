@@ -365,14 +365,29 @@ def root():
 _EVENT_LOG_PATH = os.path.join(_BASE_DIR, "event_log.json")
 
 def _load_events():
-    if os.path.exists(_EVENT_LOG_PATH):
-        with open(_EVENT_LOG_PATH, "r") as f:
-            return json.load(f)
-    return []
+    if not os.path.exists(_EVENT_LOG_PATH):
+        return []
+    with open(_EVENT_LOG_PATH, "r") as f:
+        text = f.read()
+    if not text.strip():
+        return []
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        # Tolerate trailing garbage from earlier concurrent writes by
+        # decoding only the first complete JSON value.
+        try:
+            events, _ = json.JSONDecoder().raw_decode(text)
+            return events
+        except json.JSONDecodeError:
+            return []
 
 def _save_events(events):
-    with open(_EVENT_LOG_PATH, "w") as f:
+    # Atomic write to avoid interleaved concurrent writes.
+    tmp_path = _EVENT_LOG_PATH + ".tmp"
+    with open(tmp_path, "w") as f:
         json.dump(events, f, ensure_ascii=False)
+    os.replace(tmp_path, _EVENT_LOG_PATH)
 
 
 class EventInput(BaseModel):
@@ -563,17 +578,20 @@ class HawkEyeSessionRequest(BaseModel):
     bat_time: Optional[List[float]] = None
     bat_head: Optional[List[List[float]]] = None   # [[x,y,z], ...]
     bat_handle: Optional[List[List[float]]] = None  # [[x,y,z], ...]
-    # ISA (Instantaneous Screw Axis)
+    # ISA (Instantaneous Screw Axis).
+    # Arrays may contain `null` outside the [swing_start, impact) window
+    # for the windowed-computation mode (see migrate_hawkeye_sessions.py).
     isa_time: Optional[List[float]] = None
-    isa_pos: Optional[List[List[float]]] = None    # [[x,y,z], ...]
-    isa_axis: Optional[List[List[float]]] = None   # [[wx,wy,wz], ...]
-    isa_omega: Optional[List[float]] = None        # angular velocity magnitude
+    isa_pos: Optional[List[Optional[List[float]]]] = None    # [[x,y,z]|null,...]
+    isa_axis: Optional[List[Optional[List[float]]]] = None   # [[wx,wy,wz]|null,...]
+    isa_omega: Optional[List[Optional[float]]] = None        # ω magnitude | null
     grip_max_time: Optional[float] = None          # NR start time (grip speed max)
     impact_time: Optional[float] = None            # impact time
     vel_time: Optional[List[float]] = None         # time axis for velocity chart
-    vel_head: Optional[List[float]] = None         # head speed (km/h)
-    vel_grip: Optional[List[float]] = None         # grip speed (km/h)
+    vel_head: Optional[List[Optional[float]]] = None  # head km/h, null out of window
+    vel_grip: Optional[List[Optional[float]]] = None  # grip km/h, null out of window
     swing_start_time: Optional[float] = None      # swing start (grip axial zero-cross)
+    impact_minus_nr_ms: Optional[float] = None    # (impact - NR) × 1000
     # Pitcher / Batter skeleton
     pitcher_skel: Optional[dict] = None            # {time, joints, bones}
     batter_skel: Optional[dict] = None             # {time, joints, bones}
@@ -644,6 +662,7 @@ def hawkeye_create_session(req: HawkEyeSessionRequest):
         "vel_head": req.vel_head,
         "vel_grip": req.vel_grip,
         "swing_start_time": req.swing_start_time,
+        "impact_minus_nr_ms": req.impact_minus_nr_ms,
         "pitcher_skel": req.pitcher_skel,
         "batter_skel": req.batter_skel,
         "hit_ball_time": req.hit_ball_time,
