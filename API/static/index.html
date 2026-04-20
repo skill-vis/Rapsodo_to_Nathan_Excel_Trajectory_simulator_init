@@ -542,6 +542,7 @@
             <button class="btn btn-secondary" onclick="viewBatterEyeAuto(true)" title="View from opposite batter's box">Opposite Eye</button>
             <button class="btn btn-secondary" id="btn-tunnel" onclick="toggleTunnel()" title="Show/hide pitch tunnel">Tunnel</button>
             <button class="btn btn-secondary" id="btn-spin-axis" onclick="toggleSpinAxisOnBall()" title="Show/hide spin axis on ball" style="background:#2d4059;">Spin Axis</button>
+            <button class="btn btn-secondary" id="btn-swing-trail" onclick="toggleSwingTrail()" title="Show/hide bat + ISA history from swing start" style="background:#2d4059;">Swing Trail</button>
             <button class="btn btn-secondary" onclick="exportCSV()" title="Export simulation data as CSV">CSV Export</button>
             <button class="btn btn-secondary" onclick="document.getElementById('csv-file-input').click()" title="Import CSV to simulate">CSV Import</button>
             <button class="btn btn-secondary" onclick="downloadCSVTemplate()" title="Download CSV template with required parameters">CSV Template</button>
@@ -2260,7 +2261,226 @@ function clearBat() {
     pitcherBoneLines = [];
     batterBoneLines.forEach(l => scene.remove(l));
     batterBoneLines = [];
+    clearSwingTrail();
     // NOTE: data objects (hawkeyeBatData etc.) are NOT cleared here.
+}
+
+// ───── Swing trail (bat + ISA arrows + ISA dots, all from swing start) ─────
+let batTrailLine = null;           // THREE.LineSegments for bat sticks
+let batTrailTimes = null;          // time[] aligned with segments (1 time per segment)
+let isaArrowTrailLine = null;      // THREE.LineSegments for ISA arrow shafts
+let isaArrowTrailTimes = null;     // time[] aligned with arrows
+let isaDotsTrail = null;           // THREE.Points for ISA position trail
+let isaDotsTrailTimes = null;      // time[] aligned with dots
+let batNRMesh = null;              // THREE.Mesh — NR frame bat (highlighted)
+let isaNRArrow = null;             // THREE.ArrowHelper — NR frame ISA arrow
+let nrFrameTime = null;            // cached grip_max_time
+let swingTrailVisible = true;      // toggle state (default ON)
+
+function clearSwingTrail() {
+    if (batTrailLine) { scene.remove(batTrailLine); batTrailLine.geometry.dispose(); batTrailLine = null; }
+    if (isaArrowTrailLine) { scene.remove(isaArrowTrailLine); isaArrowTrailLine.geometry.dispose(); isaArrowTrailLine = null; }
+    if (isaDotsTrail) { scene.remove(isaDotsTrail); isaDotsTrail.geometry.dispose(); isaDotsTrail = null; }
+    if (batNRMesh) { scene.remove(batNRMesh); batNRMesh.geometry.dispose(); batNRMesh = null; }
+    if (isaNRArrow) { scene.remove(isaNRArrow); isaNRArrow = null; }
+    batTrailTimes = null;
+    isaArrowTrailTimes = null;
+    isaDotsTrailTimes = null;
+    nrFrameTime = null;
+}
+
+function initSwingTrail() {
+    clearSwingTrail();
+    if (!hawkeyeBatData || hawkeyeSwingStartTime == null) return;
+
+    // ── bat sticks: swing_start → impact の各フレームを 2 頂点ずつ (handle, head) ──
+    const { time, head, handle } = hawkeyeBatData;
+    let startI = 0;
+    for (let i = 0; i < time.length; i++) { if (time[i] >= hawkeyeSwingStartTime) { startI = i; break; } }
+    let endI = time.length;
+    if (hawkeyeImpactTime != null) {
+        for (let i = time.length - 1; i >= 0; i--) {
+            if (time[i] <= hawkeyeImpactTime) { endI = i + 1; break; }
+        }
+    }
+    const n = endI - startI;
+    if (n > 1) {
+        const positions = new Float32Array(n * 6);
+        const times = new Float32Array(n);
+        for (let i = 0; i < n; i++) {
+            const h = heToThree(handle[startI + i]);
+            const t = heToThree(head[startI + i]);
+            positions[i*6]   = h.x; positions[i*6+1] = h.y; positions[i*6+2] = h.z;
+            positions[i*6+3] = t.x; positions[i*6+4] = t.y; positions[i*6+5] = t.z;
+            times[i] = time[startI + i];
+        }
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const mat = new THREE.LineBasicMaterial({ color: 0xaaaaaa, transparent: true, opacity: 0.35 });
+        batTrailLine = new THREE.LineSegments(geo, mat);
+        batTrailLine.frustumCulled = false;
+        batTrailLine.geometry.setDrawRange(0, 0);
+        batTrailLine.visible = swingTrailVisible;
+        batTrailTimes = times;
+        scene.add(batTrailLine);
+    }
+
+    // ── ISA arrow trail + ISA dots trail: 同じフレーム集合を共有 ──
+    if (hawkeyeIsaData && hawkeyeIsaData.time && hawkeyeIsaData.pos) {
+        const isa = hawkeyeIsaData;
+        const hand = (currentRelease && currentRelease.batter_hand === 'L') ? -1 : 1;
+        const arrowSegs = [];
+        const dotPts = [];
+        const ts = [];
+        for (let i = 0; i < isa.time.length; i++) {
+            const om = isa.omega[i];
+            const pos = isa.pos[i];
+            const axis = isa.axis ? isa.axis[i] : null;
+            if (om == null || pos == null || axis == null || om < 0.5) continue;
+            if (hawkeyeSwingStartTime != null && isa.time[i] < hawkeyeSwingStartTime) continue;
+            if (hawkeyeImpactTime != null && isa.time[i] > hawkeyeImpactTime) continue;
+            const p = heToThree(pos);
+            const dir = new THREE.Vector3(-axis[0]*hand, axis[2]*hand, axis[1]*hand).normalize();
+            const len = Math.min(1.0, om * 0.016);
+            const tip = p.clone().add(dir.multiplyScalar(len));
+            arrowSegs.push(p.x, p.y, p.z, tip.x, tip.y, tip.z);
+            dotPts.push(p.x, p.y, p.z);
+            ts.push(isa.time[i]);
+        }
+        if (ts.length > 0) {
+            // Arrow trail
+            const aGeo = new THREE.BufferGeometry();
+            aGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(arrowSegs), 3));
+            const aMat = new THREE.LineBasicMaterial({ color: 0xff6688, transparent: true, opacity: 0.22 });
+            isaArrowTrailLine = new THREE.LineSegments(aGeo, aMat);
+            isaArrowTrailLine.frustumCulled = false;
+            isaArrowTrailLine.geometry.setDrawRange(0, 0);
+            isaArrowTrailLine.visible = swingTrailVisible;
+            isaArrowTrailTimes = Float32Array.from(ts);
+            scene.add(isaArrowTrailLine);
+
+            // Dots trail (THREE.Points)
+            const dGeo = new THREE.BufferGeometry();
+            dGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(dotPts), 3));
+            const dMat = new THREE.PointsMaterial({
+                color: 0xff4444, size: 0.012,
+                transparent: true, opacity: 0.55, sizeAttenuation: true
+            });
+            isaDotsTrail = new THREE.Points(dGeo, dMat);
+            isaDotsTrail.frustumCulled = false;
+            isaDotsTrail.geometry.setDrawRange(0, 0);
+            isaDotsTrail.visible = swingTrailVisible;
+            isaDotsTrailTimes = Float32Array.from(ts);
+            scene.add(isaDotsTrail);
+        }
+    }
+
+    // ── NR フレームの強調表示: bat stick (太い cylinder, orange) + ISA arrow (orange) ──
+    if (hawkeyeGripMaxTime != null) {
+        nrFrameTime = hawkeyeGripMaxTime;
+        const NR_COLOR = 0xffaa00;  // orange
+
+        // NR bat stick: 3D バット形状ではなく均一太さの "太い線" (細い uniform cylinder)
+        if (hawkeyeBatData && hawkeyeBatData.time && hawkeyeBatData.time.length > 0) {
+            const { time, head, handle } = hawkeyeBatData;
+            let nrI = 0;
+            for (let i = 0; i < time.length; i++) {
+                if (time[i] >= nrFrameTime) { nrI = i; break; }
+                nrI = i;
+            }
+            const h = heToThree(handle[nrI]);
+            const t = heToThree(head[nrI]);
+            const dir = new THREE.Vector3().subVectors(t, h);
+            const len = dir.length();
+            dir.normalize();
+            // 均一太さ: 半径 0.0015m (3mm 径)
+            const LINE_R = 0.0015;
+            const geo = new THREE.CylinderGeometry(LINE_R, LINE_R, len, 10);
+            geo.translate(0, len / 2, 0);
+            const mat = new THREE.MeshBasicMaterial({
+                color: NR_COLOR, transparent: true, opacity: 0.9
+            });
+            batNRMesh = new THREE.Mesh(geo, mat);
+            batNRMesh.position.copy(h);
+            const q = new THREE.Quaternion().setFromUnitVectors(
+                new THREE.Vector3(0, 1, 0), dir);
+            batNRMesh.setRotationFromQuaternion(q);
+            batNRMesh.frustumCulled = false;
+            batNRMesh.visible = false;
+            scene.add(batNRMesh);
+        }
+
+        // NR ISA arrow
+        if (hawkeyeIsaData && hawkeyeIsaData.time) {
+            const isa = hawkeyeIsaData;
+            let nrI = -1;
+            for (let i = 0; i < isa.time.length; i++) {
+                if (isa.time[i] >= nrFrameTime && isa.omega[i] != null && isa.omega[i] > 0.5) {
+                    nrI = i; break;
+                }
+            }
+            if (nrI >= 0 && isa.pos[nrI] && isa.axis[nrI]) {
+                const pos = heToThree(isa.pos[nrI]);
+                const axis = isa.axis[nrI];
+                const om = isa.omega[nrI];
+                const hand = (currentRelease && currentRelease.batter_hand === 'L') ? -1 : 1;
+                const dir = new THREE.Vector3(-axis[0]*hand, axis[2]*hand, axis[1]*hand).normalize();
+                const len = Math.min(1.0, om * 0.016);
+                // 通常 arrow の head: 0.02 / 0.015 → NR: 0.035 / 0.02 でより目立つ
+                isaNRArrow = new THREE.ArrowHelper(dir, pos, len, NR_COLOR, 0.04, 0.022);
+                isaNRArrow.frustumCulled = false;
+                isaNRArrow.visible = false;
+                scene.add(isaNRArrow);
+            }
+        }
+    }
+}
+
+function updateSwingTrailAtTime(heTime) {
+    // 表示が OFF の場合は全て隠す
+    if (!swingTrailVisible) {
+        if (batTrailLine) batTrailLine.visible = false;
+        if (isaArrowTrailLine) isaArrowTrailLine.visible = false;
+        if (isaDotsTrail) isaDotsTrail.visible = false;
+        if (batNRMesh) batNRMesh.visible = false;
+        if (isaNRArrow) isaNRArrow.visible = false;
+        return;
+    }
+    // NR フレームに到達していれば強調表示を ON
+    const nrReached = (nrFrameTime != null && heTime >= nrFrameTime);
+    if (batNRMesh) batNRMesh.visible = nrReached;
+    if (isaNRArrow) isaNRArrow.visible = nrReached;
+    // heTime 以下のインデックス数を返すヘルパ
+    function countUpTo(times, t) {
+        let c = 0;
+        for (let i = 0; i < times.length; i++) {
+            if (times[i] <= t) c = i + 1; else break;
+        }
+        return c;
+    }
+    if (batTrailLine && batTrailTimes) {
+        batTrailLine.visible = true;
+        // 1 frame = 2 vertices = 1 segment → drawRange は count * 2
+        batTrailLine.geometry.setDrawRange(0, countUpTo(batTrailTimes, heTime) * 2);
+    }
+    if (isaArrowTrailLine && isaArrowTrailTimes) {
+        isaArrowTrailLine.visible = true;
+        isaArrowTrailLine.geometry.setDrawRange(0, countUpTo(isaArrowTrailTimes, heTime) * 2);
+    }
+    if (isaDotsTrail && isaDotsTrailTimes) {
+        isaDotsTrail.visible = true;
+        // Points は 1 vertex = 1 dot
+        isaDotsTrail.geometry.setDrawRange(0, countUpTo(isaDotsTrailTimes, heTime));
+    }
+}
+
+function toggleSwingTrail() {
+    swingTrailVisible = !swingTrailVisible;
+    const btn = document.getElementById('btn-swing-trail');
+    if (btn) btn.style.background = swingTrailVisible ? '#3a6' : '#2d4059';
+    // 即座に反映
+    const offset = hawkeyeBatData ? hawkeyeBatData._timeOffset || 0 : 0;
+    updateSwingTrailAtTime((currentSimTime || 0) + offset);
 }
 
 function initIsa() {
@@ -2275,9 +2495,11 @@ function initIsa() {
 }
 
 function updateIsaAtTime(simTime) {
+    const heTime = simTime + (hawkeyeBatData ? hawkeyeBatData._timeOffset || 0 : 0);
+    // swing trail (bat sticks + ISA arrow history) — ISA 有無に関わらず毎フレーム更新
+    updateSwingTrailAtTime(heTime);
     if (!hawkeyeIsaData || !isaArrow) return;
     const isa = hawkeyeIsaData;
-    const heTime = simTime + (hawkeyeBatData ? hawkeyeBatData._timeOffset || 0 : 0);
 
     // Find closest time index
     let idx = 0;
@@ -2305,19 +2527,8 @@ function updateIsaAtTime(simTime) {
     isaArrow.position.copy(pos);
     isaArrow.setDirection(dir);
     isaArrow.setLength(len, len * 0.15, len * 0.08);
-
-    // Add trail dot at ISA position
-    const dotGeo = new THREE.SphereGeometry(0.005, 4, 4);
-    const dotMat = new THREE.MeshBasicMaterial({ color: 0xff4444, transparent: true, opacity: 0.3 });
-    const dot = new THREE.Mesh(dotGeo, dotMat);
-    dot.position.copy(pos);
-    scene.add(dot);
-    isaTrailDots.push(dot);
-    // Limit trail length
-    if (isaTrailDots.length > 150) {
-        const old = isaTrailDots.shift();
-        scene.remove(old);
-    }
+    // ISA dots/arrows の履歴表示は initSwingTrail() で BufferGeometry で一括管理
+    // (updateSwingTrailAtTime で drawRange を進める)
 }
 
 // --- Pitcher skeleton ---
@@ -5568,6 +5779,12 @@ logEvent('page_view');
                 }
             }
             if (hawkeyeIsaData) initIsa();
+            initSwingTrail();
+            // Sync toggle button color with current state
+            {
+                const btn = document.getElementById('btn-swing-trail');
+                if (btn) btn.style.background = swingTrailVisible ? '#3a6' : '#2d4059';
+            }
             if (pitcherSkelData) initPitcherSkeleton();
             if (batterSkelData) initBatterSkeleton();
 
