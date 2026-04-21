@@ -1403,10 +1403,10 @@ function placeBatter(hand, pitchInfo) {
     if (batterGroup) scene.remove(batterGroup);
     if (hand === 'R') {
         // RHB stands on 1st-base side: Nathan X<0 → Three.js x>0
-        batterGroup = createBatter(batterEyeX, plateCenterZ, -Math.PI / 2, true);
+        batterGroup = createBatter(batterEyeX, 0, -Math.PI / 2, true);
     } else {
         // LHB stands on 3rd-base side: Nathan X>0 → Three.js x<0
-        batterGroup = createBatter(-batterEyeX, plateCenterZ, Math.PI / 2, false);
+        batterGroup = createBatter(-batterEyeX, 0, Math.PI / 2, false);
     }
     // Scale Y to match batter's eye height (sz_top + 0.3m)
     if (pitchInfo && pitchInfo.sz_top_ft != null) {
@@ -1559,7 +1559,7 @@ function showBatterEyeForPitch(pitchInfo) {
     }
     // RHB on 1st-base side: Nathan X<0 → Three.js x>0
     const eyeX = (pitchInfo.batter_hand === 'R') ? 0.65 : -0.65;
-    const eyeZ = 0.216;
+    const eyeZ = 0;  // home plate 後端 (catcher 側)
     updateBatterEyeMarker(eyeX, eyeHeight, eyeZ);
 }
 
@@ -1588,6 +1588,7 @@ updateCamera();
 function exitFirstPerson() {
     firstPersonMode = false;
     fpTrackBall = false;
+    batterEyeDynamic = false;  // 動的追従も解除
     if (batterEyeMarker) batterEyeMarker.visible = true;
     if (batterGroup && !hawkeyeMode) batterGroup.visible = true;
     camera.fov = 40;
@@ -1646,14 +1647,57 @@ function viewBatterEyeAuto(opposite) {
 }
 function viewBatterEye(hand) {
     // Batter's eye view: camera at batter's eye position, looking toward pitcher
-    // Eye height = strike zone top + 0.3m (from pitch data, or default = batter model head)
-    let eyeHeight = batterHeadY;
-    if (lastPitchInfo && lastPitchInfo.sz_top_ft != null) {
-        eyeHeight = lastPitchInfo.sz_top_ft * 0.3048 + 0.3;
+    let eyeHeight, eyeX, eyeZ;
+
+    // HawkEye モード: batter skeleton の頭部位置 (投球リリース時) を使う
+    // 優先順: nose > neck+0.15m (鼻/目の近似)
+    let gotFromSkel = false;
+    if (hawkeyeMode && batterSkelData && batterSkelData.joints) {
+        const releaseTime = (hawkeyeBallData && hawkeyeBallData.time.length > 0)
+            ? hawkeyeBallData.time[0]
+            : batterSkelData.time[0];
+        const ts = batterSkelData.time;
+        let idx = 0;
+        for (let i = 0; i < ts.length; i++) {
+            if (ts[i] <= releaseTime) idx = i; else break;
+        }
+        const tryJoint = (name) => {
+            const arr = batterSkelData.joints[name];
+            if (!arr) return null;
+            const v = arr[idx];
+            if (v && v.length === 3 && v.every(x => x != null && isFinite(x))) {
+                return v;
+            }
+            return null;
+        };
+        let src = tryJoint('nose');
+        let yOffset = 0;  // Three.js +Y = up
+        if (!src) {
+            src = tryJoint('neck');
+            // 首基部から目までの近似上方オフセット (約 15cm)
+            yOffset = 0.15;
+        }
+        if (src) {
+            const p = heToThree(src);
+            eyeX = p.x;
+            eyeHeight = p.y + yOffset;
+            eyeZ = p.z;
+            gotFromSkel = true;
+            batterEyeDynamic = true;  // アニメ中は skeleton 追従
+        }
     }
-    // RHB on 1st-base side: Nathan X<0 → Three.js x>0
-    const eyeX = (hand === 'R') ? 0.65 : -0.65;
-    const eyeZ = 0.216;  // Three.js Z = sim Y (batter's Y position)
+    if (!gotFromSkel) batterEyeDynamic = false;
+
+    if (!gotFromSkel) {
+        // Fallback: sz_top ベース (Statcast) または固定値
+        eyeHeight = batterHeadY;
+        if (lastPitchInfo && lastPitchInfo.sz_top_ft != null) {
+            eyeHeight = lastPitchInfo.sz_top_ft * 0.3048 + 0.3;
+        }
+        // RHB on 1st-base side: Nathan X<0 → Three.js x>0
+        eyeX = (hand === 'R') ? 0.65 : -0.65;
+        eyeZ = 0;  // home plate 後端 (catcher 側)
+    }
 
     // Re-place batter with correct hand and scale to match eye height
     placeBatter(hand, lastPitchInfo);
@@ -1787,7 +1831,7 @@ async function simulateRapsodo() {
         // Reset eye marker to match default batter model head position
         // RHB on 1st-base side: Nathan X<0 → Three.js x>0
         const eyeX = (batter === 'R') ? 0.65 : -0.65;
-        updateBatterEyeMarker(eyeX, batterHeadY, 0.216);
+        updateBatterEyeMarker(eyeX, batterHeadY, 0);
 
         // Reset strike zone to default (no per-batter data in manual/Rapsodo)
         resetStrikeZone();
@@ -1898,6 +1942,7 @@ let hawkeyeGripMaxTime = null; // NR start time (grip speed max, HawkEye time)
 let hawkeyeImpactTime = null;  // impact time (HawkEye time)
 let hawkeyeSwingStartTime = null; // swing start (grip axial zero-cross)
 let hawkeyeImpactMinusNR = null; // (impact - NR) × 1000 [ms]
+let batterEyeDynamic = false;    // true: HawkEye batter-eye が skeleton 追従で動的
 let hawkeyeBatSweetKph = null;   // HawkEye official sweet spot speed (km/h, hits only)
 let hawkeyeBatImpactPtKph = null; // HawkEye official impact point speed
 let hawkeyeOurHeadAtImpactKph = null; // our head speed at impact
@@ -2630,6 +2675,29 @@ function updateBatterSkeletonAtTime(simTime) {
         positions.setXYZ(0, pA.x, pA.y, pA.z);
         positions.setXYZ(1, pB.x, pB.y, pB.z);
         positions.needsUpdate = true;
+    }
+
+    // HawkEye モード: 毎フレーム neck (or nose) 位置から「目の位置」を計算
+    // → 黄色マーカーは常に追従 (外部視点でも見えるように)
+    // → first-person batter-eye 中のみカメラ eye も同じ位置に更新
+    if (hawkeyeMode) {
+        let src = sk.joints.nose ? sk.joints.nose[idx] : null;
+        let yOff = 0;
+        if (!src || src.length !== 3 || src.some(v => v == null || !isFinite(v))) {
+            src = sk.joints.neck ? sk.joints.neck[idx] : null;
+            yOff = 0.15;
+        }
+        if (src && src.length === 3 && src.every(v => v != null && isFinite(v))) {
+            const p = heToThree(src);
+            const ex = p.x, ey = p.y + yOff, ez = p.z;
+            if (batterEyeMarker) {
+                batterEyeMarker.position.set(ex, ey, ez);
+            }
+            if (batterEyeDynamic && firstPersonMode) {
+                fpEyePos.set(ex, ey, ez);
+                fpOrigin.copy(fpEyePos);
+            }
+        }
     }
 }
 
@@ -3831,7 +3899,7 @@ async function simulateManual() {
         const bHand = currentRelease.batter_hand || 'R';
         // RHB on 1st-base side: Nathan X<0 → Three.js x>0
         const eyeX = (bHand === 'R') ? 0.65 : -0.65;
-        updateBatterEyeMarker(eyeX, batterHeadY, 0.216);
+        updateBatterEyeMarker(eyeX, batterHeadY, 0);
     }
     const v0_kmh = parseFloat(document.getElementById('v0').value);
     const basePitch = {
