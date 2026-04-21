@@ -918,11 +918,13 @@ function initMouseControls() {
     });
 
     canvas.addEventListener('wheel', e => {
+        // Sensitivity は HawkEye 側 index.html と同等 (0.015) に揃える
         if (viewMode === 'ball') {
-            ballDist = Math.max(0.03, Math.min(5.0, ballDist + e.deltaY * 0.0002));
+            // ball 接近ビューはスケール小 → 元の比率を維持して 3 分の 1 に
+            ballDist = Math.max(0.03, Math.min(5.0, ballDist + e.deltaY * 0.00006));
             document.getElementById('ball-zoom-dist').value = ballDist;
         } else {
-            fieldDist = Math.max(0.5, Math.min(40, fieldDist + e.deltaY * 0.05));
+            fieldDist = Math.max(0.5, Math.min(40, fieldDist + e.deltaY * 0.015));
         }
         updateCamera();
     });

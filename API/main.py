@@ -592,6 +592,12 @@ class HawkEyeSessionRequest(BaseModel):
     vel_grip: Optional[List[Optional[float]]] = None  # grip km/h, null out of window
     swing_start_time: Optional[float] = None      # swing start (grip axial zero-cross)
     impact_minus_nr_ms: Optional[float] = None    # (impact - NR) × 1000
+    # バットスピード比較値 (km/h)
+    hawkeye_bat_sweet_kph: Optional[float] = None     # HawkEye official sweet spot speed (hits only)
+    hawkeye_bat_impactpt_kph: Optional[float] = None  # HawkEye official impact point speed
+    our_head_at_impact_kph: Optional[float] = None    # our derivative head speed at impact
+    our_head_max_kph: Optional[float] = None          # our derivative head speed peak (in swing window)
+    our_head_max_time: Optional[float] = None         # time of ours_max (HawkEye time)
     # Pitcher / Batter skeleton
     pitcher_skel: Optional[dict] = None            # {time, joints, bones}
     batter_skel: Optional[dict] = None             # {time, joints, bones}
@@ -663,6 +669,11 @@ def hawkeye_create_session(req: HawkEyeSessionRequest):
         "vel_grip": req.vel_grip,
         "swing_start_time": req.swing_start_time,
         "impact_minus_nr_ms": req.impact_minus_nr_ms,
+        "hawkeye_bat_sweet_kph": req.hawkeye_bat_sweet_kph,
+        "hawkeye_bat_impactpt_kph": req.hawkeye_bat_impactpt_kph,
+        "our_head_at_impact_kph": req.our_head_at_impact_kph,
+        "our_head_max_kph": req.our_head_max_kph,
+        "our_head_max_time": req.our_head_max_time,
         "pitcher_skel": req.pitcher_skel,
         "batter_skel": req.batter_skel,
         "hit_ball_time": req.hit_ball_time,

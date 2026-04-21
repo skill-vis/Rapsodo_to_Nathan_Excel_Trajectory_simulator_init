@@ -35,6 +35,36 @@ SESSION_DIR = os.path.join(os.path.dirname(__file__), "hawkeye_sessions")
 SF = 300.0
 BAT_LENGTH = 0.83
 
+# Local-only: 6 既存セッション → .action ファイル (HawkEye 公式の bat speed 値抽出用)
+ACTION_FILE_MAP = {
+    '232b1545': '/Users/ohta/Library/CloudStorage/Dropbox/．sync/．NTT/_HawkEye/20240412-L-H-1-180000-Json-Tag-V1/2024_31_5532_136_2024-04-12--19-01-34.533.baseball.action',
+    '9779f979': '/Users/ohta/Library/CloudStorage/Dropbox/．sync/．NTT/_HawkEye/20240412-L-H-1-180000-Json-Tag-V1/2024_31_5532_208_2024-04-12--19-39-00.866.baseball.action',
+    '986a97f0': '/Users/ohta/Library/CloudStorage/Dropbox/．sync/．NTT/_HawkEye/20240412-L-H-1-180000-Json-Tag-V1/2024_31_5532_119_2024-04-12--18-54-00.687.baseball.action',
+    '60712783': '/Users/ohta/Library/CloudStorage/Dropbox/．sync/．NTT/_HawkEye/20240412-L-H-1-180000-Json-Tag-V1/2024_31_5532_30_2024-04-12--18-13-24.150.baseball.action',
+    'a02f82e2': '/Users/ohta/Library/CloudStorage/Dropbox/．sync/．NTT/_HawkEye/20240412-L-H-1-180000-Json-Tag-V1/2024_31_5532_15_2024-04-12--18-05-29.691.baseball.action',
+    'a26cc7cc': '/Users/ohta/Library/CloudStorage/Dropbox/．sync/．NTT/_HawkEye/20240412-L-H-1-180000-Json-Tag-V1/2024_31_5532_17_2024-04-12--18-06-25.832.baseball.action',
+}
+
+
+def _extract_hawkeye_bat_speeds(action_file: str):
+    """HawkEye .action から Hit event の sweetSpot / impactPoint バット速度を抽出。
+    Hit event が無ければ (None, None) を返す (空振り)。"""
+    if not action_file or not os.path.isfile(action_file):
+        return None, None
+    try:
+        with open(action_file) as f:
+            raw = json.load(f)
+        hit_events = [e for e in raw.get('events', []) if e.get('type') == 'Hit']
+        if not hit_events:
+            return None, None
+        bat = hit_events[0].get('before', {}).get('bat', {})
+        sweet = bat.get('sweetSpot', {}).get('speed', {}).get('kph')
+        impactpt = bat.get('impactPoint', {}).get('speed', {}).get('kph')
+        return (float(sweet) if sweet is not None else None,
+                float(impactpt) if impactpt is not None else None)
+    except Exception:
+        return None, None
+
 # spline 重み
 W_BAT_VEL = 0.05
 W_GRIP = 0.00005     # ← 新方針 (要件 #7)
@@ -181,7 +211,8 @@ def _fill_windowed(n_total: int, start: int, end: int,
     return out
 
 
-def migrate_session(session: dict, sf: float = SF) -> dict:
+def migrate_session(session: dict, sf: float = SF,
+                    session_id: Optional[str] = None) -> dict:
     # Whiff の場合は impact_time をボール-バット最接近時刻に更新
     whiff_impact = _closest_approach_time(session)
     if whiff_impact is not None:
@@ -235,6 +266,26 @@ def migrate_session(session: dict, sf: float = SF) -> dict:
     grip_speed_kmh = _norm(grip_vel) * 3.6
     head_speed_kmh = _norm(head_vel) * 3.6
 
+    # --- Head velocity を FULL 範囲でも計算 (表示は全区間、数値比較用) ---
+    head_vel_full = _spline(bat_head, W_HV, sf)
+    head_speed_kmh_full = _norm(head_vel_full) * 3.6
+    our_head_at_impact_kph = float(head_speed_kmh_full[impact_frame])
+    # peak は swing 窓内でのみ探索 (外のノイズ除外)
+    search_hi = min(impact_frame + 1, len(head_speed_kmh_full))
+    search_lo = max(0, start)
+    if search_hi > search_lo:
+        max_rel = int(np.argmax(head_speed_kmh_full[search_lo:search_hi]))
+        our_head_max_frame = search_lo + max_rel
+        our_head_max_kph = float(head_speed_kmh_full[our_head_max_frame])
+        our_head_max_time = float(bat_time[our_head_max_frame])
+    else:
+        our_head_max_kph = our_head_at_impact_kph
+        our_head_max_time = impact_time
+
+    # --- HawkEye 公式 bat speed (hits のみ) ---
+    action_file = ACTION_FILE_MAP.get(session_id) if session_id else None
+    hawkeye_sweet_kph, hawkeye_impactpt_kph = _extract_hawkeye_bat_speeds(action_file)
+
     # ISA 位置 (窓内)
     isa_pos = np.zeros_like(grip_win)
     for i in range(len(grip_win)):
@@ -252,10 +303,12 @@ def migrate_session(session: dict, sf: float = SF) -> dict:
 
     impact_minus_nr_ms = (impact_time - grip_max_time) * 1000.0
 
-    # --- 出力: 窓外は null で埋める ---
+    # --- 出力 ---
     new = dict(session)
     new['vel_time'] = bat_time.tolist()
-    new['vel_head'] = _fill_windowed(n_total, start, end, head_speed_kmh)
+    # Head 速度は full 範囲 (null 無し) — 境界影響少ないため全区間で綺麗
+    new['vel_head'] = [float(v) for v in head_speed_kmh_full]
+    # Grip 速度は窓外 null (post-impact 除外が計算誤差低減に効くため)
     new['vel_grip'] = _fill_windowed(n_total, start, end, grip_speed_kmh)
     new['isa_time'] = bat_time.tolist()
     new['isa_pos'] = _fill_windowed(n_total, start, end, isa_pos)
@@ -264,6 +317,12 @@ def migrate_session(session: dict, sf: float = SF) -> dict:
     new['grip_max_time'] = grip_max_time
     new['swing_start_time'] = swing_start_time
     new['impact_minus_nr_ms'] = impact_minus_nr_ms
+    # バット速度比較用フィールド (hits: HawkEye 公式 / 全セッション: ours)
+    new['hawkeye_bat_sweet_kph'] = hawkeye_sweet_kph
+    new['hawkeye_bat_impactpt_kph'] = hawkeye_impactpt_kph
+    new['our_head_at_impact_kph'] = our_head_at_impact_kph
+    new['our_head_max_kph'] = our_head_max_kph
+    new['our_head_max_time'] = our_head_max_time
     # impact_time, release_time, 他は保持
     return new
 
@@ -293,9 +352,10 @@ def main() -> int:
         with open(path) as f:
             sess = json.load(f)
         label = (sess.get('label') or '')[:55]
+        sid = fname.replace('.json', '')
 
         try:
-            new_sess = migrate_session(sess)
+            new_sess = migrate_session(sess, session_id=sid)
         except Exception as e:
             print(f'  SKIP {fname}: {type(e).__name__}: {e}')
             continue
@@ -304,9 +364,16 @@ def main() -> int:
         ss_new = new_sess['swing_start_time']
         gm_new = new_sess['grip_max_time']
         gap_ms = new_sess['impact_minus_nr_ms']
+        sweet = new_sess.get('hawkeye_bat_sweet_kph')
+        impactpt = new_sess.get('hawkeye_bat_impactpt_kph')
+        our_i = new_sess.get('our_head_at_impact_kph')
+        our_m = new_sess.get('our_head_max_kph')
         print(f'  {fname}  [{label}]')
         print(f'    swing_start = {ss_new:.3f}s  NR = {gm_new:.3f}s  '
               f'impact = {impact_t:.3f}s  |  impact−NR = {gap_ms:+.1f} ms')
+        print(f'    HawkEye sweet = {sweet and f"{sweet:.1f}" or "n/a"} kph, '
+              f'impactPt = {impactpt and f"{impactpt:.1f}" or "n/a"} kph | '
+              f'ours@impact = {our_i:.1f} kph, ours_max = {our_m:.1f} kph')
 
         if args.dry_run:
             continue

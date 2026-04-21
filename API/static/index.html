@@ -1469,12 +1469,14 @@ canvas.addEventListener('mousemove', e => {
     }
 });
 canvas.addEventListener('wheel', e => {
+    // Sensitivity: 0.05 は強すぎるので 0.015 (約 1/3) に抑える
+    const ZOOM_SENSITIVITY = 0.015;
     if (firstPersonMode) {
         // In first-person, wheel adjusts FOV (zoom)
-        camera.fov = Math.max(20, Math.min(90, camera.fov + e.deltaY * 0.05));
+        camera.fov = Math.max(20, Math.min(90, camera.fov + e.deltaY * ZOOM_SENSITIVITY));
         camera.updateProjectionMatrix();
     } else {
-        spherical.r = Math.max(0.5, Math.min(40, spherical.r + e.deltaY * 0.05));
+        spherical.r = Math.max(0.5, Math.min(40, spherical.r + e.deltaY * ZOOM_SENSITIVITY));
         updateCamera();
     }
 });
@@ -1896,6 +1898,11 @@ let hawkeyeGripMaxTime = null; // NR start time (grip speed max, HawkEye time)
 let hawkeyeImpactTime = null;  // impact time (HawkEye time)
 let hawkeyeSwingStartTime = null; // swing start (grip axial zero-cross)
 let hawkeyeImpactMinusNR = null; // (impact - NR) × 1000 [ms]
+let hawkeyeBatSweetKph = null;   // HawkEye official sweet spot speed (km/h, hits only)
+let hawkeyeBatImpactPtKph = null; // HawkEye official impact point speed
+let hawkeyeOurHeadAtImpactKph = null; // our head speed at impact
+let hawkeyeOurHeadMaxKph = null;  // our head speed peak in swing window
+let hawkeyeOurHeadMaxTime = null; // time of ours_max (HawkEye time)
 let hawkeyeVelChart = null;    // {time:[], head:[], grip:[]}  head/grip may contain null
 let isaArrow = null;         // THREE.ArrowHelper for ISA
 let isaTrailDots = [];       // THREE.Mesh[] for ISA trail
@@ -4326,23 +4333,84 @@ function drawBatVelChart(currentSimTime) {
     ctx.fillStyle = '#44ddff'; ctx.fillText('Grip', pad.l + 40, pad.t + 12);
     ctx.fillStyle = '#888'; ctx.fillText('km/h', pad.l - 45, pad.t + 12);
 
+    // ── グラフ内マーカー (head_velocity_vs_hawkeye.png と同じ表現) ──
+    // 位置マーカー: Ours@impact (red ●), Ours max (cyan ▲)
+    // 水平線: HE sweet (orange --), HE imp.pt (green --)
+    const HE_SWEET_COL = '#ffb84d';   // orange
+    const HE_IMPPT_COL = '#66dd88';   // green
+    const OUR_IMP_COL  = '#ff3333';   // red
+    const OUR_MAX_COL  = '#44ffff';   // cyan
+    // 水平線: HawkEye 公式値 (hits のみ描画)
+    if (hawkeyeBatSweetKph != null && isFinite(hawkeyeBatSweetKph)) {
+        ctx.strokeStyle = HE_SWEET_COL; ctx.lineWidth = 1.3; ctx.setLineDash([5, 3]);
+        const y = ty(hawkeyeBatSweetKph);
+        ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + cw, y); ctx.stroke();
+        ctx.setLineDash([]);
+    }
+    if (hawkeyeBatImpactPtKph != null && isFinite(hawkeyeBatImpactPtKph)) {
+        ctx.strokeStyle = HE_IMPPT_COL; ctx.lineWidth = 1.3; ctx.setLineDash([5, 3]);
+        const y = ty(hawkeyeBatImpactPtKph);
+        ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + cw, y); ctx.stroke();
+        ctx.setLineDash([]);
+    }
+    // Ours @ impact: 赤丸
+    if (hawkeyeOurHeadAtImpactKph != null && hawkeyeImpactTime != null) {
+        const x = tx(hawkeyeImpactTime);
+        const y = ty(hawkeyeOurHeadAtImpactKph);
+        ctx.fillStyle = OUR_IMP_COL;
+        ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#000'; ctx.lineWidth = 1; ctx.stroke();
+    }
+    // Ours max: シアン▲
+    if (hawkeyeOurHeadMaxKph != null && hawkeyeOurHeadMaxTime != null) {
+        const x = tx(hawkeyeOurHeadMaxTime);
+        const y = ty(hawkeyeOurHeadMaxKph);
+        ctx.fillStyle = OUR_MAX_COL;
+        ctx.beginPath();
+        ctx.moveTo(x, y - 6); ctx.lineTo(x - 6, y + 4); ctx.lineTo(x + 6, y + 4); ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = '#000'; ctx.lineWidth = 1; ctx.stroke();
+    }
+
+    // Bat speed badges (left side, below legend) — 大きめフォント + 色付き対応記号
+    {
+        ctx.font = 'bold 14px sans-serif'; ctx.textAlign = 'left';
+        const x = pad.l + 5;
+        const fmt = v => v != null && isFinite(v) ? v.toFixed(1) : '—';
+        let y = pad.t + 32;
+        const ROW_H = 17;
+        // HE sweet — オレンジ破線
+        ctx.fillStyle = HE_SWEET_COL;
+        ctx.fillText(`— HE sweet: ${fmt(hawkeyeBatSweetKph)}`, x, y);
+        // HE imp.pt — 緑破線
+        ctx.fillStyle = HE_IMPPT_COL;
+        ctx.fillText(`— HE imp.pt: ${fmt(hawkeyeBatImpactPtKph)}`, x + 170, y);
+        y += ROW_H;
+        // Ours@impact — 赤●
+        ctx.fillStyle = OUR_IMP_COL;
+        ctx.fillText(`● Ours@imp: ${fmt(hawkeyeOurHeadAtImpactKph)}`, x, y);
+        // Ours max — シアン▲
+        ctx.fillStyle = OUR_MAX_COL;
+        ctx.fillText(`▲ Ours max: ${fmt(hawkeyeOurHeadMaxKph)}`, x + 170, y);
+    }
+
     // Timing badges (top-right) — 各値を改行して縦 2 段に表示
     {
-        ctx.font = '10px sans-serif'; ctx.textAlign = 'right';
+        ctx.font = 'bold 14px sans-serif'; ctx.textAlign = 'right';
         // トグルボタン (右上 22x22px + 余白) を避けて左にオフセット
         const xRight = pad.l + cw - 36;
-        let y = pad.t + 12;
+        let y = pad.t + 16;
 
         // 1st session
         ctx.fillStyle = '#ffcc66';
         if (hawkeyeSwingStartTime != null && hawkeyeImpactTime != null) {
             const ms = (hawkeyeImpactTime - hawkeyeSwingStartTime) * 1000;
             ctx.fillText(`Swing→Impact: ${ms.toFixed(1)} ms`, xRight, y);
-            y += 12;
+            y += 16;
         }
         if (hawkeyeImpactMinusNR != null) {
             ctx.fillText(`Impact−NR: ${hawkeyeImpactMinusNR.toFixed(1)} ms`, xRight, y);
-            y += 12;
+            y += 16;
         }
 
         // 2nd session (比較モード時)
@@ -4350,7 +4418,7 @@ function drawBatVelChart(currentSimTime) {
         if (he2SwingStartTime != null && he2ImpactTime != null) {
             const ms = (he2ImpactTime - he2SwingStartTime) * 1000;
             ctx.fillText(`2nd Swing→Impact: ${ms.toFixed(1)} ms`, xRight, y);
-            y += 12;
+            y += 16;
         }
         if (he2ImpactMinusNR != null) {
             ctx.fillText(`2nd Impact−NR: ${he2ImpactMinusNR.toFixed(1)} ms`, xRight, y);
@@ -5658,6 +5726,11 @@ logEvent('page_view');
             if (data.impact_time != null) hawkeyeImpactTime = data.impact_time;
             if (data.swing_start_time != null) hawkeyeSwingStartTime = data.swing_start_time;
             if (data.impact_minus_nr_ms != null) hawkeyeImpactMinusNR = data.impact_minus_nr_ms;
+            hawkeyeBatSweetKph       = data.hawkeye_bat_sweet_kph ?? null;
+            hawkeyeBatImpactPtKph    = data.hawkeye_bat_impactpt_kph ?? null;
+            hawkeyeOurHeadAtImpactKph= data.our_head_at_impact_kph ?? null;
+            hawkeyeOurHeadMaxKph     = data.our_head_max_kph ?? null;
+            hawkeyeOurHeadMaxTime    = data.our_head_max_time ?? null;
             if (data.vel_time && data.vel_head && data.vel_grip) {
                 hawkeyeVelChart = { time: data.vel_time, head: data.vel_head, grip: data.vel_grip };
                 // chartHidden remains true — user can open via button
