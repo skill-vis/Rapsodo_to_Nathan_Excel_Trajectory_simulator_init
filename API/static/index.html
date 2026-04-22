@@ -1390,6 +1390,7 @@ let he2MeasuredTimes = null, he2MeasuredSplines = null;
 let he2IsaData = null, he2IsaArrow = null, he2IsaTrailDots = [];
 let he2PitcherSkel = null, he2BatterSkel = null;
 let he2GripMaxTime = null, he2ImpactTime = null, he2SwingStartTime = null, he2ImpactMinusNR = null;
+let he2OurHeadMaxTime = null;  // 2nd session の our_head_max_time
 let he2VelChart = null;
 let he2Label = '';
 const HE2_COLOR = 0xff8844;  // orange for 2nd session (1st is green 0x44ff88)
@@ -4480,6 +4481,11 @@ function drawBatVelChart(currentSimTime) {
             ctx.fillText(`Impact−NR: ${hawkeyeImpactMinusNR.toFixed(1)} ms`, xRight, y);
             y += 16;
         }
+        if (hawkeyeGripMaxTime != null && hawkeyeOurHeadMaxTime != null) {
+            const ms = (hawkeyeOurHeadMaxTime - hawkeyeGripMaxTime) * 1000;
+            ctx.fillText(`NR→Ours max: ${ms.toFixed(1)} ms`, xRight, y);
+            y += 16;
+        }
 
         // 2nd session (比較モード時)
         ctx.fillStyle = 'rgba(255,204,102,0.55)';
@@ -4490,6 +4496,11 @@ function drawBatVelChart(currentSimTime) {
         }
         if (he2ImpactMinusNR != null) {
             ctx.fillText(`2nd Impact−NR: ${he2ImpactMinusNR.toFixed(1)} ms`, xRight, y);
+            y += 16;
+        }
+        if (he2GripMaxTime != null && he2OurHeadMaxTime != null) {
+            const ms = (he2OurHeadMaxTime - he2GripMaxTime) * 1000;
+            ctx.fillText(`2nd NR→Ours max: ${ms.toFixed(1)} ms`, xRight, y);
         }
     }
 }
@@ -5962,6 +5973,7 @@ logEvent('page_view');
                     if (d2.impact_time != null) he2ImpactTime = d2.impact_time;
                     if (d2.swing_start_time != null) he2SwingStartTime = d2.swing_start_time;
                     if (d2.impact_minus_nr_ms != null) he2ImpactMinusNR = d2.impact_minus_nr_ms;
+                    if (d2.our_head_max_time != null) he2OurHeadMaxTime = d2.our_head_max_time;
                     if (d2.vel_time && d2.vel_head && d2.vel_grip) {
                         he2VelChart = { time: d2.vel_time, head: d2.vel_head, grip: d2.vel_grip };
                     }

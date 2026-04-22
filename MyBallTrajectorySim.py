@@ -367,8 +367,8 @@ class BallTrajectorySimulator2:
         
         # 有効スピン（マグヌス効果に寄与する成分）
         flag = 1  # マグヌス効果を有効にする
-        spin_eff = math.sqrt(spin_total**2 - 
-                            flag * (self.rad_per_sec_to_rpm * (wx*vx + wy*vy + wz*vz) / v)**2) if v > 0 else spin_total
+        spin_eff = math.sqrt(max(0.0, spin_total**2 - 
+                            flag * (self.rad_per_sec_to_rpm * (wx*vx + wy*vy + wz*vz) / v)**2)) if v > 0 else spin_total
         
         # 回転速度（romega）
         romega = (spin_eff * self.rpm_to_rad_per_sec) * self.radius_m
@@ -610,8 +610,8 @@ class BallTrajectorySimulator2:
             v_rel = v
         
         flag = 1
-        spin_eff = math.sqrt(spin_total**2 - 
-                            flag * (self.rad_per_sec_to_rpm * (wx*vx + wy*vy + wz*vz) / v)**2) if v > 0 else spin_total
+        spin_eff = math.sqrt(max(0.0, spin_total**2 - 
+                            flag * (self.rad_per_sec_to_rpm * (wx*vx + wy*vy + wz*vz) / v)**2)) if v > 0 else spin_total
         romega = (spin_eff * self.rpm_to_rad_per_sec) * self.radius_m
         cd = self.calculate_drag_coefficient(v_rel, spin_eff, t)
         cl = self.calculate_lift_coefficient(romega, v_rel, t)
@@ -680,8 +680,8 @@ class BallTrajectorySimulator2:
                         v_rel_home = v_home
                     
                     flag = 1
-                    spin_eff_home = math.sqrt(spin_total**2 - 
-                                            flag * (self.rad_per_sec_to_rpm * (wx*vx_home + wy*vy_home + wz*vz_home) / v_home)**2) if v_home > 0 else spin_total
+                    spin_eff_home = math.sqrt(max(0.0, spin_total**2 - 
+                                            flag * (self.rad_per_sec_to_rpm * (wx*vx_home + wy*vy_home + wz*vz_home) / v_home)**2)) if v_home > 0 else spin_total
                     romega_home = (spin_eff_home * self.rpm_to_rad_per_sec) * self.radius_m
                     cd_home = self.calculate_drag_coefficient(v_rel_home, spin_eff_home, t_home)
                     cl_home = self.calculate_lift_coefficient(romega_home, v_rel_home, t_home)
@@ -737,8 +737,8 @@ class BallTrajectorySimulator2:
                     v_rel = v
                 
                 flag = 1
-                spin_eff = math.sqrt(spin_total**2 - 
-                                    flag * (self.rad_per_sec_to_rpm * (wx*vx + wy*vy + wz*vz) / v)**2) if v > 0 else spin_total
+                spin_eff = math.sqrt(max(0.0, spin_total**2 -
+                                    flag * (self.rad_per_sec_to_rpm * (wx*vx + wy*vy + wz*vz) / v)**2)) if v > 0 else spin_total
                 romega = (spin_eff * self.rpm_to_rad_per_sec) * self.radius_m
                 cd = self.calculate_drag_coefficient(v_rel, spin_eff, t)
                 cl = self.calculate_lift_coefficient(romega, v_rel, t)
