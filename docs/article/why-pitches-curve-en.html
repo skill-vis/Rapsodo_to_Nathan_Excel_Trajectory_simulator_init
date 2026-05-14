@@ -289,7 +289,7 @@ Every pitch "moves." Compared to a ball that only falls under gravity, a spinnin
 <summary>📐 For researchers: Equation of motion and Fig. 1</summary>
 <div>
 <p>The forces shown in Fig. 1 are described by the following equation of motion:</p>
-$$m\ddot{\mathbf{x}} = \underbrace{\color{#ffcc44}{m\mathbf{g}}}_{\color{#ffcc44}{\text{gravity}}} \underbrace{\color{#aaaaaa}{- \frac{1}{2}\rho A C_D {\color{#44ff44}v}^2 {\color{#44ff44}\hat{\mathbf{v}}}}}_{\color{#aaaaaa}{\text{drag}}} + \underbrace{\color{#4fc3f7}{\frac{1}{2}\rho A C_L {\color{#44ff44}v}^2 \hat{\mathbf{l}}}}_{\color{#4fc3f7}{\text{Magnus force}}}$$
+$$m\ddot{\mathbf{x}} = \underbrace{\color{#ffcc44}{m\mathbf{g}}}_{\color{#ffcc44}{\text{gravity}}} \underbrace{\color{#aaaaaa}{- \tfrac{1}{2}\rho A C_D {\color{#44ff44}v}^2 {\color{#44ff44}\hat{\mathbf{v}}}}}_{\color{#aaaaaa}{\text{drag}}} + \underbrace{\color{#4fc3f7}{\tfrac{1}{2}\rho A C_L {\color{#44ff44}v}^2 \hat{\mathbf{l}}}}_{\color{#4fc3f7}{\text{Magnus force}}}$$
 $$\hat{\mathbf{l}} = \frac{{\color{#ff8a65}\hat{\boldsymbol{\omega}}} \times {\color{#44ff44}\hat{\mathbf{v}}}}{|{\color{#ff8a65}\hat{\boldsymbol{\omega}}} \times {\color{#44ff44}\hat{\mathbf{v}}}|}$$
 <p>The three terms on the right-hand side correspond to the three forces in Fig. 1. Each term is explained in detail in the following sections. (Ref: <a href="https://baseball.physics.illinois.edu/TrajectoryAnalysis.pdf" target="_blank" style="color:#4fc3f7;">Nathan, Trajectory Calculator</a>)</p>
 </div>
@@ -1312,7 +1312,7 @@ $$\hat{\mathbf{e}}_G = \frac{\mathbf{v}}{|\mathbf{v}|}, \quad
 <summary>📐 Equations of Motion</summary>
 <div>
 <p>The equation of motion was introduced after Fig. 1; restated here for reference:</p>
-$$m\ddot{\mathbf{x}} = \underbrace{\color{#ffcc44}{m\mathbf{g}}}_{\color{#ffcc44}{\text{gravity}}} \underbrace{\color{#aaaaaa}{- \frac{1}{2}\rho A C_D {\color{#44ff44}v}^2 {\color{#44ff44}\hat{\mathbf{v}}}}}_{\color{#aaaaaa}{\text{drag}}} + \underbrace{\color{#4fc3f7}{\frac{1}{2}\rho A C_L {\color{#44ff44}v}^2 \hat{\mathbf{l}}}}_{\color{#4fc3f7}{\text{Magnus force}}}$$
+$$m\ddot{\mathbf{x}} = \underbrace{\color{#ffcc44}{m\mathbf{g}}}_{\color{#ffcc44}{\text{gravity}}} \underbrace{\color{#aaaaaa}{- \tfrac{1}{2}\rho A C_D {\color{#44ff44}v}^2 {\color{#44ff44}\hat{\mathbf{v}}}}}_{\color{#aaaaaa}{\text{drag}}} + \underbrace{\color{#4fc3f7}{\tfrac{1}{2}\rho A C_L {\color{#44ff44}v}^2 \hat{\mathbf{l}}}}_{\color{#4fc3f7}{\text{Magnus force}}}$$
 $$\hat{\mathbf{l}} = \frac{{\color{#ff8a65}\hat{\boldsymbol{\omega}}} \times {\color{#44ff44}\hat{\mathbf{v}}}}{|{\color{#ff8a65}\hat{\boldsymbol{\omega}}} \times {\color{#44ff44}\hat{\mathbf{v}}}|}$$
 <p>This simulator performs numerical integration using the 4th-order Runge-Kutta method with a 0.001-second time step.</p>
 </div>
