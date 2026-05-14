@@ -630,8 +630,9 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\color{#ff8a65}{\omega_{\text{tot
 <summary>📐 For researchers: Magnus force equation</summary>
 <div>
 <p>The Magnus force is described as follows:</p>
-$$\mathbf{F}_M = \frac{1}{2} C_L \rho A v^2 \, (\hat{\boldsymbol{\omega}} \times \hat{\mathbf{v}})$$
-<p>where $C_L$ is the lift coefficient, $\rho$ is air density, $A$ is the cross-sectional area of the ball, $v$ is velocity, $\hat{\boldsymbol{\omega}}$ is the unit vector of the spin axis, and $\hat{\mathbf{v}}$ is the unit vector of velocity.</p>
+$$\mathbf{F}_M = \frac{1}{2}\rho A C_L v^2 \hat{\mathbf{l}}$$
+$$\hat{\mathbf{l}} = \frac{\hat{\boldsymbol{\omega}} \times \hat{\mathbf{v}}}{|\hat{\boldsymbol{\omega}} \times \hat{\mathbf{v}}|}$$
+<p>where $C_L$ is the lift coefficient, $\rho$ is air density, $A$ is the cross-sectional area of the ball, $v$ is the speed (scalar), $\hat{\boldsymbol{\omega}}$ is the unit vector of the spin axis, $\hat{\mathbf{v}}$ is the unit vector along the direction of motion, and $\hat{\mathbf{l}}$ is the lift-direction unit vector.</p>
 <p>$C_L$ is a function of the spin parameter $S = R\omega/v$ (the ratio of the ball surface speed to the translational speed). The simulator at <a href="https://baseball.skill-vis.com" target="_blank" style="color:#4fc3f7;">baseball.skill-vis.com</a> uses Nathan's rational function model:</p>
 $$C_L = \frac{c_2 \cdot S}{c_0 + c_1 \cdot S}$$
 <p>Nathan's original coefficients are $c_0 = 0.583$, $c_1 = 2.333$, $c_2 = 1.12$, but this simulator uses a modified value of $c_2 = 1.045$ based on fitting to Statcast data.</p>

@@ -641,8 +641,9 @@ $$C_D = c_{d0} + c_{d,\text{spin}} \cdot \frac{\color{#ff8a65}{\omega_{\text{tot
 <summary>📐 研究者向け: マグヌス力の数式</summary>
 <div>
 <p>マグヌス力は次のように記述される:</p>
-$$\mathbf{F}_M = \frac{1}{2} C_L \rho A v^2 \, (\hat{\boldsymbol{\omega}} \times \hat{\mathbf{v}})$$
-<p>ここで $C_L$ は揚力係数、$\rho$ は空気密度、$A$ はボールの断面積、$v$ は速度、$\hat{\boldsymbol{\omega}}$ は回転軸の単位ベクトル、$\hat{\mathbf{v}}$ は速度の単位ベクトルである。</p>
+$$\mathbf{F}_M = \frac{1}{2}\rho A C_L v^2 \hat{\mathbf{l}}$$
+$$\hat{\mathbf{l}} = \frac{\hat{\boldsymbol{\omega}} \times \hat{\mathbf{v}}}{|\hat{\boldsymbol{\omega}} \times \hat{\mathbf{v}}|}$$
+<p>ここで $C_L$ は揚力係数、$\rho$ は空気密度、$A$ はボールの断面積、$v$ は速度の大きさ（スカラ）、$\hat{\boldsymbol{\omega}}$ は回転軸の単位ベクトル、$\hat{\mathbf{v}}$ は進行方向の単位ベクトル、$\hat{\mathbf{l}}$ は揚力方向の単位ベクトルである。</p>
 <p>$C_L$ はスピンパラメータ $S = R\omega/v$（ボール表面速度と並進速度の比）の関数であり、<a href="https://baseball.skill-vis.com" target="_blank" style="color:#4fc3f7;">baseball.skill-vis.com</a> のシミュレータでは、以下の Nathan の有理関数型モデルを用いている:</p>
 $$C_L = \frac{c_2 \cdot S}{c_0 + c_1 \cdot S}$$
 <p>Nathan オリジナルの係数は $c_0 = 0.583$, $c_1 = 2.333$, $c_2 = 1.12$ であるが、本シミュレータでは Statcast データへのフィッティングに基づき $c_2 = 1.045$ に修正した値を用いている。</p>
